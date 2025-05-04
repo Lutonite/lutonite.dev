@@ -633,12 +633,20 @@ function drawCanvas(data) {
         }
     }
 
-    for (let row in menu) {
+    if ((globalThis_area0 != "L001_L017_LW_Gr") || (isCurrentlyFlipped == true)) {
+		for (let row in menu) {
         for (let char in menu[row]) {
             ctx.fillText(menu[row][char], textSize * char / textSizeRatio * textMargin, textSize * (row * 1 + textLines - menu.length - 1) * textMargin);
+		}
+        }
+   } else {
+		for (let row in menu3) {
+        for (let char in menu3[row]) {
+            ctx.fillText(menu3[row][char], textSize * char / textSizeRatio * textMargin, textSize * (row * 1 + textLines - menu3.length - 1) * textMargin);	   
+		}
         }
     }
-	
+
     if (area == "Settings") {
         drawSettings();
 n = "" + 40125 + "";
@@ -895,6 +903,7 @@ area4 = "L171_L131";
 area5 = "L062_L171_SG_Tl";
 area6 = "L062_SPł_Sd";
 area7 = "L008_KG_Kz";
+area8 = "L001_L017_LW_Gr";
 
 couleur = 1;
 	if (isCurrentlyFlipped != true) {
@@ -925,6 +934,7 @@ area4 = "L171_L131";
 area5 = "L062_L171_SG_Tl";
 area6 = "L062_SPł_Sd";
 area7 = "L008_KG_Kz";
+area8 = "L001_L017_LW_Gr";
 
 couleur = 1;
 
@@ -1000,7 +1010,7 @@ couleur = 1;
         drawRadioBox("3 ◯  4", 82, 1, area6, couleur);	// DGHK
         drawRadioBox("2 ◯  5", 26, 5, area6, couleur);	// S. Poludniowy - Dandowka		
         drawRadioBox("5 ◯  4", 46, 7, area6, couleur);	// Dandowka - Kazimierz		
-        drawRadioBox("◯  5", 29, 14, area6, couleur);	// KWK Staszic		
+        drawRadioBox("◯  5", 29, 13, area6, couleur);	// KWK Staszic		
         drawRadioBox("5 ◯  3", 57, 13, area6, couleur);	// Julius - Dorota		
         drawRadioBox("5 ◯  4", 68, 16, area6, couleur);	// Maczki
         drawRadioBox("◯  2", 6, 8, area6, couleur);	// SG R52
@@ -1015,6 +1025,17 @@ couleur = 1;
         drawRadioBox("4 ◯ ", 150, 47, area7, couleur);	// Kozlow - Sedziszow		
         drawRadioBox("4 ◯ ", 150, 53, area7, couleur);	// Kozlow - Sedziszow
 
+        drawRadioBox("◯  7", 0, 7, area8, couleur);	// Lodz		
+        drawRadioBox("◯  7", 0, 22, area8, couleur);	// Lodz
+        drawRadioBox("2 ◯ ", 138, 51, area8, couleur);	// Grodzisk
+        drawRadioBox("7 ◯  2", 96, 6, area8, couleur);	// Galkowek
+        drawRadioBox("7 ◯  2", 96, 11, area8, couleur);	// Galkowek
+        drawRadioBox("7 ◯  2", 104, 15, area8, couleur);	// Zakowice Polu. F
+        drawRadioBox("◯  7", 47, 19, area8, couleur);	// Lodz Olechow
+        drawRadioBox("◯  2", 77, 39, area8, couleur);	// Beichow
+        drawRadioBox("2 ◯  4", 144, 39, area8, couleur);	// Puszcza
+        drawRadioBox("4 ◯ ", 155, 37, area8, couleur);	// Puszcza
+		
 		} else {
 
 couleur = 1;
@@ -1043,7 +1064,7 @@ couleur = 1;
 		drawRadioBox("2 ◯ ", 141, 45, area3, couleur);	// Zyrardow
         drawRadioBox("◯  5", 77, 5, area3, couleur);	// Warszawa Wschodnia
 		drawRadioBox("◯  2", 77, 12, area3, couleur);	// Warszawa Wschodnia
-		drawRadioBox("5 ◯  2", 62, 25, area3, couleur);	// Warszawa Wlochy
+		drawRadioBox("5 ◯  2", 58, 25, area3, couleur);	// Warszawa Wlochy
         drawRadioBox("2 ◯  5", 24, 28, area3, couleur);	// Warszawa Zachodnia
         drawRadioBox("5 ◯  2", 4, 25, area3, couleur);	// Warszawa Zachodnia		
 
@@ -1102,6 +1123,16 @@ couleur = 1;
         drawRadioBox("◯  4", 6, 3, area7, couleur);	// Kozlow - Sedziszow		
         drawRadioBox("◯  4", 6, 9, area7, couleur);	// Kozlow - Sedziszow
 
+        drawRadioBox("7 ◯ ", 154, 35, area8, couleur);	// Lodz		
+        drawRadioBox("7 ◯ ", 154, 50, area8, couleur);	// Lodz
+        drawRadioBox("◯  2", 18, 6, area8, couleur);	// Grodzisk
+        drawRadioBox("2 ◯  7", 58, 51, area8, couleur);	// Galkowek
+        drawRadioBox("2 ◯  7", 50, 42, area8, couleur);	// Zakowice Polu. F
+        drawRadioBox("7 ◯ ", 109, 38, area8, couleur);	// Lodz Olechow
+        drawRadioBox("2 ◯ ", 79, 22, area8, couleur);	// Beichow
+        drawRadioBox("4 ◯  2", 10, 18, area8, couleur);	// Puszcza
+        drawRadioBox("◯  4", 1, 20, area8, couleur);	// Puszcza
+		
 		}
 				
 	}
@@ -1411,6 +1442,7 @@ area4 = "L171_L131";
 area5 = "L062_L171_SG_Tl";
 area6 = "L062_SPł_Sd";
 area7 = "L008_KG_Kz";
+area8 = "L001_L017_LW_Gr";
 
        for (let station of stationToDraw) {
 		
@@ -1441,7 +1473,6 @@ drawstationuser(area1, "Łazy", "LB", 105, 38, 4)
 drawstationuser(area1, "Łazy ŁA", "ŁA", 121, 53, 6)
 drawstationuser(area1, "Zawiercie", "Zw", 144, 45, 9)
 drawstation2mots(area1, "S.Dańdówka", 112, 18, 10)
-/////drawstation2mots(area1, "Góra Włodowska --->", 70, 2, 19)
 
 drawstation2mots(area2, "L004 : Zawiercie - Grodzisk Mazowiecki", 1, 0, 38)
 drawstationuser(area2, "Góra Włodowska", "GW", 62, 8, 14)
@@ -1470,6 +1501,8 @@ drawstationuser(area3, "Korytów", "Kr", 27, 8, 7)
 drawstation2mots(area3, "W.Targówek", 110, 32, 10)
 drawstation2mots(area3, "W.Grochów", 131, 55, 9)
 drawstation2mots(area3, "W.Olszynka", 145, 53, 10)
+drawstationuser(area3, "Żyrardów", "Zr", 20, 12, 8)
+drawstationuser(area3, "Warszawa Włochy", "Wl", 79, 31, 15)
 
 drawstation2mots(area4, "L171 - L131", 1, 0, 11)
 drawstationuser(area4, "K.Zawodzie", "KZ", 2, 3, 10)
@@ -1503,9 +1536,6 @@ drawstationuser(area5, "<< Klimontów", "Kz", 83, 49, 12)
 drawstationuser(area5, "<< Starzyny", "Str", 136, 56, 11)
 drawstationuser(area5, "Sprowa >>", "Str", 127, 54, 9)
 
-///drawstation2mots(area5, "2 ◯  5", 63, 12, 6)
-//        drawRadioBox("2 ◯  5", 63, 12, area5);	// S. Poludniowy - Dandowka
-
 drawstation2mots(area6, "L062 : S.Południowy - Sędziszów-Psary-Koniecpol (adapted from Besentv)", 1, 0, 74)
 drawstationuser(area6, "S.Południowy", "Spł1", 10, 11, 13)
 drawstationuser(area6, "Julius", "Ju", 50, 13, 6)
@@ -1534,7 +1564,25 @@ drawstationuser(area7, "Miechów", "Mi", 41, 54, 7)
 drawstationuser(area7, "Tunel", "Tl", 95, 54, 5)
 drawstationuser(area7, "Kozłów", "Kz", 134, 56, 6)
 
-// N'existe pas comme Dispatching ... drawstationuser(area3, "Warszawa Zachodnia", "WZD", 130, 28, 17)
+drawstation2mots(area8, "L001 - L017 : Lódź - Zyrardów (adapted from Besentv)", 1, 0, 52)
+drawstationuser(area8, "Lódź Widzew", "LW", 15, 21, 11)
+drawstationuser(area8, "Galkówek", "G", 79, 6, 8)
+drawstationuser(area8, "Żakowice", "ZP", 89, 21, 8)
+drawstationuser(area8, "Południowe", "ZP", 88, 22, 10)
+drawstationuser(area8, "Koluski", "KO", 128, 4, 7)
+drawstationuser(area8, "Rogów", "Rg", 33, 27, 5)
+drawstationuser(area8, "Skierniewice", "Sk", 109, 32, 12)
+drawstationuser(area8, "Plyćwia", "Pl", 11, 47, 7)
+drawstationuser(area8, "Radziwillów >>", "Zr", 9, 54, 14)
+drawstationuser(area8, "Mazowiecki", "Zr", 9, 55, 10)
+drawstationuser(area8, "<< Żyrardów", "Zr", 66, 49, 11)
+		if (settings.showHornZone != true) {
+	drawstation2mots(area8, "│", 56, 9, 1)
+	drawstation2mots(area8, "│", 56, 10, 1)
+		} else {
+	drawstation2mots(area8, "△", 56, 9, 1)
+	drawstation2mots(area8, "△", 56, 10, 1)
+		}
 
 	if (isCurrentlyFlipped != true) {
 
@@ -1582,7 +1630,7 @@ drawstation2mots(area2, "<--- Grodzisk M.", 1, 3, 11)
 drawstation2mots(area2, "-Markow-", 68, 0, 10)
 
 drawstation2mots(area3, "L001 : Warszawa - Zyrardów-Korytów", 1, 0, 34)
-drawstation2mots(area3, "                                   ", 127, 56, 35)
+drawstation2mots(area3, "3                                    ", 123, 56, 39)
 drawstation2mots(area3, " SERVER = ", 140, 0, 9)
 drawstation2mots(area3, "               ", 4, 56, 15) // ___ server
 drawstation2mots(area3, "W.Targówek", 40, 24, 10)
@@ -1600,7 +1648,7 @@ drawstation2mots(area3, "         ", 46, 27, 9)
 drawstation2mots(area3, "-Warszawa Wschodnia-", 58, 0, 20)
 drawstation2mots(area3, "Warszawa Centralna", 121, 1, 18)
 drawstation2mots(area3, "Warszawa Zachodnia", 9, 23, 18)
-drawstation2mots(area3, "  -Warszawa Włochy-", 66, 25, 19)
+drawstationuser(area3, "Warszawa Włochy", "Wl", 79, 31, 15)
 drawstation2mots(area3, "Warszawa Gł.Tow.", 74, 40, 16)
 drawstation2mots(area3, "=== ┤            ", 70, 16, 16)
 drawstationuser(area3, "<< Pruszków", "Pr", 21, 29, 11)
@@ -1608,9 +1656,8 @@ drawstationuser(area3, "Józefinów >>", "Pr", 50, 31, 12)
 drawstationuser(area3, "Grodzisk Mazowiecki", "Gr", 86, 12, 19)
 drawstation2mots(area3, "             ", 146, 50, 13)
 drawstation2mots(area3, "Szeligi  --->", 146, 49, 13)
-drawstationuser(area3, "- Korytów -", "Kr", 29, -1, 11)
+drawstationuser(area3, "- Korytów -", "Kr", 17, 6, 11)
 drawstation2mots(area3, "           ", 125, 48, 11)
- //  drawstationuser(area3, "Korytów", "Kr", 27, 8, 7)
 drawstation2mots(area3, "────┐     ", 103, 32, 10)
 drawstation2mots(area3, "──── ┘   ", 125, 55, 9)
   
@@ -1645,7 +1692,7 @@ drawstation2mots(area5, "S.Dańdówka", 78, 29, 10)
 drawstation2mots(area5, "KWK Staszic", 139, 35, 11)
 
 drawstation2mots(area6, "L062 : Sędziszów-Psary-Koniecpol - S.Południowy (adapted from Besentv)       ", 1, 0, 76)
-drawstation2mots(area6, "                                                                                 ", 91, 55, 79)
+drawstation2mots(area6, "                                                                                 ", 89, 56, 80)
 drawstation2mots(area6, " SERVER = ", 140, 0, 9)
 drawstation2mots(area6, "                    ", 1, 56, 18) // ___ server
 drawstation2mots(area6, "Jaroszowiec Olkuski", 89, 28, 19)
@@ -1663,7 +1710,7 @@ drawstation2mots(area6, "SG R52", 149, 49, 6)
 drawstation2mots(area6, "        ", 5, 5, 6)
 drawstation2mots(area6, "S.Dańdówka", 116, 52, 10)
 drawstation2mots(area6, "S.Porąbka ", 101, 51, 10)
-drawstation2mots(area6, "KWK Staszic", 126, 43, 11)
+drawstation2mots(area6, "KWK Staszic", 132, 43, 11)
 drawstation2mots(area6, "        ", 102, 11, 8)
 drawstation2mots(area6, "Dorota->", 50, 45, 8)
 drawstation2mots(area6, "D.G.Strzemieszyce", 58, 43, 18)
@@ -1681,6 +1728,56 @@ drawstation2mots(area7, "- Kraków -", 106, 27, 10)
 drawstation2mots(area7, "  Olsza   ", 106, 28, 10)
 drawstation2mots(area7, "- Kraków -", 148, 37, 10)
 drawstation2mots(area7, " Zablocie ", 148, 38, 10)
+
+drawstation2mots(area8, "L001 - L017 : Lódź - Zyrardów (adapted from Besentv)", 1, 0, 52)
+    if (isCurrentlyFlipped == true) {
+drawstation2mots(area8, "[4] L001_Zy_WSD   [5] L171_L131                        ", 105, 57, 55)
+   } else {
+drawstation2mots(area8, "   [4] L001_Zy_WSD   [5] L171_L131               ", 110, 57, 52)	   
+   }	   
+drawstation2mots(area8, " SERVER = ", 140, 0, 9)
+drawstation2mots(area8, "Keyboard shortcuts: ", 0, 57, 20) // ___ server
+drawstation2mots(area8, "<- Grodzisk Mazowiecki", 0, 4, 22)
+drawstation2mots(area8, "  1       4", 83, 7, 11)
+drawstationuser(area8, "Zyrardów >>", "Zr", 66, 48, 11)
+drawstation2mots(area8, "          ", 141, 1, 10)
+drawstation2mots(area8, "                        ", 133, 3, 24)
+drawstationuser(area8, "- << Radziwillów -", "Zr", 7, 54, 18)
+drawstationuser(area8, "Mazowiecki", "Zr", 10, 53, 10)
+drawstation2mots(area8, "      ", 142, 9, 7)
+drawstationuser(area8, "Plyćwia", "Pl", 11, 46, 7)
+drawstation2mots(area8, "              ", 38, 25, 14)
+drawstationuser(area8, "-Skierniewice-", "Sk", 109, 32, 14)
+drawstation2mots(area8, "-Puszcza-", 0, 17, 9)
+drawstation2mots(area8, "Mariańska", 0, 18, 9)
+drawstation2mots(area8, "-Mikolajow-", 0, 25, 11)
+drawstation2mots(area8, "    Mk     ", 0, 26, 11)
+drawstation2mots(area8, "         ", 120, 30, 9)
+drawstationuser(area8, "- Rogów -", "Rg", 31, 27, 9)
+drawstation2mots(area8, "            ", 60, 34, 12)
+drawstationuser(area8, "-Południowe-", "ZP", 88 , 21, 12)
+drawstationuser(area8, "  Żakowice  ", "ZP", 88, 20, 12)
+drawstation2mots(area8, "Lódź Olechów", 100, 33, 12)
+drawstation2mots(area8, "Lódź Chojny", 115, 34, 11)
+drawstation2mots(area8, " -Lódź-  ", 110, 47, 9)
+drawstation2mots(area8, "Andrzejów", 110, 48, 9)
+drawstation2mots(area8, "           ", 134, 35, 11)
+drawstationuser(area8, "- Lódź Widzew -", "LW", 13, 20, 15)
+drawstation2mots(area8, "            ", 71, 51, 12)
+drawstationuser(area8, "- Galkówek -", "G", 77, 6, 12)
+drawstation2mots(area8, "           ", 24, 53, 11)
+drawstationuser(area8, "- Koluski -", "KO", 125, 4, 11)
+	drawstation2mots(area8, "  ", 56, 8, 2)
+	drawstation2mots(area8, "  ", 56, 9, 2)
+	drawstation2mots(area8, "  ", 56, 10, 2)
+	drawstation2mots(area8, "──", 56, 11, 2)
+		if (settings.showHornZone != true) {
+	drawstation2mots(area8, "│", 103, 47, 1)
+	drawstation2mots(area8, "│", 103, 48, 1)
+		} else {
+	drawstation2mots(area8, "△", 103, 47, 1)
+	drawstation2mots(area8, "△", 103, 48, 1)
+		}
 
 		}
 
@@ -2231,6 +2328,7 @@ function changeSelectedSetting(x) {
 }
 
 function keyboard(e) {
+    //console.log("Key detected: " + e.key);
     let setAreaTo = area;
     switch (e.key.toLowerCase()) {
         case "1":
@@ -2240,18 +2338,21 @@ function keyboard(e) {
             setAreaTo = "L004_Zw_Gr";
             break;
         case "3":
-            setAreaTo = "L001_Zy_WSD";
+			setAreaTo = "L001_L017_LW_Gr";
             break;
         case "4":
-            setAreaTo = "L171_L131";
+            setAreaTo = "L001_Zy_WSD";
             break;
         case "5":
+            setAreaTo = "L171_L131";
+            break;
+        case "6":
             setAreaTo = "L062_L171_SG_Tl";
             break;   
-		case "6":
+		case "7":
             setAreaTo = "L062_SPł_Sd";
             break;
-        case "7":
+        case "8":
             setAreaTo = "L008_KG_Kz";
             break;
         case "e":
