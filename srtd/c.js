@@ -537,102 +537,100 @@ function drawCanvas(data) {
 			}
 
 			
-//    }		
+				
 
-    if (settings.showDottedLines != false) {
-		if (settings.showHornZone != false) {
-			// True True
-            ctx.fillText(text[row][char].replace("{", "─").replace("}", "─"), textSize * char / textSizeRatio * textMargin, textSize * row * textMargin);
-// ***
-	if (text[row][char] != "‡" ) {
-            ctx.fillText(text[row][char].replace("{", "─").replace("}", "─"), textSize * char / textSizeRatio * textMargin, textSize * row * textMargin);
-   } else {
+
+switch (text[row][char]) {
+case "‡":
 // passages à niveau
-	text[row][char] = "\u0058";
+	text[row][char] = "\u0058"; //  X
 	n = "\u0058";
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#ff00ff";
             ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
 	ctx.fillStyle = "#ffffff";
-	text[row][char] = "\u01C0";
+	text[row][char] = "\u01C0"; // ǀ
 	n = "\u01C0";
 	ctx.fillStyle = "#ff00ff";
-            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);		
-	ctx.fillStyle = "#ffffff";			
-        }
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "@":
+// postes d'aiguillage ▣
+	text[row][char] = "\u25a3";
+	n = "\u25a3";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#88f8f8";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "$":
+// postes d'aiguillage - fleche vers la Gauche ⏴
+	text[row][char] = "\u23f4";
+	n = "\u23f4";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#88f8f8";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "?":
+// postes d'aiguillage - fleche vers la Droite ⏵
+	text[row][char] = "\u23f5";
+	n = "\u23f5";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#88f8f8";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "&":
+// postes d'aiguillage - fleche vers le Haut ⏶
+	text[row][char] = "\u23f6";
+	n = "\u23f6";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#88f8f8";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "#":
+// postes d'aiguillage - fleche vers le Bas ⏷
+	text[row][char] = "\u23f7";
+	n = "\u23f7";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#88f8f8";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+default:
+    if (settings.showDottedLines != false) {
+
+		if (settings.showHornZone != false) {
+			// True True
+// ***
+	ctx.fillText(text[row][char].replace("{", "─").replace("}", "─"), textSize * char / textSizeRatio * textMargin, textSize * row * textMargin);		
 // ***
 		} else {
 			// True False
-// ***
-	if (text[row][char] != "‡" ) {
-            ctx.fillText(text[row][char].replace("{", "─").replace("}", "─").replace("△", " "), textSize * char / textSizeRatio * textMargin, textSize * row * textMargin);
-   } else {
-// passages à niveau
-	text[row][char] = "\u0058";
-	n = "\u0058";
-	ctx.fillStyle = "#000000";
-    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
-	ctx.fillStyle = "#ff00ff";
-            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
-	ctx.fillStyle = "#ffffff";
-	text[row][char] = "\u01C0";
-	n = "\u01C0";
-	ctx.fillStyle = "#ff00ff";
-            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);		
-	ctx.fillStyle = "#ffffff";			
-        }
-// ***
-		}		
-    } else {
-		if (settings.showHornZone != false) {
+    ctx.fillText(text[row][char].replace("{", "─").replace("}", "─").replace("△", " "), textSize * char / textSizeRatio * textMargin, textSize * row * textMargin);
+        }	   
+
+		} else {
+
+	if (settings.showHornZone != false) {
 			//False True
 // ***
-	if (text[row][char] != "‡" ) {
             ctx.fillText(text[row][char].replace("{", "─").replace("}", "─").replace(".", " ").replace(":", " "), textSize * char / textSizeRatio * textMargin, textSize * row * textMargin);
    } else {
-// passages à niveau
-	text[row][char] = "\u0058";
-	n = "\u0058";
-	ctx.fillStyle = "#000000";
-    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
-	ctx.fillStyle = "#ff00ff";
-            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
-	ctx.fillStyle = "#ffffff";
-	text[row][char] = "\u01C0";
-	n = "\u01C0";
-	ctx.fillStyle = "#ff00ff";
-            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);		
-	ctx.fillStyle = "#ffffff";			
-        }
-// ***
-		} else {
-			// False False
-// ***
-	if (text[row][char] != "‡" ) {
+			//False False
             ctx.fillText(text[row][char].replace("{", "─").replace("}", "─").replace(".", " ").replace(":", " ").replace("△", " "), textSize * char / textSizeRatio * textMargin, textSize * row * textMargin);
-   } else {
-// passages à niveau
-	text[row][char] = "\u0058";
-	n = "\u0058";
-	ctx.fillStyle = "#000000";
-    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
-	ctx.fillStyle = "#ff00ff";
-            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
-	ctx.fillStyle = "#ffffff";
-	text[row][char] = "\u01C0";
-	n = "\u01C0";
-	ctx.fillStyle = "#ff00ff";
-            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);		
-	ctx.fillStyle = "#ffffff";		
-        }
-// ***
-		}	
+   }	  
+   }
     }
-		
-        }
-    }
-
+   
+   
+   
+   }
+   }
+	
     if ((globalThis_area0 != "L001_L017_LW_Gr") || (isCurrentlyFlipped == true)) {
 		for (let row in menu) {
         for (let char in menu[row]) {
@@ -784,7 +782,7 @@ y = 42;
     }	
 // postes utilisables
 n = "COLOURED";
-x = 76;
+x = 79;
 y = 44;
 	ctx.fillStyle = "#000000";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 8, textSize * textMargin);
@@ -795,7 +793,7 @@ y = 44;
     }		
 // postes pris par users
 n = "GRAY";
-x = 93;
+x = 96;
 y = 44;
 	ctx.fillStyle = "#afdfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 4, textSize * textMargin);
@@ -807,7 +805,7 @@ y = 44;
 // passages à niveau
 ///n = "X";
 n = "\u0058";
-x = 68;
+x = 69;
 y = 44;
 	ctx.fillStyle = "#000000";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
@@ -816,7 +814,7 @@ y = 44;
         ctx.fillText(n, textSize * (x + 1) / textSizeRatio * textMargin, textSize * y * textMargin);
 ///n = "│";
 n = "\u01C0";
-x = 68;
+x = 69;
 y = 44;
 	ctx.fillStyle = "#000000";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
@@ -1026,15 +1024,17 @@ couleur = 1;
         drawRadioBox("4 ◯ ", 150, 53, area7, couleur);	// Kozlow - Sedziszow
 
         drawRadioBox("◯  7", 0, 7, area8, couleur);	// Lodz		
-        drawRadioBox("◯  7", 0, 22, area8, couleur);	// Lodz
-        drawRadioBox("2 ◯ ", 138, 51, area8, couleur);	// Grodzisk
+        drawRadioBox("◯  7", 0, 20, area8, couleur);	// Lodz
+        drawRadioBox("2 ◯ ", 138, 52, area8, couleur);	// Grodzisk
         drawRadioBox("7 ◯  2", 96, 6, area8, couleur);	// Galkowek
-        drawRadioBox("7 ◯  2", 96, 11, area8, couleur);	// Galkowek
         drawRadioBox("7 ◯  2", 104, 15, area8, couleur);	// Zakowice Polu. F
-        drawRadioBox("◯  7", 47, 19, area8, couleur);	// Lodz Olechow
-        drawRadioBox("◯  2", 77, 39, area8, couleur);	// Beichow
-        drawRadioBox("2 ◯  4", 144, 39, area8, couleur);	// Puszcza
-        drawRadioBox("4 ◯ ", 155, 37, area8, couleur);	// Puszcza
+        drawRadioBox("◯  7", 43, 23, area8, couleur);	// Lodz Olechow
+        drawRadioBox("◯  4", 77, 37, area8, couleur);	// Beichow
+        drawRadioBox("2 ◯  4", 83, 41, area8, couleur);	// Skerniewice
+        drawRadioBox("2 ◯  4", 104, 40, area8, couleur);	// Skerniewice
+        drawRadioBox("4 ◯  2", 139, 40, area8, couleur);	// Puszcza
+        drawRadioBox("2 ◯  4", 131, 49, area8, couleur);	// Puszcza
+        drawRadioBox("4 ◯ ", 156, 49, area8, couleur);	// Puszcza
 		
 		} else {
 
@@ -1123,16 +1123,19 @@ couleur = 1;
         drawRadioBox("◯  4", 6, 3, area7, couleur);	// Kozlow - Sedziszow		
         drawRadioBox("◯  4", 6, 9, area7, couleur);	// Kozlow - Sedziszow
 
-        drawRadioBox("7 ◯ ", 154, 35, area8, couleur);	// Lodz		
+        drawRadioBox("7 ◯ ", 154, 37, area8, couleur);	// Lodz		
         drawRadioBox("7 ◯ ", 154, 50, area8, couleur);	// Lodz
-        drawRadioBox("◯  2", 18, 6, area8, couleur);	// Grodzisk
+        drawRadioBox("◯  2", 18, 5, area8, couleur);	// Grodzisk
         drawRadioBox("2 ◯  7", 58, 51, area8, couleur);	// Galkowek
         drawRadioBox("2 ◯  7", 50, 42, area8, couleur);	// Zakowice Polu. F
-        drawRadioBox("7 ◯ ", 109, 38, area8, couleur);	// Lodz Olechow
-        drawRadioBox("2 ◯ ", 79, 22, area8, couleur);	// Beichow
-        drawRadioBox("4 ◯  2", 10, 18, area8, couleur);	// Puszcza
-        drawRadioBox("◯  4", 1, 20, area8, couleur);	// Puszcza
-		
+        drawRadioBox("7 ◯ ", 113, 34, area8, couleur);	// Lodz Olechow
+        drawRadioBox("4 ◯ ", 79, 20, area8, couleur);	// Beichow
+        drawRadioBox("4 ◯  2", 16, 17, area8, couleur);	// Puszcza
+        drawRadioBox("◯  4", 1, 8, area8, couleur);	// Puszcza
+		drawRadioBox("4 ◯  2", 24, 8, area8, couleur);	// Puszcza
+        drawRadioBox("4 ◯  2", 49, 17, area8, couleur);	// Skierniewice	
+        drawRadioBox("4 ◯  2", 71, 16, area8, couleur);	// Skierniewice
+
 		}
 				
 	}
@@ -1496,7 +1499,7 @@ drawstationuser(area3, "Grodzisk Mazowiecki", "Gr", 86, 12, 19)
 drawstationuser(area3, "Pruszków >>", "Pr", 21, 29, 11)
 drawstationuser(area3, "<< Józefinów", "Pr", 50, 31, 12)
 drawstation2mots(area3, "W.Goląbki", 46, 27, 9)
-drawstation2mots(area3, "Warszawa Gł.Tow.", 70, 16, 16)
+drawstation2mots(area3, "Warszawa Gł.Tow.", 69, 15, 16)
 drawstationuser(area3, "Korytów", "Kr", 27, 8, 7)
 drawstation2mots(area3, "W.Targówek", 110, 32, 10)
 drawstation2mots(area3, "W.Grochów", 131, 55, 9)
@@ -1508,7 +1511,7 @@ drawstation2mots(area4, "L171 - L131", 1, 0, 11)
 drawstationuser(area4, "K.Zawodzie", "KZ", 2, 3, 10)
 drawstationuser(area4, "Sosnowiec Główny", "SG", 44, 10, 16)
 drawstationuser(area4, "Będzin", "B", 76, 3, 6)
-drawstationuser(area4, "Dąbrowa Górnicza", "DG", 111, 3, 16)
+drawstationuser(area4, "Dąbrowa Górnicza", "DG", 110, 3, 16)
 drawstationuser(area4, "S.Południowy", "Spł1", 43, 21, 13)
 drawstationuser(area4, "Juliusz", "Ju", 62, 33, 7)
 drawstationuser(area4, "Dorota", "Dra", 71, 53, 6)
@@ -1564,18 +1567,22 @@ drawstationuser(area7, "Miechów", "Mi", 41, 54, 7)
 drawstationuser(area7, "Tunel", "Tl", 95, 54, 5)
 drawstationuser(area7, "Kozłów", "Kz", 134, 56, 6)
 
-drawstation2mots(area8, "L001 - L017 : Lódź - Zyrardów (adapted from Besentv)", 1, 0, 52)
-drawstationuser(area8, "Lódź Widzew", "LW", 15, 21, 11)
-drawstationuser(area8, "Galkówek", "G", 79, 6, 8)
-drawstationuser(area8, "Żakowice", "ZP", 89, 21, 8)
-drawstationuser(area8, "Południowe", "ZP", 88, 22, 10)
+drawstation2mots(area8, "L001 - L017 : Łódź - Żyrardów (adapté de Besentv)", 1, 0, 49)
+drawstationuser(area8, "Łódź Widzew", "LW", 15, 21, 11)
+drawstationuser(area8, "Łódź >>", "G", 42, 9, 7)
+drawstationuser(area8, "Andrzejów", "G", 41, 10, 9)
+drawstationuser(area8, "<< Galkówek", "G", 77, 6, 11)
+drawstationuser(area8, "Żakowice", "ZP", 87, 17, 8)
+drawstationuser(area8, "Południowe", "ZP", 86, 18, 10)
 drawstationuser(area8, "Koluski", "KO", 128, 4, 7)
 drawstationuser(area8, "Rogów", "Rg", 33, 27, 5)
-drawstationuser(area8, "Skierniewice", "Sk", 109, 32, 12)
+drawstationuser(area8, "Skierniewice", "Sk", 103, 47, 12)
 drawstationuser(area8, "Plyćwia", "Pl", 11, 47, 7)
 drawstationuser(area8, "Radziwillów >>", "Zr", 9, 54, 14)
 drawstationuser(area8, "Mazowiecki", "Zr", 9, 55, 10)
 drawstationuser(area8, "<< Żyrardów", "Zr", 66, 49, 11)
+drawstation2mots(area8, "-Puszcza-", 151, 51, 9)
+drawstation2mots(area8, "Mariańska", 151, 52, 9)
 		if (settings.showHornZone != true) {
 	drawstation2mots(area8, "│", 56, 9, 1)
 	drawstation2mots(area8, "│", 56, 10, 1)
@@ -1629,7 +1636,7 @@ drawstationuser(area2, "Góra Włodowska", "GW", 62, 8, 14)
 drawstation2mots(area2, "<--- Grodzisk M.", 1, 3, 11)
 drawstation2mots(area2, "-Markow-", 68, 0, 10)
 
-drawstation2mots(area3, "L001 : Warszawa - Zyrardów-Korytów", 1, 0, 34)
+drawstation2mots(area3, "L001 : Warszawa - Żyrardów-Korytów", 1, 0, 34)
 drawstation2mots(area3, "3                                    ", 123, 56, 39)
 drawstation2mots(area3, " SERVER = ", 140, 0, 9)
 drawstation2mots(area3, "               ", 4, 56, 15) // ___ server
@@ -1649,7 +1656,7 @@ drawstation2mots(area3, "-Warszawa Wschodnia-", 58, 0, 20)
 drawstation2mots(area3, "Warszawa Centralna", 121, 1, 18)
 drawstation2mots(area3, "Warszawa Zachodnia", 9, 23, 18)
 drawstationuser(area3, "Warszawa Włochy", "Wl", 79, 31, 15)
-drawstation2mots(area3, "Warszawa Gł.Tow.", 74, 40, 16)
+drawstation2mots(area3, "Warszawa Gł.Tow.", 75, 41, 16)
 drawstation2mots(area3, "=== ┤            ", 70, 16, 16)
 drawstationuser(area3, "<< Pruszków", "Pr", 21, 29, 11)
 drawstationuser(area3, "Józefinów >>", "Pr", 50, 31, 12)
@@ -1672,6 +1679,12 @@ drawstation2mots(area4, "S.Dańdówka", 104, 17, 10)
 drawstation2mots(area4, "KWK Staszic", 129, 18, 11)
 drawstation2mots(area4, "SG R52", 126, 39, 6)
 drawstation2mots(area4, "DTA R5", 6, 32, 6)
+drawstationuser(area4, "Będzin", "B", 78, 3, 6)
+drawstationuser(area4, "Dąbrowa Górnicza", "DG", 112, 3, 16)
+drawstation2mots(area4, "-", 48, 53, 1)
+drawstation2mots(area4, " -", 82, 53, 2)
+drawstationuser(area4, "K.Zawodzie", "KZ", 5, 3, 10)
+drawstation2mots(area4, "-  ", 155, 53, 3)
 
 drawstation2mots(area5, "L062 - L171 : Sedziszow - Zawodzie", 125, 56, 34)
 drawstation2mots(area5, "<--- Psary  - Starzyny >> -         ", 0, 0, 36)
@@ -1729,7 +1742,7 @@ drawstation2mots(area7, "  Olsza   ", 106, 28, 10)
 drawstation2mots(area7, "- Kraków -", 148, 37, 10)
 drawstation2mots(area7, " Zablocie ", 148, 38, 10)
 
-drawstation2mots(area8, "L001 - L017 : Lódź - Zyrardów (adapted from Besentv)", 1, 0, 52)
+drawstation2mots(area8, "L001 - L017 : Łódź - Żyrardów (adapted from Besentv)", 1, 0, 52)
     if (isCurrentlyFlipped == true) {
 drawstation2mots(area8, "[4] L001_Zy_WSD   [5] L171_L131                        ", 105, 57, 55)
    } else {
@@ -1737,9 +1750,9 @@ drawstation2mots(area8, "   [4] L001_Zy_WSD   [5] L171_L131               ", 110
    }	   
 drawstation2mots(area8, " SERVER = ", 140, 0, 9)
 drawstation2mots(area8, "Keyboard shortcuts: ", 0, 57, 20) // ___ server
-drawstation2mots(area8, "<- Grodzisk Mazowiecki", 0, 4, 22)
+drawstation2mots(area8, "<--- Grodzisk Mazowiecki", 13, 3, 24)
 drawstation2mots(area8, "  1       4", 83, 7, 11)
-drawstationuser(area8, "Zyrardów >>", "Zr", 66, 48, 11)
+drawstationuser(area8, "Żyrardów >>", "Zr", 66, 48, 11)
 drawstation2mots(area8, "          ", 141, 1, 10)
 drawstation2mots(area8, "                        ", 133, 3, 24)
 drawstationuser(area8, "- << Radziwillów -", "Zr", 7, 54, 18)
@@ -1747,30 +1760,44 @@ drawstationuser(area8, "Mazowiecki", "Zr", 10, 53, 10)
 drawstation2mots(area8, "      ", 142, 9, 7)
 drawstationuser(area8, "Plyćwia", "Pl", 11, 46, 7)
 drawstation2mots(area8, "              ", 38, 25, 14)
-drawstationuser(area8, "-Skierniewice-", "Sk", 109, 32, 14)
-drawstation2mots(area8, "-Puszcza-", 0, 17, 9)
-drawstation2mots(area8, "Mariańska", 0, 18, 9)
+drawstationuser(area8, "Skierniewice", "Sk", 104, 47, 12)
+drawstation2mots(area8, "            ", 44, 10, 12)
+//drawstationuser(area8, "\u25a3 ", "Sk", 99, 46, 2)
+drawstation2mots(area8, "-Puszcza-", 0, 5, 9)
+drawstation2mots(area8, "Mariańska", 0, 6, 9)
+drawstation2mots(area8, "         ", 151, 51, 9)
+drawstation2mots(area8, "         ", 151, 52, 9)
+drawstation2mots(area8, " ┬ ──────", 151, 39, 9)
+drawstation2mots(area8, " │       ", 151, 40, 9)
 drawstation2mots(area8, "-Mikolajow-", 0, 25, 11)
 drawstation2mots(area8, "    Mk     ", 0, 26, 11)
 drawstation2mots(area8, "         ", 120, 30, 9)
 drawstationuser(area8, "- Rogów -", "Rg", 31, 27, 9)
 drawstation2mots(area8, "            ", 60, 34, 12)
-drawstationuser(area8, "-Południowe-", "ZP", 88 , 21, 12)
-drawstationuser(area8, "  Żakowice  ", "ZP", 88, 20, 12)
-drawstation2mots(area8, "Lódź Olechów", 100, 33, 12)
-drawstation2mots(area8, "Lódź Chojny", 115, 34, 11)
-drawstation2mots(area8, " -Lódź-  ", 110, 47, 9)
-drawstation2mots(area8, "Andrzejów", 110, 48, 9)
+drawstation2mots(area8, "          ", 64 , 34, 10)
+drawstation2mots(area8, "          ", 64, 35, 10)
+drawstationuser(area8, "-Żakowice-", "ZP", 86, 17, 10)
+drawstationuser(area8, "Południowe", "ZP", 86, 16, 10)
+drawstation2mots(area8, "          ", 64 , 38, 10)
+drawstation2mots(area8, "Łódź Olechów", 103, 33, 12)
 drawstation2mots(area8, "           ", 134, 35, 11)
-drawstationuser(area8, "- Lódź Widzew -", "LW", 13, 20, 15)
-drawstation2mots(area8, "            ", 71, 51, 12)
-drawstationuser(area8, "- Galkówek -", "G", 77, 6, 12)
-drawstation2mots(area8, "           ", 24, 53, 11)
-drawstationuser(area8, "- Koluski -", "KO", 125, 4, 11)
+drawstationuser(area8, "- Łódź Widzew -", "LW", 13, 20, 15)
+////drawstation2mots(area8, "            ", 71, 51, 12)
+drawstationuser(area8, "<< Łódź", "G", 42, 8, 7)
+drawstation2mots(area8, "  124    ", 110, 46, 9)
+drawstationuser(area8, "Andrzejów", "G", 41, 7, 9)
+drawstation2mots(area8, "         ", 110, 47, 9)
+drawstationuser(area8, "Galkówek >>", "G", 77, 5, 11)
+drawstation2mots(area8, "           ", 72, 50, 11)
+drawstationuser(area8, "Koluski", "KO", 128, 3, 7)
+drawstation2mots(area8, "       ", 25, 52, 7)
 	drawstation2mots(area8, "  ", 56, 8, 2)
 	drawstation2mots(area8, "  ", 56, 9, 2)
 	drawstation2mots(area8, "  ", 56, 10, 2)
 	drawstation2mots(area8, "──", 56, 11, 2)
+drawstationuser(area8, "\u25a3 ", "Sk", 100, 46, 2) // Skierniewice
+drawstationuser(area8, "\u25a3 ", "Pl", 17, 47, 2) // Plyćwia
+drawstationuser(area8, "\u25a3 ", "G", 88, 6, 2) // Galkówek
 		if (settings.showHornZone != true) {
 	drawstation2mots(area8, "│", 103, 47, 1)
 	drawstation2mots(area8, "│", 103, 48, 1)
