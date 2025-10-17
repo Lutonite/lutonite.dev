@@ -56,11 +56,11 @@ const coloursPalette = {
     "green ": ["#000", "#00FF00"],
     "white ": ["#000", "#ffffff"],
     "pink2 ": ["#000", "#eac8f0"],
-    "orange": ["#000", "#FF8000"],
+    "orange": ["#000", "#FF6000"],
     "pink  ": ["#000", "#FBF"],
     "red   ": ["#000", "#FF0000"],
     "blue  ": ["#000", "#305CDE"],
-    "yellow": ["#000", "#FFEE00"],
+    "yellow": ["#000", "#FFBA00"],
 }
  
 const serversListUrl = "https://panel.simrail.eu:8084/servers-open";
@@ -89,6 +89,7 @@ var	train11 = [];  // Origine (en 8 lettres) Warszawa ...
 var	train12 = [];  // Destination (en 8 lettres) Warszawa ...
 var	train13 = [];  // Origine (en 8 lettres) Warszawa ...
 var	train14 = [];  // Destination (en 8 lettres) Warszawa ...
+var	train16 = [];  // Signal in Front pour Arret_Station
 
 var cnv, ctx, box, ni, x, x2, speedbox1, train2, train3, vmax;
 globalThis.senstrain = -1;
@@ -114,7 +115,7 @@ globalThis.showEntry = false;
 globalThis.showExit = false;
 globalThis.Key = "";
 
-        for (let i = 0; i < 200; i++) {
+        for (let i = 0; i < 150; i++) {
 			train1[i] = 0;
 			train3[i] = 0;
 			train4[i] = 0;
@@ -127,7 +128,8 @@ globalThis.Key = "";
 			train11[i] = 0;
 			train12[i] = 0;
 			train13[i] = 0;
-			train14[i] = 0;			
+			train14[i] = 0;
+			train16[i] = 0;			
 		}
 
 const textSize = 36;
@@ -1552,6 +1554,7 @@ function getTrainsCoords(data) {
 	
         if (train.TrainData.SignalInFront != null) {
             let nextSignal = train.TrainData.SignalInFront.split("@")[0];
+			signal2 = nextSignal;
             if (Object.keys(coordinates[area]).includes(nextSignal)) {
                 let trainBackgroundColour = getTrainBackground(train.TrainData.SignalInFrontSpeed, train.TrainData.DistanceToSignalInFront);
 
@@ -1581,7 +1584,8 @@ function getTrainsCoords(data) {
 		train9[train2] = train.TrainName;
 		train11[train2] = train.StartStation;
 		train12[train2] = train.EndStation;
-	
+
+//console.log ("1603 : ", signalStation);		
 		loco1 = train7[train2].indexOf("/"); // position du /
 		loco2 = train7[train2].substring(loco1 + 1);
 		loco3 = train7[train2].indexOf("-"); // position du -
@@ -1593,7 +1597,7 @@ function getTrainsCoords(data) {
 /// VMax des trains
 		typeTrain = train.TrainName.substring(0, 3);
 		train10[train2] = typeTrain;
-console.log("1585 - train.TrainName : ", train2, train.TrainName, " - typeTrain : ", typeTrain, train5[train2], train6[train2], train7[train2], train8[train2], train9[train2]);
+//console.log("1585 - train.TrainName : ", train2, train.TrainName, " - typeTrain : ", typeTrain, train5[train2], train6[train2], train7[train2], train8[train2], train9[train2], train16[train2]);
 	vmax = vmaxTrain(typeTrain);
 	train9[train2] = vmax;
 //console.log("1589 - vmax : ", vmax, " - train9[train2] : ", train9[train2]);
@@ -1617,9 +1621,9 @@ console.log("1585 - train.TrainName : ", train2, train.TrainName, " - typeTrain 
 //		trainOutMap[train2] = ExitfromMap;
 		ExitByNum = ExitNoLocal(train5[train2]);
 		train14[train2] = ExitByNum;
-console.log("1616 - Origine : ", train2, Origine, train11[train2], Destination, train12[train2], train13[train2], train14[train2], ExitByNum);
-
-
+//console.log("1616 - Origine : ", train2, Origine, train11[train2], Destination, train12[train2], train13[train2], train14[train2], ExitByNum);
+	train16[train2] = testSignal_Station(train5[train2], signal2);
+//console.log("1642 : ", train16[train2], train5[train2], signal2);
 /// Attention : VMax des locos et pas des trains
 ///if ((typeof train.Vehicles[1] != "undefined") || (typeTrain != "LTE")) {
 if (typeof train.Vehicles[1] != "undefined") {
@@ -1628,7 +1632,7 @@ if (typeof train.Vehicles[1] != "undefined") {
 loco6 = train8[train2];
 //console.log("1632 - loco4 : ", loco4, " - loco6 : ", loco6);
 loco5 = locoHLP(loco6);
-console.log("1634 - loco5 : ", loco5, " - loco6 : ", loco6, "train9[train2] : ", train9[train2]);
+//console.log("1634 - loco5 : ", loco5, " - loco6 : ", loco6, "train9[train2] : ", train9[train2]);
 	if (loco5 != "no")  {
 		train8[train2] = loco5;
 		loco4 = train9[train2];
@@ -1794,9 +1798,35 @@ switch (Station)  {
 	case "Warszawa":
 		Entry = "Warszawa"; // OK
 		break;
+	case "Gdynia G":
+	case "Gdynia P":
+		Entry = "Warszawa"; // OK
+		break;
+	case "Białysto":
+		Entry = "Warszawa"; // OK
+		break;
+	case "Zielonka":
+		Entry = "Warszawa"; // OK
+		break;
+	case "Ożarów M":
+		Entry = "Warszawa Gol."; // OK
+		break;
 	case "Katowice":
 		Entry = "Katowice"; // OK
 		break;
+	case "Bohumin":
+		Entry = "Kato.Brynów"; // OK
+		break;
+	case "Tychy":
+	case "Tychy Lo":
+		Entry = "Kato.Brynów"; // OK
+		break;
+	case "Gliwice":
+		Entry = "Kato.Tow KTC"; // OK
+		break;
+	case "Gliwice ":
+		Entry = "Kato.Tow KTC"; // OK
+		break;		
 	case "KWK Staszic":
 		Entry = "KWK Staszic" // OK
 		break;
@@ -1804,16 +1834,25 @@ switch (Station)  {
 		Entry = "Kato.Brynów"; // OK
 		break;
 	case "Kraków P":
-		Entry = "Kraków Przedm"; // OK
+		Entry = "Kraków Główny"; // OK
 		break
 	case "Kraków G":
 		Entry = "Kraków Główny"; // OK
 		break
-	case "Kraków N":
-		Entry = "Dłubnia"; // OK
-		break
+	case "Zakopane":
+		Entry = "Kraków Główny"; // OK
+		break;
 	case "Kraków O":
 		Entry = "Kraków Olsza"; // OK
+		break
+	case "Wola Rzę":
+		Entry = "Kraków Olsza"; // OK
+		break
+	case "Brzesko ":
+		Entry = "Kraków Olsza"; // OK
+		break;
+	case "Kraków N":
+		Entry = "Dłubnia"; // OK
 		break
 	case "Kraków M":
 		if (globalThis_area0 == "L001_KO_Zw")  {
@@ -1824,96 +1863,44 @@ switch (Station)  {
 			Entry = "Rokiciny";
 			break;
 		}
-;
-	case "Gdynia G":
-	case "Gdynia P":
-		Entry = "Warszawa"; // OK
-		break;
 	case "Kielce":
 		Entry = "Sędziszów"; // OK
-		break;
-	case "Bohumin":
-		Entry = "Kato.Brynów"; // OK
-		break;
-	case "Tychy":
-	case "Tychy Lo":
-		Entry = "Kato.Brynów"; // OK
-		break;
-	case "Tychy Fi":
-	case "Tychy Lo":
-		Entry = "Staszic"; // OK
-		break;
-	case "Gliwice":
-		Entry = "Kato.Tow KTC"; // OK
-		break;	
-	case "Lublin":
-		Entry = "Czarnca";  // OK
-		break;
-	case "Skarżysk":
-		Entry = "Słotwiny"; // OK
-		break;
-	case "Zielonka":
-		Entry = "Warszawa"; // OK
 		break;
 	case "Sitkówka":
 		Entry = "Sędziszów"; // OK
 		break;
-	case "Ożarów M":
-		Entry = "Sędziszów"; // OK
-		break;
-	case "Łódź Cho":
-		Entry = "Łódź Chojny"; // OK
-		break;
-	case "Łódź Chojny":
-		Entry = "Łódź Chojny"; // OK
-		break;
-	case "Łódź Fabryczna":
-		Entry = "Łódź Fabryc."; // OK
-		break;
-	case "Łódź Fab":
-		Entry = "Łódź Fabryc."; // OK
-		break;
-	case "Chorzew ":
-		Entry = "Łódź Chojny";  // OK
-		break;
 	case "Jędrzejó":
 		Entry = "Sędziszów"; // OK
 		break;
-	case "Myszków":
-		Entry = "Myszków"; // OK
+	case "Radom":
+		Entry = "Sędziszów"; // OK
 		break;
-	case "Częstoch":
-		Entry = "Myszków"; // OK
+	case "Łódź Cho":
+		Entry = "Łódź Olechów"; // OK
+		break;
+	case "Łódź Chojny":
+		Entry = "Łódź Olechów"; // OK
+		break;
+	case "Szczecin":
+		Entry = "Łódź Chojny";  // OK
+		break;
+	case "Małaszew":
+		Entry = "Łódź Chojny";  // OK
 		break;
 	case "Wrocław ":
 		Entry = "Łódź Chojny";  // OK
 		break;
-	case "Sosnowie":
-		Entry = "S.Maczki"; // OK
+	case "Chorzew ":
+		Entry = "Łódź Chojny";  // OK
 		break;
-	case "S.Maczki":
-		Entry = "S.Maczki"; // OK
+	case "Henryków":
+		Entry = "Łódź Chojny";  // OK
 		break;
-	case "Jaworzno":
-		Entry = "S.Maczki";  // OK
+	case "Łódź Fab":
+		Entry = "Łódź Fabryczna"; // OK
 		break;
-	case "Brzesko ":
-		Entry = "Kraków"; // OK
-		break;
-	case "Mszczonó":
-		Entry = "Marków"; // OK
-		break;
-	case "Dąbrowa ":
-		Entry = "Dąbrowa "; // OK
-		break;
-	case "Nałęczów":
-		Entry = "Idzikowice"; // OK
-		break;
-	case "Bełchów":
-		Entry = "Bełchów"; // OK
-		break;
-	case "Zakopane":
-		Entry = "Kraków"; // OK
+	case "Łódź Fabryczna":
+		Entry = "Łódź Fabryczna"; // OK
 		break;
 	case "Poznań G":
 		if (globalThis_area0 == "L001_L017_LW_Gr")  {
@@ -1924,53 +1911,71 @@ switch (Station)  {
 			Entry = "Myszków";
 			break;
 		}
+	case "Myszków":
+		Entry = "Myszków"; // OK
+		break;
+	case "Częstoch":
+		Entry = "Myszków"; // OK
+		break;
 	case "Wrocław ":
 		Entry = "Myszków"; // OK
 		break;
 	case "Częstoch":
 		Entry = "Myszków"; // OK
 		break;
-	case "Puszcza ":
-		Entry = "Puszcza"; // OK
+	case "Trzebini":
+		Entry = "Myszków"; // OK
+		break;
+	case "Sosnowie":
+		Entry = "S.Maczki"; // OK
+		break;
+	case "S.Maczki":
+		Entry = "S.Maczki"; // OK
+		break;
+	case "Jaworzno":
+		Entry = "S.Maczki";  // OK
+		break;
+	case "Lublin":
+		Entry = "Czarnca";  // OK
+		break;
+	case "Puławy":
+		Entry = "Czarnca"; // OK
+		break;
+	case "Nałęczów":
+		Entry = "Idzikowice"; // OK
+		break;
+	case "Mszczonó":
+		Entry = "Marków"; // OK
 		break;
 	case "Małkinia":
 		Entry = "Marków";  // OK
 		break;
+	case "Tychy Fi":
+		Entry = "Staszic"; // OK
+		break;
+	case "Skarżysk":
+		Entry = "Słotwiny"; // OK
+		break;
+	case "Dąbrowa ":
+		Entry = "D.G. Tow"; // OK
+		break;
+	case "Bełchów":
+		Entry = "Bełchów"; // OK
+		break;
+	case "Puszcza ":
+		Entry = "Puszcza"; // OK
+		break;
 	case "Radomsko":
 		Entry = "Rokiciny"; // OK
-		break;
-	case "Szczecin":
-		Entry = "Łódź Chojny";  // OK
-		break;
-	case "Małaszew":
-		Entry = "Łódź Chojny";  // OK
-		break;
-	case "Henryków":
-		Entry = "Łódź Chojny";  // OK
 		break;
 	case "Łowicz G":
 		Entry = "Skierniewice"; // OK
 		break;
-	case "Białysto":
-		Entry = "Warszawa"; // OK
-		break;
 	case "Piława G":
 		Entry = "Szeligi"; // OK
 		break;
-	case "Puławy":
-		Entry = "Idzikowice"; // OK
-		break;
-	case "Radom":
-		Entry = "Idzikowice"; // OK
-		break;
 	case "Jelenia ":
 		Entry = "Żelislawice"; // OK
-		break;
-	case "Trzebini":
-		Entry = "Myszków"; // OK
-		break;
-	case "Gliwice ":
-		Entry = "Kato.Tow KTC"; // OK
 		break;
 	case "Tomaszów":
 		Entry = "Tomaszów"; // OK
@@ -1981,12 +1986,14 @@ switch (Station)  {
 	return Entry
 }
 
+/////****************************
 function ExitNoLocal(TrainNoLocal)  {
 
 // *** Speed trains
 
 if (TrainNoLocal.length == 4)  {
 train3 = TrainNoLocal.substring(0, 3);
+//**** dont 3 chiffres !!!
  console.log("1923 : ", TrainNoLocal, train3);
 switch (train3)  {
 	case "160":
@@ -2004,6 +2011,7 @@ switch (train3)  {
 }
  console.log("1934 : ", TrainNoLocal, train3, Exit);
 train3 = TrainNoLocal.substring(0, 2);
+//**** dont 2 chiffres !!!
 switch (train3)  {
 	case "37":
 		if (globalThis_area0 == "L001_KO_Zw")  {
@@ -2032,13 +2040,13 @@ switch (train3)  {
 		Exit = "Warszawa";
 		break;
 	case "13":
-		Exit = "Kraków";
+		Exit = "Kraków Główny";
 		break;
 	case "14":
 		Exit = "Kato.Brynów";
 		break;
 	case "19":
-		Exit = "Łódź Fabryc.";
+		Exit = "Łódź Fabryczna";
 		break;
 	case "54":
 		Exit = "Kato.Tow KTC";
@@ -2056,6 +2064,7 @@ switch (train3)  {
 //*** Passengers
 
 if (TrainNoLocal.length == 5)  {
+//**** dont 5 chiffres !!!
 switch (TrainNoLocal)  {
 	case "42206":
 		Exit = "Sędziszów";
@@ -2063,6 +2072,7 @@ switch (TrainNoLocal)  {
 }
 //**** dont 4 chiffres !!!
 train3 = TrainNoLocal.substring(0, 4);
+//**** dont 4 chiffres !!!
  console.log("1972 : ", TrainNoLocal, train3);
 switch (train3)  {
 	case "1615":
@@ -2114,7 +2124,7 @@ switch (train3)  {
 	case "9326":
 	case "9327":
 	case "9328":
-		Exit = "Łódź Fabryc.";
+		Exit = "Łódź Fabryczna";
 		break;
 	case "1115":
 	case "1116":
@@ -2134,6 +2144,7 @@ switch (train3)  {
 		Exit = "!! " + train3
 }
 train3 = TrainNoLocal.substring(0, 3);
+//**** dont 3 chiffres !!!
  console.log("2021 : ", TrainNoLocal, train3);
 switch (train3)  {
 	case "741":
@@ -2158,7 +2169,7 @@ switch (train3)  {
 	case "531":
 	case "532":
 	case "239":
-		Exit = "Kraków";
+		Exit = "Kraków Główny";
 		break;
 	case "351":
 	case "352":
@@ -2194,7 +2205,7 @@ switch (train3)  {
 		break;		
 	case "105":
 	case "212":
-		Exit = "Łódź Fabryc.";
+		Exit = "Łódź Fabryczna";
 		break;		
 	case "122":
 		Exit = "Mikołajów";
@@ -2227,7 +2238,7 @@ switch (train3)  {
 //*** Fret
 
 if (TrainNoLocal.length == 6)  {
-//**** dont 4 chiffres !!!
+//**** dont 6 chiffres !!!
 train3 = TrainNoLocal.substring(0, 6); 
 switch (train3)  {
 	case "335001":
@@ -2235,13 +2246,13 @@ switch (train3)  {
 	case "335005":
 	case "335007":
 	case "335009":
-	case "3350011":
-	case "3350013":
-	case "3350015":
-	case "3350017":
-	case "3350019":
-	case "3350021":
-	case "3350023":
+	case "335011":
+	case "335013":
+	case "335015":
+	case "335017":
+	case "335019":
+	case "335021":
+	case "335023":
 			Exit = "Kraków Olsza";
 			break;
 	case "335000":
@@ -2249,23 +2260,23 @@ switch (train3)  {
 	case "335004":
 	case "335006":
 	case "335008":
-	case "3350010":
-	case "3350012":
-	case "3350014":
-	case "3350016":
-	case "3350018":
-	case "3350020":
-	case "3350022":
+	case "335010":
+	case "335012":
+	case "335014":
+	case "335016":
+	case "335018":
+	case "335020":
+	case "335022":
 	case "336000":
 	case "336002":
 	case "336004":
 	case "336006":
 	case "336008":
-	case "3360010":
-	case "3360012":
-	case "3360014":
-	case "3360016":
-	case "3360018":
+	case "336010":
+	case "336012":
+	case "336014":
+	case "336016":
+	case "336018":
 			Exit = "Dłubnia";
 			break;
 	case "336001":
@@ -2273,24 +2284,25 @@ switch (train3)  {
 	case "336005":
 	case "336007":
 	case "336009":
-	case "3360011":
-	case "3360013":
-	case "3360015":
-	case "3360017":
-	case "3360019":
-	case "3360021":
-	case "3360023":
+	case "336011":
+	case "336013":
+	case "336015":
+	case "336017":
+	case "336019":
+	case "336021":
+	case "336023":
 			Exit = "Kraków Główny";
 			break;
 }
-train3 = TrainNoLocal.substring(0, 4); 
+train3 = TrainNoLocal.substring(0, 4);
+//**** dont 4 chiffres !!! 
 switch (train3)  {
 	case "4120":
 		if (globalThis_area0 == "L001_L017_LW_Gr")  {
 			Exit = "Łódź Olechów";
 			break;
 		}		
-		if (globalThis_area0 == "L004_Zw_Gr")  {
+		if ((globalThis_area0 == "L004_Zw_Gr") || (globalThis_area0 == "L062_L171_SG_Tl") || (globalThis_area0 == "L062_SPł_Sd")) {
 			Exit = "Idzikowice";
 			break;
         }
@@ -2312,17 +2324,19 @@ switch (train3)  {
 	case "4439":
 		Exit = " Myszków";
 		break;
+	case "3350":
+	case "3360":
+			break;
 	default:
 		Exit = "!! " + train3		
 }
 train3 = TrainNoLocal.substring(0, 3);
+//**** dont 3 chiffres !!!
 switch (train3)  {		
 	case "234":
 		Exit = "Kraków Olsza";
 		break;
 	case "132":
-	case "335":
-	case "336":
 		Exit = "Dłubnia";
 		break;
 	case "142":
@@ -2376,6 +2390,8 @@ switch (train3)  {
 		Exit = "Staszic";
 		break;
 	case "144":
+	case "335":
+	case "336":
 	case "443":
 	case "412":
 	case "4120":
@@ -2388,6 +2404,383 @@ switch (train3)  {
 console.log("2160 : Exit : ", Exit);
 	return Exit
 }
+function testSignal_Station (TrainNoLocal, Signal_Station)   {
+	if (TrainNoLocal.length == 6)  {
+		signal = false;
+		return signal;
+}
+switch (Signal_Station)  {
+// L001 : Katowice - Zawiercie
+case "KO_M1":  // Katowice
+case "KO_M3":
+case "KO_M7":
+case "KO_M9":
+case "KO_M2":
+case "KO_M4":
+case "KO_M8":
+case "KO_M10":
+case "KO_N1":
+case "KO_N3":
+case "KO_N7":
+case "KO_N9":
+case "KO_N2":
+case "KO_N4":
+case "KO_N8":
+case "KO_N10":
+case "KZ_K": // K. Zawodzie
+case "KZ_D2":
+case "KZ_E":
+case "KZ_M":
+case "SPł1_B":  // S.Poludniowy
+case "SPł1_C":
+case "Spł1_J":
+case "SPł1_K":
+case "SG_H1":  // S. Główny
+case "SG_H2":
+case "SG_H4":
+case "SG_N1":
+case "SG_N2":
+case "SG_N4":
+case "B_K1": // Będzin
+case "B_E2":
+case "DG_C2": // D.Górnicza
+case "DG_N1":
+case "DZ_O":
+case "DZ_O":  // D.G. Ząbkowice
+case "DZ_P":
+case "DZ_N6":
+case "DZ_J":
+case "DZ_K":
+case "DZ_L":
+case "DZ_M":
+case "LB_H1":  // Lazy
+case "LB_H2":
+case "LB_H3":
+case "LB_R1":
+case "LB_R2":
+case "LB_R3":
+case "LB_O":
+case "Zw_E1":  // Zawiercie
+case "Zw_E2":
+case "Zw_E4":
+case "Zw_G1":
+case "Zw_G2":
+case "Zw_H4":
+// autres stations
+case "L1_3128":
+case "L1_3133":
+case "B_C":
+case "B_B":
+case "B_D":
+case "L1_3036":
+case "L1_3023":
+case "DG_P":
+case "L1_2966":
+case "L1_2983":
+case "L1_2952":
+case "L1_2971":
+case "L1_2886D":
+case "L1_2899D":
+case "L1_2852":
+case "L1_2869D":
+case "LC_W2":
+case "L1_2851":
+case "L1_2852":
+case "LC_Y":
+case "L1_2692":
+case "L1_2707":
+case "L1_2677":
+case "L1_2661":
+case "My_C":
+case "L1_2637":
+
+// L004 : Zawiercie - Grodzisk Mazowiecki 
+case "WP_E":  // Włoszczowa Północ
+case "WP_F":
+case "WP_J":
+case "WP_K":
+case "WP_N":
+case "WP_P":
+case "OP_H":	// Opoczno Południe
+case "OP_L":
+// Pas d'autres stations
+
+// L001 : Korytów-Żyrardów - Warszawa
+case "Gr_H3":  // Grodzisk
+case "Gr_H4":
+case "Gr_H14":
+case "Gr_M3":
+case "Gr_M4":
+case "Gr_M14":
+case "Pr_G4":	// Pruszków
+case "Pr_L3":
+case "WZD_G1": // Warszawa Zachodnia
+case "WZD_G3":
+case "WZD_G5":
+case "WZD_G2":
+case "WZD_G4":
+case "WZD_G6": // > 6
+case "WZD_G8":
+case "WZD_K1":
+case "WZD_K3":
+case "WZD_K5":  // <5
+case "WZD_K2":
+case "WZD_K4":
+case "WZD_K6":
+case "WZD_K8":
+case "WZD_H20":  // >20
+case "WZD_H21":
+case "WZD_H22":
+case "WZD_H23": 
+case "WZD_J20":  // < 20
+case "WZD_J21":
+case "WZD_J22":
+case "WZD_J23":
+case "L4_611":  
+////case "WDC_xxxx // Warszawa Centralna
+case "WDC_G":  // <2
+case "WDC_H":  // <4
+case "WDC_J":  // <6
+case "WDC_K":  // <8
+case "WDC_P":  // >1
+case "WDC_R":  // >3
+case "WDC_S":  // >5
+case "WDC_T":  // >7
+////case "WSD_xxxx // Warszawa Wschodnia
+case "WSD_J2":
+case "WSD_J4": // <4
+case "WSD_J6":
+case "WSD_J8":
+case "WSD_J10": // <10
+case "WSD_J12":
+case "WSD_J20":
+case "WSD_J21":
+case "WSD_J22":
+case "WSD_J23":
+case "WSD_K1": // >1
+case "WSD_K3":
+case "WSD_K5":
+case "WSD_K5":
+case "WSD_K20":
+case "WSD_K21":
+case "WSD_K22":
+case "WSD_K23": // >23
+// autres stations
+case "L447_86":
+case "Wl_H":
+case "5431_Zy_B":
+case "L1_398":
+case "L1_340":
+case "L1_355":
+case "L447_193":
+case "Pr_Z":
+case "L447_101":
+case "L447_117":
+case "L447_127":
+case "L447_116":
+case "L447_102":
+case "L447_86":
+case "L447_252":
+case "L447_271":
+case "L447_208":
+case "L447_221":
+case "Gl_fake001":
+
+// L171 - L131
+case "SDn_A":   // Dandowka
+case "SDn1_D":
+case "SDn_N":
+case "SKz_C":	// S. Kazimierz
+case "SKz_E":
+case "SKz_F":
+case "SKz_L":
+case "SKz_O":
+case "SKz_R":
+case "SKz_S":
+case "DS_V":  // D.S.
+case "DW_F":	// D. G. Wschodnia
+case "DW_P":
+case "DP_C":    // D.P.
+case "DPl_J":
+case "Sl_E2":	// Sławków
+case "Sl_H1":
+case "Bo_D2": // Bukowno
+case "Bo_F1":
+case "O_C":   // Olkusz
+case "O1_F":
+case "JO_F":  // Jaroszowiec  Olkuski
+case "JO1_C":
+case "W1_D":  // Wolbrom
+case "W_G":
+case "Ch_C":  // Charsznica
+case "Ch1_F":
+case "Tl_D":   // Tunel
+case "Tl_J":
+case "Kz_G2":   // Kozłów
+case "Kz_G4":
+case "Kz_G6":
+case "Kz_S1":
+case "Kz_S3":
+case "Kz_S5":
+case "Sd3_H1": // <1   // Sędziszów
+case "Sd_G2":  // >2
+case "Sd3_H4":  // <3
+// autres stations
+case "301_A":
+case "301_C":
+case "GA_B":
+case "GA_D":
+case "W_K":
+case "W1_A":
+case "Za_B":
+case "Za_D":
+case "Ch1_H":
+
+// L008 : Kraków - Kozłów
+case "1952_KG_U1": //  Krakow
+case "1952_KG_U2":
+case "1952_KG_U3":
+case "1952_KG_U4":
+case "1952_KG_U5":
+case "1952_KG_U6":
+case "1952_KG_U7":
+case "1952_KG_U8":
+case "1952_KG_U9":
+case "1952_KG_U10":
+case "1952_KG_U11":
+case "1952_KG_U12":
+case "1952_KG_T1":
+case "1952_KG_T2":
+case "1952_KG_T3":
+case "1952_KG_T4":
+case "1952_KG_T5":
+case "1952_KG_T6":
+case "1952_KG_T7":
+case "1952_KG_T8":
+case "1952_KG_T9":
+case "1952_KG_T10":
+case "1952_KG_T11":
+case "1952_KG_T12":
+case "5251_Zs_K": // Zastow
+case "5251_Zs_E":
+case "1937_BT_O": // Batowice
+case "1937_Bt_D":
+case "2280_Nd_G":  //  Niedźwiedź
+case "2280_Nd_L":
+case "3923_Sm_E": // Słomniki
+case "3923_Sm_F":
+case "3923_Sm_G":
+case "3923_Sm_J":
+case "Mi_E": // Miechów
+case "Mi_F":
+case "Mi_J":
+case "Mi_L":
+// autres stations
+case "L8_2722":
+case "L8_2731":
+case "L8_2798":
+case "L8_2811":
+case "L8_2828":
+case "L8_2843":
+case "L8_2868":
+case "L8_2883":
+case "Sm_M":
+case "L8_2925":
+case "L8_2984":
+case "L8_2993":
+case "L8_3008":
+case "L8_3017":
+case "L8_3032":
+case "L8_3043":
+case "2030_KZ_S2":
+
+// L001_L017 : Łódź - Żyrardów
+case "2457_LW_R4":  //  Lodz Widzew
+case "2457_LW_S1":
+case "2457_LW_S2":
+case "2457_LW_S3":
+case "2457_LW_S5":
+case "2457_LW_S7":
+case "2457_LW_L1":
+case "2457_LW_L2":
+case "2457_LW_L3":
+case "2457_LW_L5":
+case "2457_LW_L7":
+case "2457_LW_M4":
+case "924_G_H":    // Galkowek
+case "924_G_J":
+case "924_G_K":
+case "924_G_L":
+case "L17_121":   // Lodz Andrzejów 
+case "2422_LA_H": 
+case "5377_ZP_A":   /// Zakowice Poludniowa
+case "5377_ZP_T":
+case "1803_KO_G1":   // Koluski  >1
+case "1803_KO_G2":
+case "1803_KO_G3":
+case "1803_KO_G5":
+case "1803_KO_G6":
+case "1803_KO_G8":
+case "1803_KO_J1":
+case "1803_KO_J2":
+case "1803_KO_J3":
+case "1803_KO_J5":
+case "1803_KO_J6":
+case "1803_KO_J8":
+case "3590_Rg_E":   // Rogów
+case "3590_Rg_J":
+case "3251_Pl_E":   // Plyćwia
+case "3251_Pl_G":
+case "3877_Sk_P1":  //  Skierniewice
+case "3877_Sk_P2":
+case "3877_Sk_P3":
+case "3877_Sk_P104":
+case "3877_Sk_R1":
+case "3877_Sk_R2":
+case "3877_Sk_R3":
+case "3877_Sk_R104":
+case "5431_Zy_D2":   // Zyrardow
+case "5431_Zy_D4":
+case "5431_Zy_F1":
+case "5431_Zy_F4":
+// autres stations
+case "L1_518":
+case "L1_533":
+case "L1_484":
+case "L1_499":
+case "5431_Zy_B":
+case "L1_398":
+case "L1_340":
+case "L1_355":
+case "L1_596":
+case "L1_533":
+case "3877_Sk_B":
+case "L1_708":
+case "L1_723":
+case "L1_748":
+case "L1_755":
+case "L1_834":
+case "L1_851":
+case "L1_894":
+case "L1_909":
+case "L1_922":
+case "L1_988":
+case "L1_1003":
+case "L1_1102":
+case "L1_1115":
+case "L17_137":
+case "L17_124":
+case "L17_167":
+case "L17_152":
+
+	signal = true;
+	break;
+default:
+	signal = false;
+}
+	return signal;
+}
+
 /////****************************
 
 function getstationCoords(stationdata) {
@@ -2499,7 +2892,7 @@ function drawTrains(trainsToDraw) {
 
 
 		ii = 1;
-        for (let i = 0; i < 200; i++) {
+        for (let i = 0; i < 150; i++) {
 			if (train5[i] != train0[0]) {
 		train3 = 1;
 			} else {
@@ -2560,7 +2953,9 @@ console.log("1853 - train3 : ", train3, "train8[ii] : ", train8[ii], train5[ii],
 					break;
 			default:
           if (train0[0] != "xxxxxx")  {
-					drawNumberBox4(...createSpeedBoxFromTrain(train0, isSpeedBox = false, train3), true, true, 6);	
+	signal3 = train16[ii];
+console.log("2625 : ", signal);
+					drawNumberBox4(...createSpeedBoxFromTrain(train0, isSpeedBox = false, train3), true, true, 6, signal3);	
 			}
 
 			}
@@ -2626,7 +3021,7 @@ globalThis.userstation = "neant"
 drawstation2mots(area1, "L001 : Katowice - Zawiercie", 1, 0, 27)
 drawstationuser(area1, "Katowice", "KO", 22, 21, 8)
 drawstation2mots(area1, "Ko Tow.KTC", 3, 10, 10)
-drawstationuser(area1, "K.Zawodzie", "KZ", 55, 13, 10)
+drawstationuser(area1, "K.Zawodzie", "KZ", 54, 13, 10)
 drawstationuser(area1, "Sosnowiec Główny", "SG", 93, 13, 16)
 drawstationuser(area1, "Będzin", "B", 124, 14, 6)
 drawstationuser(area1, "Dąbrowa Górnicza", "DG", 141, 17, 16)
@@ -3214,7 +3609,7 @@ function drawNumberBox(number = null, x, y, speed = -1, signalDirection = 0, tra
     }
 }
 
-function drawNumberBox4(number = null, x, y, speed = -1, signalDirection = 0, trainBackgroundColour = null, isSpeedBox = false, drawBoundingBox = true, maxLength = 6) {
+function drawNumberBox4(number = null, x, y, speed = -1, signalDirection = 0, trainBackgroundColour = null, isSpeedBox = false, drawBoundingBox = true, maxLength = 6, signal3) {
 
 	Humain = 0;
 
@@ -3252,7 +3647,7 @@ function drawNumberBox4(number = null, x, y, speed = -1, signalDirection = 0, tr
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
 			n = "*" + number + "" + "*>";
 	humain = true;
-	
+
 		}
 		
     } else {	
@@ -3282,10 +3677,15 @@ function drawNumberBox4(number = null, x, y, speed = -1, signalDirection = 0, tr
 				x = x - 1;
 			}
 	maxLength = 10;
+console.log("3345 : ", humain, signal3); 
 			if (humain) {
 	ctx.fillStyle = "#80dfff";
 			} else {
-	ctx.fillStyle = "#afdf44";				
+	if (signal3) { 
+	ctx.fillStyle = "#FFFF00";  // afdf44				
+			} else { 
+	ctx.fillStyle = "#afdf44";  // afdf44	FFBA00			
+			}
 			}
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
@@ -3325,7 +3725,6 @@ function drawNumberBox4(number = null, x, y, speed = -1, signalDirection = 0, tr
         ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
     }
 }
-
 
 function createSpeedBoxFromTrain5(train, isSpeedBox = false, train3) {
     let speedBox = train;
