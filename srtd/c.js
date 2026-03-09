@@ -18,15 +18,15 @@ var settings = {
 	colour3: "pink2 ",
 	showCameras: false,
 	showTables: false,
-	showClosedTrack: false,
+///	showClosedTrack: false,
 	showHornZone: false,
 	showRadioChannel: false,
 	showDottedLines: false,
     drawScanLines: false,
     flipped: false,
+    showSens: false,
     showTrainSpeed: true,
     showNextSignalSpeed: true,
-
     loggingSignalNames: false,
     recording: true,
     replaying: false,
@@ -40,13 +40,14 @@ var availableSettings = {
 	colour2: ["white ", "orange", "pink  ", "red   ", "blue  ", "yellow", "green "],
 	colour3: ["white ", "orange", "pink  ", "pink2 ", "red   ", "blue  ", "yellow", "green "],
 	showCameras: [true, false],
-	showTables: [false, false],
-	showClosedTrack: [false, false],
+	showTables: [true, false],
+///	showClosedTrack: [false, false],
 	showHornZone: [true, false],
 	showRadioChannel: [true, false],
 	showDottedLines: [true, false],
     drawScanLines: [true, false],
     flipped: [false, true],
+    showSens: [true, false],
     showTrainSpeed: [false, true],
 	showNextSignalSpeed: [false, true],
 
@@ -94,7 +95,6 @@ var	train16 = [];  // Signal in Front pour Arret_Station
 var cnv, ctx, box, ni, x, x2, speedbox1, train2, train3, vmax;
 globalThis.senstrain = -1;
 globalThis.speedbox2 = 1;
-// globalThis.train3 = 1;
 globalThis.station0 = 1;
 globalThis.station1 = 1;
 globalThis.station2 = 1;
@@ -105,7 +105,7 @@ globalThis_nbTrainUsers = 0;
 globalThis_nbStationUsers = 0;
 globalThis.userstation = "NO ";
 globalThis.userstation2 = "NO ";
-globalThis.couleurtrain = "green ";
+globalThis.couleurtrain = "reen ";
 globalThis.showLoco = false;
 globalThis.showSpeed = false;
 globalThis.showTypeTrain = false;
@@ -113,7 +113,9 @@ globalThis.showOrigine = false;
 globalThis.showDestination = false;
 globalThis.showEntry = false;
 globalThis.showExit = false;
+globalThis.signal = false;
 globalThis.Key = "";
+globalThis.ChangeSens = false;
 
         for (let i = 0; i < 150; i++) {
 			train1[i] = 0;
@@ -123,13 +125,13 @@ globalThis.Key = "";
 			train6[i] = 0;
 			train7[i] = 0;
 			train8[i] = 0;			
-			train9[i] = 0;
+			train9[i] = 0;				
 			train10[i] = 0;
 			train11[i] = 0;
 			train12[i] = 0;
 			train13[i] = 0;
 			train14[i] = 0;
-			train16[i] = 0;			
+			train16[i] = 0;
 		}
 
 const textSize = 36;
@@ -143,7 +145,6 @@ const screenWidth = charsPerRow * textSize / textSizeRatio * textMargin;
 const screenHeight = screenWidth / screenRatio;
 
 var area = "Settings";
-/// var area = "L001_KO_Zw";
 var isCurrentlyFlipped = false;
 
 addEventListener("load", start);
@@ -294,14 +295,15 @@ async function updateTrainDescriber(calledByTimer = false, data = undefined) {
         data = polishData(data);
 		findnbTrainUsers(data);
     }
-    addClosedTracks(data);
+///    addClosedTracks(data);
     drawCanvas(data);
+
+
 
     if (settings.loggingSignalNames) {
         logSignalNames(data);
     }
     if (calledByTimer && settings.recording) {
-//        data = polishData(data);
         recordTrains(data);
 
     }
@@ -314,26 +316,14 @@ async function updatestationDescriber(calledByTimer = false, data = undefined) {
 
         stationdata = await getstationDataFromServer();
 		findnbStationUsers(stationdata);
-		
-//    if (calledByTimer && settings.recording) {
-//        recordstation(stationdata);
-//
-//    }
 	
 }
 
 function polishData(data) {
- //   data = findMissingSignals(data);
 	    data = locateTrainsWithoutSignalInFront(data);
     for (let i in data.data) {
-//        delete data.data[i].EndStation;
         delete data.data[i].ServerCode;
-//        delete data.data[i].StartStation;
-//        delete data.data[i].TrainName;
-//        delete data.data[i].Type;
-//        delete data.data[i].Vehicles;
         delete data.data[i].id;
-//        delete data.data[i].TrainData.ControlledBySteamID;
     }
     return data;
 }
@@ -360,7 +350,6 @@ function polishstationData(stationdata) {
         delete stationdata.data[i].AdditionalImage1URL;
         delete stationdata.data[i].AdditionalImage2URL;
         delete stationdata.data[i].id;
-//        delete stationdata.data[i].DispatchedBy.SteamId;
     }
     return stationdata;
 }
@@ -382,7 +371,7 @@ function distance (x1, y1, x2, y2) {
 function locateTrainsWithoutSignalInFront(data)
 {
     if (!recorded) return data;
-		
+
     for (let i in data.data) 
     {
         let distanceFromLastSeenAtSignal = 0;
@@ -436,57 +425,37 @@ numtrain2 = numb.toFixed(0);
 
   for (let signal in missingSignalsByGPSLeft) {
            
-//                let distAB = Math.round(distance(...missingSignalsByGPSRight[signal]) * 1000000) / 1000000;
-//                let distAC = distance(missingSignalsByGPSRight[signal][0], missingSignalsByGPSRight[signal][1], lat, longi);
-//                let distBC = distance(lat, longi, missingSignalsByGPSRight[signal][2], missingSignalsByGPSRight[signal][3]);
-//                let sumDist = Math.round((distAC + distBC) * 1000000) / 1000000;
-//
 	numb0 = missingSignalsByGPSLeft[signal][0];
 	numb1 = missingSignalsByGPSLeft[signal][1];
 	numb2 = missingSignalsByGPSLeft[signal][2];
 	numb3 = missingSignalsByGPSLeft[signal][3];
 			distAB = Math.round((distance(numb0, numb1, numb2, numb3)) * 1000) / 1000;
-//			distAC = Math.round((distance(numb0, numb1, lat, longi)) * 1000) / 1000;
-//			distBC = Math.round((distance(lat, longi, numb2, numb3)) * 1000) / 1000;
 			distAC = distance(numb0, numb1, lat, longi);
 			distBC = distance(lat, longi, numb2, numb3);
 
 			sumDist = Math.round((distAC + distBC) * 1000) / 1000;
-//            if (distAB == sumDist) {
             if ((distAB >= (sumDist - 0.01)) && (distAB <= (sumDist + 0.01))) {
                     data.data[i].TrainData.SignalInFront = signal + "@-Infinity";
                     break;
                 }
-//                }
             }
 			
     } else {
 				
             for (let signal in missingSignalsByGPSRight) {
            
-//                let distAB = Math.round(distance(...missingSignalsByGPSRight[signal]) * 1000000) / 1000000;
-//                let distAC = distance(missingSignalsByGPSRight[signal][0], missingSignalsByGPSRight[signal][1], lat, longi);
-//                let distBC = distance(lat, longi, missingSignalsByGPSRight[signal][2], missingSignalsByGPSRight[signal][3]);
-//                let sumDist = Math.round((distAC + distBC) * 1000000) / 1000000;
-//
 	numb0 = missingSignalsByGPSRight[signal][0];
 	numb1 = missingSignalsByGPSRight[signal][1];
 	numb2 = missingSignalsByGPSRight[signal][2];
 	numb3 = missingSignalsByGPSRight[signal][3];
-///                if ((numb0 < lat) && (lat > numb2)) {
-///					if ((numb1 > longi) && (longi < numb3)) {
 			distAB = Math.round((distance(numb0, numb1, numb2, numb3)) * 1000) / 1000;
-//			distAC = Math.round((distance(numb0, numb1, lat, longi)) * 1000) / 1000;
-//			distBC = Math.round((distance(lat, longi, numb2, numb3)) * 1000) / 1000;
 			distAC = distance(numb0, numb1, lat, longi);
 			distBC = distance(lat, longi, numb2, numb3);
 			sumDist = Math.round((distAC + distBC) * 1000) / 1000;
-//            if (distAB == sumDist) {
             if ((distAB >= (sumDist - 0.01)) && (distAB <= (sumDist + 0.01))) {
 						data.data[i].TrainData.SignalInFront = signal + "@-Infinity";
                     break;
            }
-///                }
             }
 			
     }
@@ -504,22 +473,6 @@ numtrain2 = numb.toFixed(0);
 }
 
 function addClosedTracks(data) {
-   if (settings.showClosedTrack != false) {
-    closedTrackDummy = {
-        TrainNoLocal : "xxxxxx",
-        TrainData : {
-            DistanceToSignalInFront : 1.0,
-            SignalInFront : "",
-            SignalInFrontSpeed : 0.0,
-            Velocity : 0.0,
-        }
-    };
-
-    for (let x of closedTrackSignals) {
-        closedTrackDummy.TrainData.SignalInFront = x + "@0,0-0,0";
-        data.data.push(structuredClone(closedTrackDummy));
-    }
-    }
 }
 
 function recordTrains(data) {
@@ -549,8 +502,9 @@ function drawCanvas(data) {
     if (area != "Settings") {
 		
 /// Donne la couleur du caractere
-		
-			character = text[row][char];
+					
+			character = text[row][char];			
+			
 		    if (character == "=") {
 				ctx.fillStyle = coloursPalette[settings.colour2][1];
 				text[row][char] = "─";
@@ -567,8 +521,9 @@ function drawCanvas(data) {
 				ctx.fillStyle = "#9f9f9f";
 				text[row][char] = "◯";
 			}
-			}
-
+			
+			}	
+   
     if (settings.showCameras != false) {
 cam1 = "\u278a";
 cam2 = "\u278b";
@@ -582,7 +537,7 @@ cam9 = "\u2792";
 dbl_g = "\u23EA";
 dbl_d = "\u23E9";
 dbl_h = "\u23EB";
-dbl_b = "\u23EC";				
+dbl_b = "\u23EC";
    } else {
 cam1 = "\u0020";
 cam2 = "\u0020";
@@ -613,25 +568,27 @@ dbl_b = " ";
 				ctx.fillStyle = "#000000";
 				text[row][char] = " ";
    }
-   }
-   
+
+   }   
+
     if (settings.showTables != false) {
 dbl_g = "\u23EA";
-dbl_d = "\u23E9"
-dbl_h = "\u23EB"
-dbl_b = "\u23EC"
+dbl_d = "\u23E9";
+dbl_h = "\u23EB";
+dbl_b = "\u23EC";
    } else {
 dbl_g = " ";
 dbl_d = " ";
 dbl_h = " ";
 dbl_b = " ";
-   }
+   }   
 	if (isCurrentlyFlipped != false) { 
 dbl_d = "\u23EA";
 dbl_g = "\u23E9";
 dbl_b = "\u23EB";
 dbl_h = "\u23EC";
-   }   
+   } 
+
 				toto = text[row][char];
 				lookStation1 = "#"; // bas  "\u23f7"
 				lookStation2 = "&"; // haut  "\u23f6"
@@ -667,7 +624,7 @@ dbl_h = "\u23EC";
 				lookStation3 = "\u23f4"; // gauche  "\u23f4"
 				lookStation4 = "\u23f5"; // droite  "\u23f5"			
    } 
- 
+  
 switch (text[row][char]) {
 case "‡":
 // passages à niveau
@@ -883,7 +840,7 @@ default:
    } 
    
    }  
-
+    
     if (settings.showDottedLines != false) {
 
 		if (settings.showHornZone != false) {
@@ -935,7 +892,7 @@ n = "" + 40125 + "";
 // green
 x = 16;
 y = 41;
-	ctx.fillStyle = "#0F0";
+	ctx.fillStyle = "#00FF00";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 5, textSize * textMargin);
 	ctx.fillStyle = "#000000";
     //Draw number
@@ -945,7 +902,7 @@ y = 41;
 // yellow
 x = 16;
 y = 40;
-	ctx.fillStyle = "#FF0";
+	ctx.fillStyle = "#FFBA00";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 5, textSize * textMargin);
 	ctx.fillStyle = "#000000";
     //Draw number
@@ -955,7 +912,7 @@ y = 40;
 // orange
 x = 16;
 y = 39;
-	ctx.fillStyle = "#E73";
+	ctx.fillStyle = "#FF6000";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 5, textSize * textMargin);
 	ctx.fillStyle = "#000000";
     //Draw number
@@ -965,14 +922,14 @@ y = 39;
 // red
 x = 16;
 y = 38;
-	ctx.fillStyle = "#F00";
+	ctx.fillStyle = "#FF0000";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 5, textSize * textMargin);
 	ctx.fillStyle = "#000000";
     //Draw number
     for (let i = 0; i < 5; i++) {
         ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
     }		
-// white - colour3
+// white
 x = 16;
 y = 42;
     ctx.fillStyle = coloursPalette[settings.colour3][1];
@@ -990,7 +947,7 @@ y = 12;
 	ctx.fillStyle = coloursPalette[settings.colour][1];
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 6, textSize * textMargin);
 	ctx.fillStyle = coloursPalette[settings.colour][1];
-	if (nl != "blue  ") {
+	if (nl != "bleu  ") {
 	ctx.fillStyle = "#000000"; 
 	} else {
 	ctx.fillStyle = "#ffffff";  
@@ -1007,7 +964,7 @@ y = 14;
 	ctx.fillStyle = coloursPalette[settings.colour2][1];
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 6, textSize * textMargin);
 	ctx.fillStyle = coloursPalette[settings.colour][1];
-	if (nl != "blue  ") {
+	if (nl != "bleu  ") {
 	ctx.fillStyle = "#000000"; 
 	} else {
 	ctx.fillStyle = "#ffffff";  
@@ -1024,14 +981,14 @@ y = 16;
 	ctx.fillStyle = coloursPalette[settings.colour3][1];
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 6, textSize * textMargin);
 	ctx.fillStyle = coloursPalette[settings.colour][1];
-	if (nl != "blue  ") {
+	if (nl != "bleu  ") {
 	ctx.fillStyle = "#000000"; 
 	} else {
 	ctx.fillStyle = "#ffffff";  
 	}  
      for (let i = 0; i < 6; i++) {
         ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
-    }
+    }	
 // trains users
 n = "BLUE";
 x = 46;
@@ -1068,7 +1025,7 @@ n = "COLOURED";
 x = 79;
 y = 46;
 	ctx.fillStyle = "#000000";
-    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 8, textSize * textMargin);
+    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 7, textSize * textMargin);
 	ctx.fillStyle = "#88f8f8";
     //Draw number
     for (let i = 0; i < 8; i++) {
@@ -1084,7 +1041,7 @@ y = 46;
     //Draw number
     for (let i = 0; i < 4; i++) {
         ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
-    }
+    }	
 // passages à niveau
 ///n = "X";
 n = "\u0058";
@@ -1115,7 +1072,7 @@ y = 49;
         ctx.fillText(n, textSize * (x + 1) / textSizeRatio * textMargin, textSize * y * textMargin);
 n = "▲";
 x = 83;
-y = 50;
+y = 50
 	ctx.fillStyle = "#000000";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#ffffff";
@@ -1149,15 +1106,16 @@ y = 52;
 	ctx.fillStyle = "#88f8f8";
     //Draw number
         ctx.fillText(n, textSize * (x + 1) / textSizeRatio * textMargin, textSize * y * textMargin);
+
+	ctx.fillStyle = "#ffffff";
+
 // Orient Tables
 n = "⏫";
 x = 77;
 y = 48;
-//	ctx.fillStyle = "#888bbb";
-//    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 5, textSize * textMargin);
-//	ctx.fillStyle = "#000000";
     //Draw number
         ctx.fillText(n, textSize * (x + 1) / textSizeRatio * textMargin, textSize * y * textMargin);
+	
 // nb Train Users
 n = "" + globalThis_nbTrainUsers + "";
 if (globalThis_nbTrainUsers <= 1)  {
@@ -1175,6 +1133,7 @@ y = 44;
 	ctx.fillStyle = "#000000";
         ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
     }
+	ctx.fillStyle = "#ffffff";
 // nb Station Users
 n = "" + globalThis_nbStationUsers + "";
 if (globalThis_nbStationUsers <= 1)  {
@@ -1187,28 +1146,30 @@ y = 46;
 	ctx.fillStyle = "#48dfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * n.length, textSize * textMargin);
 	ctx.fillStyle = "#000000";
-///    //Draw number
     for (let i = 0; i < n.length; i++) {
 	ctx.fillStyle = "#000000";
-        ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
+        ctx.fillText(n[i] , textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
     }
+	ctx.fillStyle = "#ffffff";
 	
     } else {
 		
         let stationToDraw = getstationCoords(stationdata);
 
         drawstation(stationToDraw);
+		
 	if (settings.showHornZone != true) {
 
 // Utilisation de drawRadioBox pour effacer les triangles
 area1 = "L001_KO_Zw";
 area2 = "L004_Zw_Gr";
 area3 = "L001_Zy_WSD";
-area4 = "L171_L131";
+area4 = "L062_L171_L133";
 area5 = "L062_L171_SG_Tl";
-area6 = "L062_SPł_Sd";
+area6 = "L062_L064_SPł_Sd";
 area7 = "L008_KG_Kz";
 area8 = "L001_L017_LW_Gr";
+area9 = "L017_LW";
 
 couleur = 1;
 	if (isCurrentlyFlipped != true) {
@@ -1235,11 +1196,12 @@ couleur = 1;
 area1 = "L001_KO_Zw";
 area2 = "L004_Zw_Gr";
 area3 = "L001_Zy_WSD";
-area4 = "L171_L131";
+area4 = "L062_L171_L133";
 area5 = "L062_L171_SG_Tl";
-area6 = "L062_SPł_Sd";
+area6 = "L062_L064_SPł_Sd";
 area7 = "L008_KG_Kz";
 area8 = "L001_L017_LW_Gr";
+area9 = "L017_LW";
 
 couleur = 1;
 
@@ -1263,7 +1225,7 @@ couleur = 1;
         drawRadioBox("5 ◯  1", 55, 19, area2, couleur);	// Psary		
         drawRadioBox("◯  5", 23, 15, area2, couleur);	// Kozlow
         drawRadioBox("1 ◯  2", 144, 47, area2, couleur);	// Grodzisk
-        drawRadioBox("1 ◯  2", 112, 52, area2, couleur);	// Grodzisk
+        drawRadioBox("1 ◯  2", 105, 52, area2, couleur);	// Grodzisk
 		
         drawRadioBox("◯  1", 2, 1, area3, couleur);	// Szeligli
         drawRadioBox("1 ◯  2", 40, 6, area3, couleur);	// Koritow
@@ -1359,7 +1321,7 @@ couleur = 1;
         drawRadioBox("3 ◯  4", 142, 19, area1, couleur);	// DGHK
         drawRadioBox("2 ◯  3", 133, 12, area1, couleur);	// DGHK
 
-        drawRadioBox("2 ◯  1", 42, 4, area2, couleur);	// Grodzisk
+        drawRadioBox("2 ◯  1", 49, 4, area2, couleur);	// Grodzisk
         drawRadioBox("2 ◯  1", 10, 9, area2, couleur);	// Grodzisk
         drawRadioBox("1 ◯ ", 154, 55, area2, couleur);	// Zawiercie
         drawRadioBox("1 ◯  5", 99, 37, area2, couleur);	// Psary		
@@ -1441,7 +1403,7 @@ couleur = 1;
         drawRadioBox("◯  4", 1, 8, area8, couleur);	// Puszcza
 		drawRadioBox("4 ◯  2", 24, 8, area8, couleur);	// Puszcza
         drawRadioBox("4 ◯  2", 49, 17, area8, couleur);	// Skierniewice	
-        drawRadioBox("4 ◯  2", 71, 16, area8, couleur);	// Skierniewice
+        drawRadioBox("4 ◯  2", 71, 16, area8, couleur);	// Skierniewice	
 
 		}
 				
@@ -1452,6 +1414,7 @@ couleur = 1;
         drawTrains(trainsToDraw);
 		
     }
+	
     if (settings.drawScanLines) {
         drawScanLines();
     }
@@ -1510,7 +1473,7 @@ y = 0;
     for (let i = 0; i < 5; i++) {
         ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
     }
-	
+
 }
 
 function getTrainBackground(signalSpeed = 999999, distanceToSignalInFront) {
@@ -1543,15 +1506,7 @@ function getTrainsCoords(data) {
     for (let train of data.data) {
 
 		train2 = train2 + 1;
-				
-
-				
-///        if (train.TrainData.ControlledBySteamID != null) {
-///			train[6] = "OUI";
-///		} else {
-///			train[6] = "NO";
-///        }		
-	
+					
         if (train.TrainData.SignalInFront != null) {
             let nextSignal = train.TrainData.SignalInFront.split("@")[0];
 			signal2 = nextSignal;
@@ -1585,7 +1540,6 @@ function getTrainsCoords(data) {
 		train11[train2] = train.StartStation;
 		train12[train2] = train.EndStation;
 
-//console.log ("1603 : ", signalStation);		
 		loco1 = train7[train2].indexOf("/"); // position du /
 		loco2 = train7[train2].substring(loco1 + 1);
 		loco3 = train7[train2].indexOf("-"); // position du -
@@ -1594,13 +1548,16 @@ function getTrainsCoords(data) {
         } else  {
 		train8[train2] = "E6ACT"
         }
+        if (train8[train2].substring(0,3) != "163") {
+        } else  {
+		train8[train2] = "163"
+        }
+
 /// VMax des trains
 		typeTrain = train.TrainName.substring(0, 3);
 		train10[train2] = typeTrain;
-//console.log("1585 - train.TrainName : ", train2, train.TrainName, " - typeTrain : ", typeTrain, train5[train2], train6[train2], train7[train2], train8[train2], train9[train2], train16[train2]);
 	vmax = vmaxTrain(typeTrain);
 	train9[train2] = vmax;
-//console.log("1589 - vmax : ", vmax, " - train9[train2] : ", train9[train2]);
 
 		Origine = train11[train2].substring(0, 8);
 		if (Origine == "KATOWICE") {
@@ -1617,22 +1574,14 @@ function getTrainsCoords(data) {
 		train12[train2] = Destination;
 		InMap = EntryMap(Origine);
 		train13[train2] = InMap;
-//		ExitfromMap = ExitMap(Destination);				
-//		trainOutMap[train2] = ExitfromMap;
 		ExitByNum = ExitNoLocal(train5[train2]);
 		train14[train2] = ExitByNum;
-//console.log("1616 - Origine : ", train2, Origine, train11[train2], Destination, train12[train2], train13[train2], train14[train2], ExitByNum);
 	train16[train2] = testSignal_Station(train5[train2], signal2);
-//console.log("1642 : ", train16[train2], train5[train2], signal2);
 /// Attention : VMax des locos et pas des trains
-///if ((typeof train.Vehicles[1] != "undefined") || (typeTrain != "LTE")) {
 if (typeof train.Vehicles[1] != "undefined") {
         } else  {
-//console.log("HLP : train.TrainName : ", train.TrainName, " - typeTrain : ", typeTrain, "train.Vehicles[1] : ", train.Vehicles[1]);
 loco6 = train8[train2];
-//console.log("1632 - loco4 : ", loco4, " - loco6 : ", loco6);
 loco5 = locoHLP(loco6);
-//console.log("1634 - loco5 : ", loco5, " - loco6 : ", loco6, "train9[train2] : ", train9[train2]);
 	if (loco5 != "no")  {
 		train8[train2] = loco5;
 		loco4 = train9[train2];
@@ -1664,15 +1613,13 @@ loco5 = locoHLP(loco6);
         }
     }
     if (logSignalsWithMultipleTrains.length) {
-//        console.log("Some sections have more than one train on them: ", logSignalsWithMultipleTrains);
     }
 
     return trainsToDraw;
 }
 
-////*******************************
 function vmaxTrain(typeTrain)  {
-//console.log("1710 - typeTrain : <", typeTrain, ">");
+
 switch (typeTrain)  {
 	case "TSE":
 		vmax = "50";
@@ -1744,32 +1691,34 @@ switch (typeTrain)  {
 }	
 		return vmax;
 }
-/////****************************
 
 function locoHLP(loco)  {
 
 switch (loco)  {
 	case "E186":
-		loco5 = "E186 HLP";
+		loco5 = "E186 L.E";
 		break;
 	case "E6ACT":
-		loco5 = "E6ACT HLP";
+		loco5 = "E6ACT L.E";
 		break;
 	case "EP07":
-		loco5 = "EP07 HLP";
+		loco5 = "EP07 L.E";
 		break;
 	case "EP08":
-		loco5 = "EP08 HLP";
+		loco5 = "EP08 L.E";
 		break;
 	case "EU07":
-		loco5 = "EU07 HLP";
+		loco5 = "EU07 L.E";
 		break;
 	case "ET22":
-		loco5 = "ET22 HLP";
+		loco5 = "ET22 L.E";
 		break;
 	case "ET25":
-		loco5 = "ET25 HLP";
-		break;	
+		loco5 = "ET25 L.E";
+		break;
+	case "163":
+		loco5 = "163 L.E";
+		break;		
 	case "EN57":
 		loco5 = "no";
 		break;
@@ -1790,7 +1739,6 @@ switch (loco)  {
 }	
 	return loco5
 }
-/////****************************
 
 function EntryMap(Station)  {
 
@@ -1986,15 +1934,11 @@ switch (Station)  {
 	return Entry
 }
 
-/////****************************
 function ExitNoLocal(TrainNoLocal)  {
-
-// *** Speed trains
 
 if (TrainNoLocal.length == 4)  {
 train3 = TrainNoLocal.substring(0, 3);
 //**** dont 3 chiffres !!!
- console.log("1923 : ", TrainNoLocal, train3);
 switch (train3)  {
 	case "160":
 	case "161":
@@ -2009,7 +1953,6 @@ switch (train3)  {
 	default:
 		Exit = "!! " + train3		
 }
- console.log("1934 : ", TrainNoLocal, train3, Exit);
 train3 = TrainNoLocal.substring(0, 2);
 //**** dont 2 chiffres !!!
 switch (train3)  {
@@ -2073,7 +2016,6 @@ switch (TrainNoLocal)  {
 //**** dont 4 chiffres !!!
 train3 = TrainNoLocal.substring(0, 4);
 //**** dont 4 chiffres !!!
- console.log("1972 : ", TrainNoLocal, train3);
 switch (train3)  {
 	case "1615":
 	case "1616":
@@ -2145,7 +2087,6 @@ switch (train3)  {
 }
 train3 = TrainNoLocal.substring(0, 3);
 //**** dont 3 chiffres !!!
- console.log("2021 : ", TrainNoLocal, train3);
 switch (train3)  {
 	case "741":
 		if (globalThis_area0 == "L001_L017_LW_Gr")  {
@@ -2232,7 +2173,6 @@ switch (train3)  {
 	default:
 		Exit = "!! " + train3
 }
-// console.log("2084 : ", TrainNoLocal, train3, Exit);
 }
 
 //*** Fret
@@ -2302,7 +2242,7 @@ switch (train3)  {
 			Exit = "Łódź Olechów";
 			break;
 		}		
-		if ((globalThis_area0 == "L004_Zw_Gr") || (globalThis_area0 == "L062_L171_SG_Tl") || (globalThis_area0 == "L062_SPł_Sd")) {
+		if ((globalThis_area0 == "L004_Zw_Gr") || (globalThis_area0 == "L062_L171_SG_Tl") || (globalThis_area0 == "L062_L064_SPł_Sd")) {
 			Exit = "Idzikowice";
 			break;
         }
@@ -2401,9 +2341,9 @@ switch (train3)  {
 		Exit = "!! " + train3		
 }	
 }	
-console.log("2160 : Exit : ", Exit);
 	return Exit
 }
+
 function testSignal_Station (TrainNoLocal, Signal_Station)   {
 	if (TrainNoLocal.length == 6)  {
 		signal = false;
@@ -2536,7 +2476,7 @@ case "WZD_J20":  // < 20
 case "WZD_J21":
 case "WZD_J22":
 case "WZD_J23":
-case "L4_611":  
+case "L4_611": 
 ////case "WDC_xxxx // Warszawa Centralna
 case "WDC_G":  // <2
 case "WDC_H":  // <4
@@ -2586,7 +2526,7 @@ case "L447_208":
 case "L447_221":
 case "Gl_fake001":
 
-// L171 - L131
+// L062 - L171 - L133
 case "SDn_A":   // Dandowka
 case "SDn1_D":
 case "SDn_N":
@@ -2781,12 +2721,9 @@ default:
 	return signal;
 }
 
-/////****************************
-
 function getstationCoords(stationdata) {
 	
     let stationToDraw = [];
-///    let distancesFromTrainsToSignals = [];
 
 	station2 = 0;
 
@@ -2800,7 +2737,6 @@ function getstationCoords(stationdata) {
                     station.DispatchedBy,
 					station.MainImageURL,
                 ]);
-				
     }
 	findnbStationUsers(stationdata);
     return stationToDraw;
@@ -2848,9 +2784,8 @@ function drawSettings() {
     for (let id of Object.keys(settings)) {
 		
         if (coordinates.Settings[id] != undefined) {
-           drawNumberBox(writeCoolSettingName(settings[id], id == selectedSetting), ...coordinates.Settings[id], 0, 0, null, false, id == selectedSetting, 8);
+            drawNumberBox(writeCoolSettingName(settings[id], id == selectedSetting), ...coordinates.Settings[id], 0, 0, null, false, id == selectedSetting, 8);
         }
-///   }
 }
 }
 
@@ -2883,11 +2818,8 @@ function drawTrains(trainsToDraw) {
 // ***  Numéros de train (sans couleurs)
 				drawNumberBox(...train0);
 
-//            if (train[0] = "xxxxxx")  {
-//                drawNumberBox(...createSpeedBoxFromTrain(train), true, true, 3);
-//		}
 
-            if (settings.showTrainSpeed === true) {
+            if ((settings.showTrainSpeed === true) || (settings.showSens === true)) {
 //  *** Vitesses et Numéros de train (avec couleurs)
 
 
@@ -2901,9 +2833,6 @@ function drawTrains(trainsToDraw) {
 		}
 				train3 = ii;
 
-////
-console.log("1853 - train3 : ", train3, "train8[ii] : ", train8[ii], train5[ii], train0[0]);  // pour le type de loco
-//console.log("1854 : ", train3, train8[ii], train5[ii], train0[0]);   // pour le type de loco
 
 			show = "";
 		if (globalThis.Key == "v")  {
@@ -2934,7 +2863,6 @@ console.log("1853 - train3 : ", train3, "train8[ii] : ", train8[ii], train5[ii],
 			show = "showExitMap";
         } else   {
 		}
-	console.log("2046 : ", globalThis.Key, show);		
 			switch (show)  {
 			case "showLoco":
 					drawNumberBox5(...createSpeedBoxFromTrain5(train0, isSpeedBox = false, train3), true, true, 8);	
@@ -2954,15 +2882,17 @@ console.log("1853 - train3 : ", train3, "train8[ii] : ", train8[ii], train5[ii],
 			default:
           if (train0[0] != "xxxxxx")  {
 	signal3 = train16[ii];
-console.log("2625 : ", signal);
+        if (settings.showSens === true) {
+					drawNumberBox3(...createSpeedBoxFromTrain(train0, isSpeedBox = false, train3), true, true, 6, signal3);	
+        } else {
 					drawNumberBox4(...createSpeedBoxFromTrain(train0, isSpeedBox = false, train3), true, true, 6, signal3);	
 			}
-
+			}
 			}
 	}
 }	
- 		
-    function writeCoolSettingName(settingName, isSelected) {
+ 
+ function writeCoolSettingName(settingName, isSelected) {
         if (settingName === true) {
             settingName = "YES   ";
         } else if (settingName === false) {
@@ -2998,11 +2928,12 @@ function drawstation(stationToDraw) {
 area1 = "L001_KO_Zw";
 area2 = "L004_Zw_Gr";
 area3 = "L001_Zy_WSD";
-area4 = "L171_L131";
+area4 = "L062_L171_L133";
 area5 = "L062_L171_SG_Tl";
-area6 = "L062_SPł_Sd";
+area6 = "L062_L064_SPł_Sd";
 area7 = "L008_KG_Kz";
 area8 = "L001_L017_LW_Gr";
+area9 = "L017_LW";
 
        for (let station of stationToDraw) {
 		
@@ -3019,6 +2950,7 @@ globalThis.userstation = "neant"
 	globalThis.station3 = station[3];
 
 drawstation2mots(area1, "L001 : Katowice - Zawiercie", 1, 0, 27)
+drawstation2mots(area1, "----", 1, 1, 4)
 drawstationuser(area1, "Katowice", "KO", 22, 21, 8)
 drawstation2mots(area1, "Ko Tow.KTC", 3, 10, 10)
 drawstationuser(area1, "K.Zawodzie", "KZ", 54, 13, 10)
@@ -3037,6 +2969,7 @@ drawstation2mots(area1, "D.G. Tow", 96, 50, 8)
 drawstation2mots(area1, "D.G. Tow", 89, 44, 8)
 
 drawstation2mots(area2, "L004 : Zawiercie - Grodzisk Mazowiecki", 1, 0, 38)
+drawstation2mots(area2, "----", 1, 1, 4)
 drawstationuser(area2, "Góra Włodowska", "GW", 62, 8, 14)
 drawstationuser(area2, "Psary", "Ps", 67, 19, 5)
 drawstationuser(area2, "<< Starzyny", "Str", 38, 19, 11)
@@ -3054,6 +2987,7 @@ drawstationuser(area2, "Korytów", "Kr", 92, 54, 7)
 drawstation2mots(area2, "Grodzisk M. --->", 142, 53, 11)
 
 drawstation2mots(area3, "L001 : Korytów-Żyrardów - Warszawa ", 1, 0, 35)
+drawstation2mots(area3, "----", 1, 1, 4)
 drawstationuser(area3, "Grodzisk Mazowiecki", "Gr", 86, 12, 19)
 drawstationuser(area3, "Pruszków >>", "Pr", 21, 29, 11)
 drawstationuser(area3, "<< Józefinów", "Pr", 50, 31, 12)
@@ -3066,7 +3000,8 @@ drawstation2mots(area3, "W.Olszynka", 145, 53, 10)
 drawstationuser(area3, "Żyrardów", "Zr", 20, 12, 8)
 drawstationuser(area3, "Warszawa Włochy", "Wl", 79, 31, 15)
 
-drawstation2mots(area4, "L171 - L131", 1, 0, 11)
+drawstation2mots(area4, "L062-L171-L133 : K.Zawodzie - D.G.Ząbkowice", 1, 0, 43)
+drawstation2mots(area4, "--------------", 1, 1, 14)
 drawstationuser(area4, "K.Zawodzie", "KZ", 2, 3, 10)
 drawstationuser(area4, "Sosnowiec Główny", "SG", 44, 10, 16)
 drawstationuser(area4, "Będzin", "B", 76, 3, 6)
@@ -3085,7 +3020,8 @@ drawstation2mots(area4, "S.Dańdówka", 46, 39, 10)
 drawstation2mots(area4, "D.G. Tow", 134, 19, 8)
 drawstation2mots(area4, "D.G. Tow", 143, 25, 8)
 
-drawstation2mots(area5, "L062 - L171 : Zawodzie - Sedziszow", 1, 0, 34)
+drawstation2mots(area5, "L062 - L064 : Zawodzie - Sedziszow", 1, 0, 34)
+drawstation2mots(area5, "-----------", 1, 1, 11)
 drawstationuser(area5, "K.Zawodzie", "KZ", 2, 3, 10)
 drawstationuser(area5, "S.Główny", "SG", 43, 10, 8)
 drawstationuser(area5, "Będzin", "B", 67, 3, 6)
@@ -3105,7 +3041,8 @@ drawstationuser(area5, "Sprowa >>", "Str", 127, 54, 9)
 drawstation2mots(area5, "S.Dańdówka", 72, 27, 10)
 drawstation2mots(area5, "D.G.Poludniowa", 131, 25, 14)
 
-drawstation2mots(area6, "L062 : S.Południowy - Sędziszów-Psary-Koniecpol (adapted from Besentv)", 1, 0, 74)
+drawstation2mots(area6, "L062 - L064 - L065 : S.Południowy - Sędziszów-Psary-Koniecpol", 1, 0, 61)
+drawstation2mots(area6, "------------------", 1, 1, 18)
 drawstationuser(area6, "S.Południowy", "Spł1", 10, 11, 13)
 drawstationuser(area6, "Julius", "Ju", 50, 13, 6)
 drawstationuser(area6, "S.Kazimierz", "SKz", 64, 2, 12)
@@ -3125,6 +3062,7 @@ drawstation2mots(area6, "S.Dańdówka", 34, 4, 10)
 drawstation2mots(area6, "S.Porąbka", 49, 5, 9)
 
 drawstation2mots(area7, "L008 : Kraków - Kozłów", 1, 0, 22)
+drawstation2mots(area7, "----", 1, 1, 4)
 drawstationuser(area7, "Kraków", "KPm", 61, 25, 6)
 drawstationuser(area7, "Przedmieście", "KPm", 58, 26, 12)
 drawstationuser(area7, "Kraków Batowice", "BT",76, 26, 15)
@@ -3136,7 +3074,8 @@ drawstationuser(area7, "Miechów", "Mi", 41, 54, 7)
 drawstationuser(area7, "Tunel", "Tl", 95, 54, 5)
 drawstationuser(area7, "Kozłów", "Kz", 134, 56, 6)
 
-drawstation2mots(area8, "L001 - L017 : Łódź - Żyrardów (adapted from Besentv)", 1, 0, 52)
+drawstation2mots(area8, "L001 - L017 : Łódź - Grodzisk Mazowiecki                    ", 1, 0, 60)
+drawstation2mots(area8, "-----------", 1, 1, 11)
 drawstationuser(area8, "Łódź Widzew", "LW", 15, 21, 11)
 drawstationuser(area8, "Łódź >>", "G", 42, 9, 7)
 drawstationuser(area8, "Andrzejów", "G", 41, 10, 9)
@@ -3152,6 +3091,9 @@ drawstationuser(area8, "Mazowiecki", "Zr", 9, 55, 10)
 drawstationuser(area8, "<< Żyrardów", "Zr", 66, 48, 11)
 drawstation2mots(area8, " Puszcza ", 151, 51, 9)
 drawstation2mots(area8, "Mariańska", 151, 52, 9)
+
+drawstation2mots(area9, "SCREEN UNDER CONSTRUCTION ...", 51, 38, 34)
+
 		if (settings.showHornZone != true) {
 	drawstation2mots(area8, "│", 56, 9, 1)
 	drawstation2mots(area8, "│", 56, 10, 1)
@@ -3165,11 +3107,11 @@ drawstation2mots(area8, "Mariańska", 151, 52, 9)
 		} else {
 			
 drawstation2mots(area1, "L001 : Zawiercie - Katowice", 1, 0, 27)
+drawstation2mots(area1, "----", 1, 1, 4)
 drawstation2mots(area1, "                           ", 132, 55, 27)
-drawstation2mots(area1, " SERVER = ", 140, 0, 9)
+drawstation2mots(area1, "SERVER = ", 141, 0, 9)
 drawstation2mots(area1, "                 ", 2, 56, 17) // ___ server
 drawstationuser(area1, "Sosnowiec Główny", "SG", 93, 13, 16)
-// drawstationuser(area1, "Dąbrowa Górnicza", "DG", 142, 11, 16)
 drawstationuser(area1, "Dąbrowa Górnicza", "DG", 141, 17, 16)
 drawstationuser(area1, "S.Południowy ", "Spł1", 95, 23, 14)
 drawstation2mots(area1, "S.Dańdówka", 38, 38, 10)
@@ -3184,8 +3126,6 @@ drawstation2mots(area1, "DTA R5", 51, 7, 6)
 drawstation2mots(area1, "SG R52", 70, 37, 6)
 drawstation2mots(area1, "Ko Tow.KTC", 147, 46, 10)
 drawstation2mots(area1, "          ", 3, 10, 10)
-// drawstation2mots(area1, "    120 ┌", 3, 10, 10)
-// drawstation2mots(area1, "     118 ├ ", 3, 11, 11)
 drawstation2mots(area1, "     │    ", 99, 18, 10)
 drawstation2mots(area1, "          ", 112, 18, 10)
 drawstation2mots(area1, "D.G. Tow", 56, 6, 8)
@@ -3194,8 +3134,9 @@ drawstation2mots(area1, "         ", 96, 50, 9)
 drawstation2mots(area1, "       │ ", 89, 44, 9)
 
 drawstation2mots(area2, "L004 : Grodzisk Mazowiecki - Zawiercie", 1, 0, 38)
+drawstation2mots(area2, "----", 1, 1, 4)
 drawstation2mots(area2, "                                      ", 121, 56, 38)
-drawstation2mots(area2, " SERVER = ", 140, 0, 9)
+drawstation2mots(area2, "SERVER = ", 141, 0, 9)
 drawstation2mots(area2, "               ", 4, 56, 15) // ___ server
 drawstationuser(area2, "Biała Rawska >>", "St", 120, 45, 15)
 drawstationuser(area2, "<< Strzałki", "St", 54, 38, 11)
@@ -3210,8 +3151,9 @@ drawstation2mots(area2, "<--- Grodzisk M.", 1, 3, 11)
 drawstation2mots(area2, "-Markow-", 68, 0, 10)
 
 drawstation2mots(area3, "L001 : Warszawa - Żyrardów-Korytów", 1, 0, 34)
+drawstation2mots(area3, "----", 1, 1, 4)
 drawstation2mots(area3, "3                                    ", 123, 56, 39)
-drawstation2mots(area3, " SERVER = ", 140, 0, 9)
+drawstation2mots(area3, "SERVER = ", 141, 0, 9)
 drawstation2mots(area3, "               ", 4, 56, 15) // ___ server
 drawstation2mots(area3, "W.Targówek", 40, 24, 10)
 drawstation2mots(area3, "Warszawa Praga", 27, 21, 14)
@@ -3242,9 +3184,11 @@ drawstation2mots(area3, "           ", 125, 48, 11)
 drawstation2mots(area3, "────┐     ", 103, 32, 10)
 drawstation2mots(area3, "──── ┘   ", 125, 55, 9)
   
-drawstation2mots(area4, "L131 - L171", 1, 0, 11)
-drawstation2mots(area4, "           ", 148, 56, 11)
-drawstation2mots(area4, " SERVER = ", 140, 0, 9)
+drawstation2mots(area4, "L062-L171-L133 : D.G.Ząbkowice - K.Zawodzie", 1, 0, 43)
+drawstation2mots(area4, "--------------", 1, 1, 14)
+drawstation2mots(area4, "    ", 156, 56, 4)
+drawstation2mots(area4, "                                           ", 113, 56, 43)
+drawstation2mots(area4, " SERVER = ", 141, 0, 9)
 drawstation2mots(area4, "               ", 4, 56, 15) // ___ server
 drawstationuser(area4, "Sosnowiec Główny", "SG", 44, 10, 16)
 drawstationuser(area4, "S.Południowy ", "Spł1", 43, 21, 14)
@@ -3265,10 +3209,11 @@ drawstation2mots(area4, "D.G. Tow", 18, 37, 8)
 drawstation2mots(area4, "─── ┐     ", 132, 19, 11)
 drawstation2mots(area4, "Staszic  ", 142, 25, 10)
 
-drawstation2mots(area5, "L062 - L171 : Sedziszow - Zawodzie", 125, 56, 34)
+drawstation2mots(area5, "L062 - L064 : Sedziszow - Zawodzie", 125, 55, 34)
+drawstation2mots(area5, "-----------                       ", 125, 56, 34)
 drawstation2mots(area5, "<--- Psary  - Starzyny >> -         ", 0, 0, 36)
-drawstation2mots(area5, " SERVER = ", 140, 0, 9)
-drawstation2mots(area5, "              ", 4, 56, 15) // ___ server
+drawstation2mots(area5, " SERVER = ", 141, 0, 9)
+drawstation2mots(area5, "                 ", 1, 56, 17) // ___ server
 drawstation2mots(area5, "SG R52", 126, 41, 6)
 drawstation2mots(area5, "Jaroszowiec Olkuski", 66, 20, 19)
 drawstationuser(area5, "<< Kozłów", "Kz", 62, 55, 9)
@@ -3283,9 +3228,10 @@ drawstationuser(area5, "S.Kazimierz", "SKz", 94, 1, 12)
 drawstation2mots(area5, "S.Dańdówka", 78, 29, 10)
 drawstation2mots(area5, "KWK Staszic", 139, 35, 11)
 
-drawstation2mots(area6, "L062 : Sędziszów-Psary-Koniecpol - S.Południowy (adapted from Besentv)       ", 1, 0, 76)
-drawstation2mots(area6, "                                                                                 ", 89, 56, 80)
-drawstation2mots(area6, " SERVER = ", 140, 0, 9)
+drawstation2mots(area6, "L062 - L064 - L065 : Sędziszów-Psary-Koniecpol - S.Południowy                    ", 1, 0, 81)
+drawstation2mots(area6, "------------------", 1, 1, 18)
+drawstation2mots(area6, "                                                                                  ", 89, 56, 81)
+drawstation2mots(area6, "SERVER = ", 141, 0, 9)
 drawstation2mots(area6, "                    ", 1, 56, 18) // ___ server
 drawstation2mots(area6, "Jaroszowiec Olkuski", 89, 28, 19)
 drawstationuser(area6, "<< Kozłów", "Kz", 82, 55, 9)
@@ -3306,16 +3252,17 @@ drawstation2mots(area6, "KWK Staszic", 132, 43, 11)
 drawstation2mots(area6, "        ", 102, 11, 8)
 drawstation2mots(area6, "Dorota->", 50, 45, 8)
 drawstation2mots(area6, "D.G.Strzemieszyce", 58, 43, 18)
-drawstation2mots(area5, " ────── ┘  ", 72, 27, 10)
-drawstation2mots(area5, "==─ ─ ┴ ─====─", 131, 25, 14)
-
+drawstation2mots(area6, " ────── ┘  ", 72, 27, 10)
+drawstation2mots(area6, "==─ ─ ┴ ─====─", 131, 25, 14)
 drawstation2mots(area6, "                 ", 84, 13, 17)
 drawstation2mots(area6, "─┼ ─====─ ", 34, 4, 10)
 drawstation2mots(area6, "         ", 49, 5, 9)
 
-drawstation2mots(area7, "L008 : Kozłów - Kraków", 137, 56, 22)
+drawstation2mots(area7, "L008 : Kozłów - Kraków", 137, 53, 22)
+drawstation2mots(area7, "----                  ", 137, 54, 22)
+drawstation2mots(area7, "                      ", 137, 56, 22)
 drawstation2mots(area7, "                 - Kozłów -", 1, 0, 27)
-drawstation2mots(area7, " SERVER = ", 140, 0, 9)
+drawstation2mots(area7, " SERVER = ", 141, 0, 9)
 drawstation2mots(area7, "               ", 4, 56, 15) // ___ server
 drawstationuser(area7, "   Kraków   ", "KPm", 58, 26, 12)
 drawstationuser(area7, "Przedmieście", "KPm", 58, 25, 12)
@@ -3327,14 +3274,9 @@ drawstation2mots(area7, "  Olsza   ", 106, 28, 10)
 drawstation2mots(area7, "  Kraków  ", 148, 37, 10)
 drawstation2mots(area7, " Zablocie ", 148, 38, 10)
 
-drawstation2mots(area8, "L001 - L017 : Łódź - Żyrardów (adapted from Besentv)", 1, 0, 52)
-    if (isCurrentlyFlipped == true) {
-drawstation2mots(area8, "[4] L001_Zy_WSD   [5] L171_L131                        ", 105, 57, 55)
-   } else {
-drawstation2mots(area8, "   [4] L001_Zy_WSD   [5] L171_L131               ", 110, 57, 52)	   
-   }	   
-drawstation2mots(area8, " SERVER = ", 140, 0, 9)
-drawstation2mots(area8, "Keyboard shortcuts: ", 0, 57, 20) // ___ server
+drawstation2mots(area8, "L001 - L017 : Grodzisk Mazowiecki - Łódź                    ", 1, 0, 60)
+drawstation2mots(area8, "-----------", 1, 1, 11)
+drawstation2mots(area8, "SERVER = ", 141, 0, 9)
 drawstation2mots(area8, "<--- Grodzisk Mazowiecki", 13, 3, 24)
 drawstation2mots(area8, "  1       4", 83, 7, 11)
 drawstationuser(area8, "Żyrardów >>", "Zr", 66, 47, 11)
@@ -3380,6 +3322,7 @@ drawstationuser(area8, "Galkówek >>", "G", 77, 5, 11)
 drawstation2mots(area8, "           ", 72, 52, 11)  // Galkówek
 drawstationuser(area8, "Koluski", "KO", 126, 3, 7)
 drawstation2mots(area8, "       ", 27, 52, 7)
+
 	drawstation2mots(area8, "     ", 56, 8, 5)
 	drawstation2mots(area8, "     ", 56, 9, 5)
 	drawstation2mots(area8, "     ", 56, 10, 5)
@@ -3395,6 +3338,9 @@ drawstationuser(area8, "\u25a3 ", "Pl", 17, 47, 2) // Plyćwia
 	drawstation2mots(area8, "▲", 103, 47, 1)
 	drawstation2mots(area8, "▲", 103, 48, 1)
 		}
+
+drawstation2mots(area9, "SCREEN UNDER CONSTRUCTION ...", 51, 18, 34)
+drawstation2mots(area9, "                                  ", 85, 18, 34)
 
 		}
 
@@ -3463,8 +3409,6 @@ function drawstationuser(areax, namestation, nameprefix, x, y, maxLength) {
 			if (areax != globalThis_area0) {
 	} else {
 	if (globalThis.station1 != nameprefix) {
-//				globalThis.userstation = globalThis.station0;
-//				userstation2 = "rien";	
 		} else {
 		// On a trouve la station equivalent à ses initiales
 				if (globalThis.station2 != "") {
@@ -3488,7 +3432,6 @@ function drawstationuser(areax, namestation, nameprefix, x, y, maxLength) {
 		}		
 		
 			ctx.fillStyle = "#000000";
-///    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
 	ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
 			
 	// Set the text right aligned
@@ -3502,8 +3445,7 @@ function drawstationuser(areax, namestation, nameprefix, x, y, maxLength) {
     //Draw number
     for (let i = 0; i < n.length; i++) {
 
-					ctx.fillStyle = "#88f8f8";
-///    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
+					ctx.fillStyle = "#88f8f8"; /// #88f8f8
     ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
 
         }
@@ -3519,10 +3461,8 @@ function drawstationuser(areax, namestation, nameprefix, x, y, maxLength) {
 			y = 56 - y;
 		}		
 
-//    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
 	ctx.fillStyle = "#80dfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
-//    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
 			
 	// Set the text right aligned
 
@@ -3544,6 +3484,304 @@ function drawstationuser(areax, namestation, nameprefix, x, y, maxLength) {
  }
 
 function createSpeedBoxFromTrain(train, isSpeedBox = false, train3) {
+    let speedBox = train;
+    let x = train[1];
+    let x2 = train[1];
+    let y = train[2];
+	globalThis.train4 = train[4];
+			globalThis.user = train6[train3];
+
+	let box = 0;
+    speedBox[1] = (train[4] === 1 ? (speedBox[1] = x + 2) : (x - 1));
+    speedBox2 = (train[4] === 1 ? (speedBox[1] = x2 + 2) : (x2 - 1));
+    speedBox[2] = y - 1;
+
+
+	if (globalThis.train4 === 1) {
+	globalThis.senstrain = -1;
+	}
+	if (globalThis.train4 === 0) {
+	globalThis.senstrain = 1;
+	}
+
+    return speedBox;
+}
+
+function drawNumberBox(number = null, x, y, speed = -1, signalDirection = 0, trainBackgroundColour = null, isSpeedBox = false, drawBoundingBox = true, maxLength = 6) {
+
+    if ((trainBackgroundColour === null))
+    trainBackgroundColour = settings.colour;
+
+    if (isSpeedBox)
+        number = speed.toFixed(0);
+
+    let n = number + "";
+	if (number != "xxxxxx") {
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
+    } else {
+	ctx.fillStyle = "#999999";
+    }
+    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
+
+    //Set the text right aligned
+    for (let i = 1; i <= maxLength; i++) {
+        if (n.length < i) {
+            x++;
+        }
+    }
+
+    //Draw number
+    for (let i = 0; i < n.length; i++) {
+        ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
+    }
+}
+
+function drawNumberBox3(number = null, x, y, speed = -1, signalDirection = 0, trainBackgroundColour = null, isSpeedBox = false, drawBoundingBox = true, maxLength = 6, signal3) {
+
+	Humain = 0;
+   if ((trainBackgroundColour === null))
+
+    trainBackgroundColour = settings.colour;
+
+    if (isSpeedBox)
+        number = speed.toFixed(0);
+
+
+	if ((globalThis.train4 == 1)) {	
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
+    ctx.fillRect((x - 1) * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
+		    } else {
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
+    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
+	}
+
+	number1 = 0;
+	number2 = 1;
+	number3 = 2;
+	number4 = 3;
+	if ((settings.showSens === true)) {
+	number1 = ">   >";
+	number2 = "**";
+	number3 = "<   <";
+	number4 = "**";
+	}
+	
+	if ((globalThis.train4 == 1)) {
+	x = x - 1;
+		if (globalThis.user != "user") {
+	//// * = User - not Bot
+	//// number = vitesse
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
+    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
+			n = "" + number1 + "" + ">";
+	humain = false;
+		    } else {
+	ctx.fillStyle = "#48dfff";
+    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
+			n = "*" + number2 + "" + "*>";
+	humain = true;
+
+		}
+		
+    } else {	
+		if (globalThis.user != "user") {
+	//// * = User - not Bot
+	//// number = vitesse
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
+    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
+			n = "<" + number3 + "";
+	humain = false;
+		    } else {
+	ctx.fillStyle = "#48dfff";
+    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
+			n = "<*" + number3 + "*";
+	humain = true;		
+		}	
+		
+    }
+
+// ****************** Train à l'arret *****************
+	if ((number < 1)) {
+			if ((globalThis.train4 == 1)) {
+				x = x - 3;
+			} else {
+				x = x - 1;
+			}
+	maxLength = 10;
+			if (humain) {
+	ctx.fillStyle = "#80dfff";
+			} else {
+	if (signal3) { 
+	ctx.fillStyle = "#FFFF00";  // afdf44				
+			} else { 
+	ctx.fillStyle = "#afdf44";  // afdf44	FFBA00			
+			}
+			}
+    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
+
+			if (globalThis.train4 != 1) {
+			if (humain) {
+	n = "<*Stopped*";
+			} else {
+	n = "< Stopped";				
+			}
+			} else {
+			if (humain) {
+	n = "*Stopped*>";
+			} else {
+	n = " Stopped >";				
+			}
+			}
+    }
+// ****************** Train à l'arret *****************
+	
+    //Set the text right aligned
+	if (globalThis.train4 == 1) {
+    for (let i = 1; i <= maxLength; i++) {
+        if (n.length < i) {
+            x++;
+        }
+    }
+
+		    } else {
+
+    }
+
+    //Draw number
+    for (let i = 0; i < n.length; i++) {
+        ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
+    }
+}
+
+function drawNumberBox4(number = null, x, y, speed = -1, signalDirection = 0, trainBackgroundColour = null, isSpeedBox = false, drawBoundingBox = true, maxLength = 6, signal3) {
+
+	Humain = 0;
+   if ((trainBackgroundColour === null) || ((settings.showTrainSpeed) && (isSpeedBox === false)))
+
+    trainBackgroundColour = settings.colour;
+
+    if (isSpeedBox)
+        number = speed.toFixed(0);
+
+
+	if ((globalThis.train4 == 1)) {	
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
+    ctx.fillRect((x - 1) * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
+		    } else {
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
+    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
+	}
+
+	number1 = number;
+	number2 = number;
+	number3 = number;
+	number4 = number;
+	if ((globalThis.train4 == 1)) {
+//	  n = number + "" + ">";
+	x = x - 1;
+		if (globalThis.user != "user") {
+	//// * = User - not Bot
+	//// number = vitesse
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
+    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
+			n = "" + number1 + "" + ">";
+	humain = false;
+		    } else {
+	ctx.fillStyle = "#48dfff";
+    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
+			n = "*" + number2 + "" + "*>";
+	humain = true;
+
+		}
+		
+    } else {	
+		if (globalThis.user != "user") {
+	//// * = User - not Bot
+	//// number = vitesse
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
+    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
+			n = "<" + number3 + "";
+	humain = false;
+		    } else {
+	ctx.fillStyle = "#48dfff";
+    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
+			n = "<*" + number3 + "*";
+	humain = true;		
+		}	
+		
+    }
+
+// ****************** Train à l'arret *****************
+	if ((number < 1)) {
+			if ((globalThis.train4 == 1)) {
+				x = x - 3;
+			} else {
+				x = x - 1;
+			}
+	maxLength = 10;
+			if (humain) {
+	ctx.fillStyle = "#80dfff";
+			} else {
+	if (signal3) { 
+	ctx.fillStyle = "#FFFF00";  // afdf44				
+			} else { 
+	ctx.fillStyle = "#afdf44";  // afdf44	FFBA00			
+			}
+			}
+    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
+    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
+
+			if (globalThis.train4 != 1) {
+			if (humain) {
+	n = "<*Stopped*";
+			} else {
+	n = "< Stopped";				
+			}
+			} else {
+			if (humain) {
+	n = "*Stopped*>";
+			} else {
+	n = " Stopped >";				
+			}
+			}
+    }
+// ****************** Train à l'arret *****************
+	
+
+
+    //Set the text right aligned
+	if (globalThis.train4 == 1) {
+    for (let i = 1; i <= maxLength; i++) {
+        if (n.length < i) {
+            x++;
+        }
+    }
+
+		    } else {
+
+    }
+
+    //Draw number
+    for (let i = 0; i < n.length; i++) {
+        ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
+    }
+}
+
+function createSpeedBoxFromTrain5(train, isSpeedBox = false, train3) {
     let speedBox = train;
     let x = train[1];
     let x2 = train[1];
@@ -3576,154 +3814,6 @@ function createSpeedBoxFromTrain(train, isSpeedBox = false, train3) {
 //	}
 
     return speedBox;
-}
-
-function drawNumberBox(number = null, x, y, speed = -1, signalDirection = 0, trainBackgroundColour = null, isSpeedBox = false, drawBoundingBox = true, maxLength = 6) {
-
-////    if ((trainBackgroundColour === null) || ((settings.showTrainSpeed) && (isSpeedBox === false)))
-    if ((trainBackgroundColour === null))
-    trainBackgroundColour = settings.colour;
-
-    if (isSpeedBox)
-        number = speed.toFixed(0);
-
-    let n = number + "";
-	if (number != "xxxxxx") {
-    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
-    } else {
-	ctx.fillStyle = "#999999";
-    }
-    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
-    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
-
-    //Set the text right aligned
-    for (let i = 1; i <= maxLength; i++) {
-        if (n.length < i) {
-            x++;
-        }
-    }
-
-    //Draw number
-    for (let i = 0; i < n.length; i++) {
-        ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
-    }
-}
-
-function drawNumberBox4(number = null, x, y, speed = -1, signalDirection = 0, trainBackgroundColour = null, isSpeedBox = false, drawBoundingBox = true, maxLength = 6, signal3) {
-
-	Humain = 0;
-
-   if ((trainBackgroundColour === null) || ((settings.showTrainSpeed) && (isSpeedBox === false)))
-
-    trainBackgroundColour = settings.colour;
-
-    if (isSpeedBox)
-        number = speed.toFixed(0);
-
-
-	if ((globalThis.train4 == 1)) {	
-    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
-    ctx.fillRect((x - 1) * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
-    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
-		    } else {
-    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
-    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
-    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
-	}				
-	if ((globalThis.train4 == 1)) {
-//	  n = number + "" + ">";
-	x = x - 1;
-		if (globalThis.user != "user") {
-	//// * = User - not Bot
-	//// number = vitesse
-    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
-    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
-    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
-			n = "" + number + "" + ">";
-	humain = false;
-		    } else {
-	ctx.fillStyle = "#48dfff";
-    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
-    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
-			n = "*" + number + "" + "*>";
-	humain = true;
-
-		}
-		
-    } else {	
-		if (globalThis.user != "user") {
-	//// * = User - not Bot
-	//// number = vitesse
-    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
-    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
-    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
-			n = "<" + number + "";
-	humain = false;
-		    } else {
-	ctx.fillStyle = "#48dfff";
-    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
-    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
-			n = "<*" + number + "*";
-	humain = true;		
-		}	
-		
-    }
-
-// ****************** Train à l'arret *****************
-	if ((number < 1)) {
-			if ((globalThis.train4 == 1)) {
-				x = x - 3;
-			} else {
-				x = x - 1;
-			}
-	maxLength = 10;
-console.log("3345 : ", humain, signal3); 
-			if (humain) {
-	ctx.fillStyle = "#80dfff";
-			} else {
-	if (signal3) { 
-	ctx.fillStyle = "#FFFF00";  // afdf44				
-			} else { 
-	ctx.fillStyle = "#afdf44";  // afdf44	FFBA00			
-			}
-			}
-    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
-    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
-
-			if (globalThis.train4 != 1) {
-			if (humain) {
-	n = "<*Stopped*";
-			} else {
-	n = "< Stopped";	
-			}
-			} else {
-			if (humain) {
-	n = "*Stopped*>";
-			} else {
-	n = " Stopped >";
-			}
-			}
-    }
-// ****************** Train à l'arret *****************
-	
-
-
-    //Set the text right aligned
-	if (globalThis.train4 == 1) {
-    for (let i = 1; i <= maxLength; i++) {
-        if (n.length < i) {
-            x++;
-        }
-    }
-
-		    } else {
-
-    }
-
-    //Draw number
-    for (let i = 0; i < n.length; i++) {
-        ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
-    }
 }
 
 function createSpeedBoxFromTrain5(train, isSpeedBox = false, train3) {
@@ -3878,30 +3968,15 @@ function drawNumberBox5(number = null, x, y, speed = -1, signalDirection = 0, tr
         numberspeed = speed.toFixed(0);
 
 number = train8[train3];
-        if (number.substring(0, 5) != "Light") {
-maxLengthHLP = 0
+        if (number.substring(5,8) != "HLP") {
+maxLength = 8;
 	} else {
-maxLengthHLP = 6		
+maxLength = 12;		
 	}
-//	console.log("2515 - number : ", number, "train8[train3] : ", train8[train3], "HLP : ", number.substring(5,8));
 
-//	if ((globalThis.train4 == 1)) {	
-//    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
-//    ctx.fillRect((x - 1) * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
-//    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
-//		    } else {
-//    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
-//    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
-//    ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
-//	}				
 	if ((globalThis.train4 == 1)) {
-//	  n = number + "" + " >";
-//	x = x - 1;
 		if (globalThis.user != "user") {
-	//// * = User - not Bot
-	//// number = type de loco
 
-	maxLength = maxLengthHLP + 7;
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
@@ -3909,7 +3984,6 @@ maxLengthHLP = 6
 
 	humain = false;
 		    } else {
-	maxLength = maxLengthHLP + 9;
 	ctx.fillStyle = "#48dfff";
 
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
@@ -3917,14 +3991,13 @@ maxLengthHLP = 6
 			n = " *" + number + "" + "*>";
 
 	humain = true;
-//console.log("n train4 = 1 : ", n);
 		}
 		
     } else {	
 		if (globalThis.user != "user") {
 	//// * = User - not Bot
 	//// number = vitesse
-	maxLength = maxLengthHLP + 7;
+
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
@@ -3932,7 +4005,6 @@ maxLengthHLP = 6
 
 	humain = false;
 		    } else {
-	maxLength = maxLengthHLP + 9;
 	ctx.fillStyle = "#48dfff";
 
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
@@ -3941,21 +4013,14 @@ maxLengthHLP = 6
 
 	humain = true;		
 		}	
-//console.log("n train4 = -1 : ", n);		
     }
 
 // ****************** Train à l'arret *****************
 	if ((numberspeed < 1)) {
-//			if ((globalThis.train4 == 1)) {
-//				x = x - 1;
-//			} else {
-//				x = x - 2;
-//			}
-///	maxLength = 8;
-        if (number.substring(0,5) != "Light") {
-maxLengthHLP = 0
+        if (number.substring(5,8) != "HLP") {
+maxLength = 8
 	} else {
-maxLengthHLP = 6		
+maxLength = 12		
 	}
 			if (humain) {
 	ctx.fillStyle = "#b8dfff";
@@ -3968,18 +4033,14 @@ maxLengthHLP = 6
 
 			if (globalThis.train4 != 1) {
 			if (humain) {
-	maxLength = maxLengthHLP + 9;
 	n = "<*" + number + "*";
 			} else {
-	maxLength = maxLengthHLP + 6;
 	n = "< " + number + "";				
 			}
 			} else {
 			if (humain) {
-	maxLength = maxLengthHLP + 9;
 	n = "*" + number + "*>";
 			} else {
-	maxLength = maxLengthHLP + 6;
 	n = " " + number + " >";				
 			}
 			}
@@ -4008,7 +4069,7 @@ function drawNumberBox6(number = null, x, y, speed = -1, signalDirection = 0, tr
         numberspeed = speed.toFixed(0);
 
 number = "v " + train9[train3] + "";
-        if (number.substring(0,5) != "Light") {
+        if (number.substring(5,8) != "HLP") {
 maxLengthHLP = 0
 	} else {
 maxLengthHLP = 5		
@@ -4067,7 +4128,7 @@ maxLengthHLP = 5
 
 // ****************** Train à l'arret *****************
 	if ((numberspeed < 1)) {
-        if (number.substring(0,5) != "Light") {
+        if (number.substring(5,8) != "HLP") {
 maxLengthHLP = 0
 	} else {
 maxLengthHLP = 5		
@@ -4101,8 +4162,6 @@ maxLengthHLP = 5
     }
 // ****************** Train à l'arret *****************
 	
-
-
     //Set the text right aligned
 	if (globalThis.train4 == 1) {
     for (let i = 1; i <= maxLength; i++) {
@@ -4133,7 +4192,7 @@ function drawNumberBox7(number = null, x, y, speed = -1, signalDirection = 0, tr
         numberspeed = speed.toFixed(0);
 
 number = train10[train3];
-        if (number.substring(0,5) != "Light") {
+        if (number.substring(5,8) != "HLP") {
 maxLengthHLP = 0
 number = "" + number;
 	} else {
@@ -4194,10 +4253,10 @@ maxLengthHLP = 2
 
 // ****************** Train à l'arret *****************
 	if ((numberspeed < 1)) {
-        if (number.substring(0,5) != "Light") {
+        if (number.substring(5,8) != "HLP") {
 maxLengthHLP = 0
 	} else {
-maxLengthHLP = 5		
+maxLengthHLP = 3		
 	}
 			if (humain) {
 
@@ -4228,8 +4287,6 @@ maxLengthHLP = 5
     }
 // ****************** Train à l'arret *****************
 	
-
-
     //Set the text right aligned
 	if (globalThis.train4 == 1) {
     for (let i = 1; i <= maxLength; i++) {
@@ -4304,6 +4361,7 @@ switch (globalThis.Key) {
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
 			n = "*" + number + "" + "* >";
+///			maxLength = (n.length);
 	humain = true;
 
 		}
@@ -4323,6 +4381,7 @@ switch (globalThis.Key) {
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
 			n = "< *" + number + "*";
+///			maxLength = (n.length);
 	humain = true;		
 		}	
 		
@@ -4360,8 +4419,6 @@ switch (globalThis.Key) {
     }
 // ****************** Train à l'arret *****************
 	
-
-
     //Set the text right aligned
 	if (globalThis.train4 == 1) {
     for (let i = 1; i <= maxLength; i++) {
@@ -4382,15 +4439,7 @@ switch (globalThis.Key) {
 
 function drawRadioBox(n = null, x, y, areax, couleur, speed = -1, signalDirection = 0, trainBackgroundColour = null, isSpeedBox = false, drawBoundingBox = true, maxLength = 6) {
 
-///	if (([...n].length) > 6) {
 	maxLength = n.length;
-///	} else {
-///		if (([...n].length) == 6) {
-///			maxLength = 6;
-///		} else {
-///			maxLength = 4;
-///		}
-///    }
 	
 	if (globalThis_area0 != areax) {
 	return;
@@ -4492,18 +4541,13 @@ function flipLayouts() {
                 .replaceAll("┌", "þ").replaceAll("┘", "┌").replaceAll("þ", "┘")
                 .replaceAll("└", "þ").replaceAll("┐", "└").replaceAll("þ", "┐")
                 .replaceAll("▶", "þ").replaceAll(" ◀", "▶ ").replaceAll(" þ","◀ ");
-////				let regex = /^([a-zA-Z0-9\Ł\ł\_ ąćęłńóśżźŁ]+)$/;
-            let regex = /^([ąćęłńóśżźŁa-zA-Z0-9\Ł\ł\Ż\_]+)$/;
+            let regex = /^([ąćęłńóśżźŁa-zA-Z0-9\Ł\ł\Ł\Ż\_]+)$/;       
             let currentlyOnAStringThatNeedsToBeReverseFlipped = false;
             let stringsThatNeedsToBeReverseFlippedStartsAtId = 0;
             let stringToBeReverseFlipped = "";
             for (let charId in flippedRow) {
                 if (regex.test(flippedRow[charId]) && charId < flippedRow.length - 1) {
 
-//            if (charId != "_") {
-//			} else {
-//			charId = " ";	
-//            }
                     if (!currentlyOnAStringThatNeedsToBeReverseFlipped) {
                         currentlyOnAStringThatNeedsToBeReverseFlipped = true;
                         stringsThatNeedsToBeReverseFlippedStartsAtId = charId * 1;
@@ -4602,10 +4646,10 @@ function changeSelectedSetting(x) {
     }
     selectedSetting = Object.keys(availableSettings)[index];
     updateTrainDescriber();
+
 }
 
 function keyboard(e) {
-    //console.log("Key detected: " + e.key);
     let setAreaTo = area;
     switch (e.key.toLowerCase()) {
         case "1":
@@ -4653,7 +4697,7 @@ function keyboard(e) {
 		globalThis.showExit = false;
             break;
         case "5":
-            setAreaTo = "L171_L131";
+            setAreaTo = "L062_L171_L133";
 		globalThis.Key = "5";
 		globalThis.showLoco = false;
 		globalThis.showSpeed = false;
@@ -4675,7 +4719,7 @@ function keyboard(e) {
 		globalThis.showExit = false;
             break;   
 		case "7":
-            setAreaTo = "L062_SPł_Sd";
+            setAreaTo = "L062_L064_SPł_Sd";
 		globalThis.Key = "7";
 		globalThis.showLoco = false;
 		globalThis.showSpeed = false;
@@ -4696,6 +4740,17 @@ function keyboard(e) {
 		globalThis.showEntry = false;
 		globalThis.showExit = false;
             break;
+        case "9":
+            setAreaTo = "L017_LW";
+		globalThis.Key = "9";
+		globalThis.showLoco = false;
+		globalThis.showSpeed = false;
+		globalThis.showTypeTrain = false;
+		globalThis.showOrigine = false;
+		globalThis.showDestination = false;
+		globalThis.showEntry = false;
+		globalThis.showExit = false;
+            break;
         case "e":
             setAreaTo = "Settings";
 		globalThis.showLoco = false;
@@ -4707,6 +4762,16 @@ function keyboard(e) {
 		globalThis.showExit = false;
             break;
         case "k":
+            setAreaTo = "Keys_Used";
+		globalThis.showLoco = false;
+		globalThis.showSpeed = false;
+		globalThis.showTypeTrain = false;
+		globalThis.showOrigine = false;
+		globalThis.showDestination = false;
+		globalThis.showEntry = false;
+		globalThis.showExit = false;
+            break;
+        case "z":
             setAreaTo = "Keys_Used";
 		globalThis.showLoco = false;
 		globalThis.showSpeed = false;
@@ -4782,18 +4847,29 @@ function keyboard(e) {
         case "arrowleft":
 //        case "a":
             changeSetting(-1);
+        if (settings.showSens === true) {
+		settings.showTrainSpeed = false;
+        changeSetting(0);
+		}
             break;
         case "arrowright":
 //        case "d":
-            changeSetting(1);
+            changeSetting(-1);
+        if (settings.showSens === true) {
+		settings.showSens = false;
+		settings.showTrainSpeed = true;
+        changeSetting(0);
+		}				
             break;
         case "arrowup":
 //        case "w":
             changeSelectedSetting(-1);
+
             break;
         case "arrowdown":
 //        case "s":
             changeSelectedSetting(1);
+
             break;
     }
     if (area != setAreaTo) {
