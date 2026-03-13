@@ -9,6 +9,7 @@
 *
 * Traduit et adapté par RWag64.
 *
+* v 2.9.5 En
 **/
 
 var settings = {
@@ -19,10 +20,11 @@ var settings = {
 	showCameras: false,
 	showTables: false,
 ///	showClosedTrack: false,
+	showSpeedLine: false,
 	showHornZone: false,
 	showRadioChannel: false,
 	showDottedLines: false,
-    drawScanLines: false,
+///    drawScanLines: false,
     flipped: false,
     showSens: false,
     showTrainSpeed: true,
@@ -42,10 +44,11 @@ var availableSettings = {
 	showCameras: [true, false],
 	showTables: [true, false],
 ///	showClosedTrack: [false, false],
+	showSpeedLine: [true, false],
 	showHornZone: [true, false],
 	showRadioChannel: [true, false],
 	showDottedLines: [true, false],
-    drawScanLines: [true, false],
+///    drawScanLines: [true, false],
     flipped: [false, true],
     showSens: [true, false],
     showTrainSpeed: [false, true],
@@ -94,6 +97,7 @@ var	train16 = [];  // Signal in Front pour Arret_Station
 
 var cnv, ctx, box, ni, x, x2, speedbox1, train2, train3, vmax;
 globalThis.senstrain = -1;
+globalThis.sensRokiciny =1;
 globalThis.speedbox2 = 1;
 globalThis.station0 = 1;
 globalThis.station1 = 1;
@@ -105,7 +109,7 @@ globalThis_nbTrainUsers = 0;
 globalThis_nbStationUsers = 0;
 globalThis.userstation = "NO ";
 globalThis.userstation2 = "NO ";
-globalThis.couleurtrain = "reen ";
+globalThis.couleurtrain = "green ";
 globalThis.showLoco = false;
 globalThis.showSpeed = false;
 globalThis.showTypeTrain = false;
@@ -523,21 +527,17 @@ function drawCanvas(data) {
 			}
 			
 			}	
-   
+	
     if (settings.showCameras != false) {
-cam1 = "\u278a";
-cam2 = "\u278b";
-cam3 = "\u278c";
-cam4 = "\u278d";
-cam5 = "\u278e";
-cam6 = "\u278f";
-cam7 = "\u2790";
-cam8 = "\u2791";
-cam9 = "\u2792";
-dbl_g = "\u23EA";
-dbl_d = "\u23E9";
-dbl_h = "\u23EB";
-dbl_b = "\u23EC";
+cam1 = "\u0031";
+cam2 = "\u0032";
+cam3 = "\u0033";
+cam4 = "\u0034";
+cam5 = "\u0035";
+cam6 = "\u0036";
+cam7 = "\u0037";
+cam8 = "\u0038";
+cam9 = "\u0039";
    } else {
 cam1 = "\u0020";
 cam2 = "\u0020";
@@ -570,7 +570,42 @@ dbl_b = " ";
    }
 
    }   
-
+    if (settings.showSpeedLine != false) {
+speed1 = "\u3010\u0031\u3011";  // ①  1 dans un double-rond  // limite à 10 km/h
+speed2 = "\u3010\u0032\u3011";  // ②  2 dans un double-rond  // limite à 20 km/h
+speed3 = "\u3010\u0033\u3011";  // ③  3 dans un double-rond  // limite à 30 km/h
+speed4 = "\u3010\u0034\u3011";  // ④  4 dans un double-rond  // limite à 40 km/h
+speed5 = "\u3010\u0035\u3011";  // ⑤  5 dans un double-rond  // limite à 50 km/h
+speed6 = "\u3010\u0036\u3011";  // ⑥  6 dans un double-rond  // limite à 60 km/h
+speed7 = "\u3010\u0037\u3011";  // ⑦  7 dans un double-rond  // limite à 70 km/h
+speed8 = "\u3010\u0038\u3011";  // ⑧  8 dans un double-rond  // limite à 80 km/h
+speed9 = "\u3010\u0039\u3011";  // ⑨  9 dans un double-rond  // limite à 90 km/h
+speed10 = "\u3010\u0031\u0030\u3011";  // ⑩  10 dans un double-rond  // limite de 100 km/h
+speed11 = "\u3010\u0031\u0031\u3011";  // ⑪  11 dans un double-rond  // limite de 110 km/h
+speed12 = "\u3010\u0031\u0032\u3011";  // ⑫  12 dans un double-rond  // limite de 120 km/h
+speed13 = "\u3010\u0031\u0033\u3011";  // ⑬  13 dans un double-rond  // limite de 130 km/h
+speed14 = "\u3010\u0031\u0034\u3011";  // ⑭  14 dans un double-rond  // limite de 140 km/h
+speed15 = "\u3010\u0031\u0035\u3011";  // ⑮  15 dans un double-rond  // limite de 150 km/h
+speed16 = "\u3010\u0031\u0036\u3011";  // ⑯  16 dans un double-rond  // limite de 160 km/h
+   } else {
+speed1 = "\u0020";
+speed2 = "\u0020";
+speed3 = "\u0020";
+speed4 = "\u0020";
+speed5 = "\u0020";
+speed6 = "\u0020";
+speed7 = "\u0020";
+speed8 = "\u0020";
+speed9 = "\u0020";
+speed10 = "\u0020";
+speed11 = "\u0020";
+speed12 = "\u0020";
+speed13 = "\u0020";
+speed14 = "\u0020";
+speed15 = "\u0020";
+speed16 = "\u0020";
+	}
+	
     if (settings.showTables != false) {
 dbl_g = "\u23EA";
 dbl_d = "\u23E9";
@@ -582,11 +617,18 @@ dbl_d = " ";
 dbl_h = " ";
 dbl_b = " ";
    }   
-	if (isCurrentlyFlipped != false) { 
+	if (isCurrentlyFlipped != false) {
+	    if (settings.showTables != false) {
 dbl_d = "\u23EA";
 dbl_g = "\u23E9";
 dbl_b = "\u23EB";
 dbl_h = "\u23EC";
+   } else {
+dbl_g = " ";
+dbl_d = " ";
+dbl_h = " ";
+dbl_b = " ";
+   } 
    } 
 
 				toto = text[row][char];
@@ -719,6 +761,150 @@ case "➒":
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#88f8f8";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "①":
+// speed 10 -1-
+	text[row][char] = "" + speed1 + "";
+	n = "" + speed1 + "";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#FF0000";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "②":
+// speed 20 -1-
+	text[row][char] = "" + speed2 + "";
+	n = "" + speed2 + "";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#FF0000";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "③":
+// speed 30 -1-
+	text[row][char] = "" + speed3 + "";
+	n = "" + speed3 + "";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#FF0000";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "④":
+// speed 40 -1-
+	text[row][char] = "" + speed4 + "";
+	n = "" + speed4 + "";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#FF0000";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "⑤":
+// speed 50 -1-
+	text[row][char] = "" + speed5 + "";
+	n = "" + speed5 + "";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#FF0000";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "⑥":
+// speed 60 -1-
+	text[row][char] = "" + speed6 + "";
+	n = "" + speed6 + "";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#FF0000";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "⑦":
+// speed 70 -1-
+	text[row][char] = "" + speed7 + "";
+	n = "" + speed7 + "";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#FF0000";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "⑧":
+// speed 80 -1-
+	text[row][char] = "" + speed8 + "";
+	n = "" + speed8 + "";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#FF0000";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "⑨":
+// speed 90 -1-
+	text[row][char] = "" + speed9 + "";
+	n = "" + speed9 + "";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#FF0000";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "⑩":
+// speed 100 -1-
+	text[row][char] = "" + speed10 + "";
+	n = "" + speed10 + "";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#FF0000";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "⑪":
+// speed 110 -1-
+	text[row][char] = "" + speed11 + "";
+	n = "" + speed11 + "";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#FF0000";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "⑫":
+// speed 120 -1-
+	text[row][char] = "" + speed12 + "";
+	n = "" + speed12 + "";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#FF0000";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "⑬":
+// speed 130 -1-
+	text[row][char] = "" + speed13 + "";
+	n = "" + speed13 + "";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#FF0000";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "⑭":
+// speed 140 -1-
+	text[row][char] = "" + speed14 + "";
+	n = "" + speed14 + "";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#FF0000";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "⑮":
+// speed 150 -1-
+	text[row][char] = "" + speed15 + "";
+	n = "" + speed15 + "";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#FF0000";
+            ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
+break;
+case "⑯":
+// speed 160 -1-
+	text[row][char] = "" + speed16 + "";
+	n = "" + speed16 + "";
+	ctx.fillStyle = "#000000";
+    ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+	ctx.fillStyle = "#FF0000";
             ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
 break;
 case "⏫":
@@ -889,7 +1075,7 @@ default:
         drawSettings();
 n = "" + 40125 + "";
 
-// green
+// vert
 x = 16;
 y = 41;
 	ctx.fillStyle = "#00FF00";
@@ -899,7 +1085,7 @@ y = 41;
     for (let i = 0; i < 5; i++) {
         ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
     }
-// yellow
+// jaune
 x = 16;
 y = 40;
 	ctx.fillStyle = "#FFBA00";
@@ -919,8 +1105,8 @@ y = 39;
     for (let i = 0; i < 5; i++) {
         ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
     }		
-// red
-x = 16;
+// rouge
+x = 16
 y = 38;
 	ctx.fillStyle = "#FF0000";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 5, textSize * textMargin);
@@ -929,7 +1115,7 @@ y = 38;
     for (let i = 0; i < 5; i++) {
         ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
     }		
-// white
+// blanc
 x = 16;
 y = 42;
     ctx.fillStyle = coloursPalette[settings.colour3][1];
@@ -947,7 +1133,7 @@ y = 12;
 	ctx.fillStyle = coloursPalette[settings.colour][1];
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 6, textSize * textMargin);
 	ctx.fillStyle = coloursPalette[settings.colour][1];
-	if (nl != "bleu  ") {
+	if (nl != "blue  ") {
 	ctx.fillStyle = "#000000"; 
 	} else {
 	ctx.fillStyle = "#ffffff";  
@@ -964,7 +1150,7 @@ y = 14;
 	ctx.fillStyle = coloursPalette[settings.colour2][1];
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 6, textSize * textMargin);
 	ctx.fillStyle = coloursPalette[settings.colour][1];
-	if (nl != "bleu  ") {
+	if (nl != "blue  ") {
 	ctx.fillStyle = "#000000"; 
 	} else {
 	ctx.fillStyle = "#ffffff";  
@@ -981,7 +1167,7 @@ y = 16;
 	ctx.fillStyle = coloursPalette[settings.colour3][1];
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 6, textSize * textMargin);
 	ctx.fillStyle = coloursPalette[settings.colour][1];
-	if (nl != "bleu  ") {
+	if (nl != "blue  ") {
 	ctx.fillStyle = "#000000"; 
 	} else {
 	ctx.fillStyle = "#ffffff";  
@@ -991,7 +1177,7 @@ y = 16;
     }	
 // trains users
 n = "BLUE";
-x = 46;
+x = 42;
 y = 44;
 	ctx.fillStyle = "#48dfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 4, textSize * textMargin);
@@ -1001,7 +1187,7 @@ y = 44;
         ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
     }
 n = "<*xxx*";
-x = 62;
+x = 58;
 y = 44;
 	ctx.fillStyle = "#48dfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 6, textSize * textMargin);
@@ -1011,7 +1197,7 @@ y = 44;
         ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
     }
 n = "*xxx*>";
-x = 72;
+x = 68;
 y = 44;
 	ctx.fillStyle = "#48dfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 6, textSize * textMargin);
@@ -1022,7 +1208,7 @@ y = 44;
     }	
 // postes utilisables
 n = "COLOURED";
-x = 79;
+x = 75;
 y = 46;
 	ctx.fillStyle = "#000000";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 7, textSize * textMargin);
@@ -1033,7 +1219,7 @@ y = 46;
     }		
 // postes pris par users
 n = "BLUE";
-x = 96;
+x = 92;
 y = 46;
 	ctx.fillStyle = "#80dfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 4, textSize * textMargin);
@@ -1045,7 +1231,7 @@ y = 46;
 // passages à niveau
 ///n = "X";
 n = "\u0058";
-x = 69;
+x = 65;
 y = 46;
 	ctx.fillStyle = "#000000";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
@@ -1054,7 +1240,7 @@ y = 46;
         ctx.fillText(n, textSize * (x + 1) / textSizeRatio * textMargin, textSize * y * textMargin);
 ///n = "│";
 n = "\u01C0";
-x = 69;
+x = 65;
 y = 46;
 	ctx.fillStyle = "#000000";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
@@ -1062,17 +1248,17 @@ y = 46;
     //Draw number
         ctx.fillText(n, textSize * (x + 1) / textSizeRatio * textMargin, textSize * y * textMargin);				
 // zones de sifflet
+// n = "▲";
+// x = 82;
+// y = 49;
+// 	ctx.fillStyle = "#000000";
+//     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
+// 	ctx.fillStyle = "#ffffff";
+//     //Draw number
+//         ctx.fillText(n, textSize * (x + 1) / textSizeRatio * textMargin, textSize * y * textMargin);
 n = "▲";
-x = 83;
-y = 49;
-	ctx.fillStyle = "#000000";
-    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
-	ctx.fillStyle = "#ffffff";
-    //Draw number
-        ctx.fillText(n, textSize * (x + 1) / textSizeRatio * textMargin, textSize * y * textMargin);
-n = "▲";
-x = 83;
-y = 50
+x = 74;
+y = 50;
 	ctx.fillStyle = "#000000";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#ffffff";
@@ -1080,7 +1266,7 @@ y = 50
         ctx.fillText(n, textSize * (x + 1) / textSizeRatio * textMargin, textSize * y * textMargin);
 // Canaux Radio
 n = " ◯";
-x = 57;
+x = 53;
 y = 52;
 	ctx.fillStyle = "#888bbb";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 5, textSize * textMargin);
@@ -1090,31 +1276,32 @@ y = 52;
         ctx.fillText(n[i], textSize * (x + 1 * i) / textSizeRatio * textMargin, textSize * y * textMargin);
     }
 // caméras
-n = "\u25b7";
-x = 127;
+n = "▽"; 
+x = 126;
 y = 52;
 	ctx.fillStyle = "#000000";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 4, textSize * textMargin);
 	ctx.fillStyle = "#88f8f8";
     //Draw number
         ctx.fillText(n, textSize * (x + 1) / textSizeRatio * textMargin, textSize * y * textMargin);
-n = "\u278a";
-x = 125;
-y = 52;
-	ctx.fillStyle = "#000000";
-    ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 4, textSize * textMargin);
-	ctx.fillStyle = "#88f8f8";
-    //Draw number
-        ctx.fillText(n, textSize * (x + 1) / textSizeRatio * textMargin, textSize * y * textMargin);
-
-	ctx.fillStyle = "#ffffff";
+// n = "\u0031"; // \0278a
+// x = 124;
+// y = 52;
+// 	ctx.fillStyle = "#000000";
+//     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * 4, textSize * textMargin);
+// 	ctx.fillStyle = "#88f8f8";
+//     //Draw number
+//         ctx.fillText(n, textSize * (x + 1) / textSizeRatio * textMargin, textSize * y * textMargin);
+// 
+// 	ctx.fillStyle = "#ffffff";
 
 // Orient Tables
 n = "⏫";
-x = 77;
+x = 73;
 y = 48;
     //Draw number
         ctx.fillText(n, textSize * (x + 1) / textSizeRatio * textMargin, textSize * y * textMargin);
+
 	
 // nb Train Users
 n = "" + globalThis_nbTrainUsers + "";
@@ -1123,7 +1310,7 @@ n = n + " USER DRIVEN TRAIN";
     } else  {
 n = n + " USERS DRIVEN TRAINS";
     }
-x = 135;
+x = 131;
 y = 44;
 	ctx.fillStyle = "#48dfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * n.length, textSize * textMargin);
@@ -1141,7 +1328,7 @@ n = n + " STATION TAKEN";
     } else  {
 n = n + " STATIONS TAKEN";
     }
-x = 135;
+x = 131;
 y = 46;
 	ctx.fillStyle = "#48dfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * n.length, textSize * textMargin);
@@ -1173,19 +1360,19 @@ area9 = "L017_LW";
 
 couleur = 1;
 	if (isCurrentlyFlipped != true) {
-        drawRadioBox("│", 85, 12, area1, couleur);	// SG R52
+//        drawRadioBox("│", 85, 12, area1, couleur);	// SG R52
         drawRadioBox("│", 85, 13, area1, couleur);	// SG R52		
-        drawRadioBox("│", 30, 9, area4, couleur);	// SG R52
+//        drawRadioBox("│", 30, 9, area4, couleur);	// SG R52
         drawRadioBox("│", 30, 10, area4, couleur);	// SG R52
-        drawRadioBox("│", 30, 9, area5, couleur);	// SG R52
-        drawRadioBox("│", 30, 10, area5, couleur);	// SG R52
+//        drawRadioBox("│", 55, 9, area8, couleur);	// SG R52
+        drawRadioBox("│", 55, 10, area8, couleur);	// SG R52
 		} else {
-        drawRadioBox("│", 72, 43, area1, couleur);	// SG R52
+//        drawRadioBox("│", 72, 43, area1, couleur);	// SG R52
         drawRadioBox("│", 72, 44, area1, couleur);	// SG R52		
-        drawRadioBox("│", 127, 46, area4, couleur);	// SG R52
+//        drawRadioBox("│", 127, 46, area4, couleur);	// SG R52
         drawRadioBox("│", 127, 47, area4, couleur);	// SG R52
-        drawRadioBox("│", 127, 46, area5, couleur);	// SG R52
-        drawRadioBox("│", 127, 47, area5, couleur);	// SG R52
+//        drawRadioBox("│", 102, 46, area8, couleur);	// SG R52
+        drawRadioBox("│", 102, 47, area8, couleur);	// SG R52
 	}
 	}
 
@@ -1230,7 +1417,7 @@ couleur = 1;
         drawRadioBox("◯  1", 2, 1, area3, couleur);	// Szeligli
         drawRadioBox("1 ◯  2", 40, 6, area3, couleur);	// Koritow
         drawRadioBox("1 ◯  2", 75, 1, area3, couleur);	// Grodzisk
-		drawRadioBox("◯  2", 21, 8, area3, couleur);	// Zyrardow
+		drawRadioBox("1 ◯  2", 19, 8, area3, couleur);	// Zyrardow
         drawRadioBox("2 ◯ ", 79, 44, area3, couleur);	// Warszawa Wschodnia
 		drawRadioBox("5 ◯ ", 79, 51, area3, couleur);	// Warszawa Wschodnia
 		drawRadioBox("2 ◯  5", 96, 31, area3, couleur);	// Warszawa Wlochy
@@ -1247,7 +1434,7 @@ couleur = 1;
         drawRadioBox("◯  5", 41, 48, area4, couleur);	// Maczki
         drawRadioBox("5 ◯  3", 63, 53, area4, couleur);	// Dorota
         drawRadioBox("4 ◯  3", 94, 43, area4, couleur);	// DGHK
-        drawRadioBox("3 ◯  2", 103, 52, area4, couleur);	// DGHK
+        drawRadioBox("3 ◯  2", 103, 48, area4, couleur);	// DGHK
         drawRadioBox("5 ◯  3", 67, 31, area4, couleur);	// Juliuzs
         drawRadioBox("3 ◯  4", 76, 31, area4, couleur);	// Juliuzs
         drawRadioBox("◯  5", 7, 30, area4, couleur);	// Tychy
@@ -1265,14 +1452,14 @@ couleur = 1;
         drawRadioBox("3 ◯  4", 121, 15, area5, couleur);	// Dorota - Wschodnia
         drawRadioBox("3 ◯  4", 121, 25, area5, couleur);	// Dorota - Wschodnia
         drawRadioBox("4 ◯ ", 137, 46, area5, couleur);	// Sedziszow
-        drawRadioBox("1 ◯  4", 15, 51, area5, couleur);	// Tunel
+        drawRadioBox("1 ◯  4", 14, 52, area5, couleur);	// Tunel
         drawRadioBox("◯  5", 22, 20, area5, couleur);	// KJw		
         drawRadioBox("2 ◯ ", 77, 8, area5, couleur);	// Zawiercie		
 
         drawRadioBox("4 ◯  5", 94, 40, area6, couleur);	// Kozlow - Sprowa
         drawRadioBox("4 ◯ ", 153, 46, area6, couleur);	// Kozlow - Sedziszow		
         drawRadioBox("4 ◯ ", 153, 52, area6, couleur);	// Kozlow - Sedziszow
-        drawRadioBox("1 ◯  4", 35, 51, area6, couleur);	// Tunel - Miechow
+        drawRadioBox("1 ◯  4", 28, 51, area6, couleur);	// Tunel - Miechow
         drawRadioBox("5 ◯  1", 127, 37, area6, couleur);	// Starzyny - Psary
         drawRadioBox("3 ◯  4", 82, 1, area6, couleur);	// DGHK
         drawRadioBox("2 ◯  5", 26, 5, area6, couleur);	// S. Poludniowy - Dandowka		
@@ -1286,9 +1473,9 @@ couleur = 1;
         drawRadioBox("◯  1", 1, 46, area6, couleur);	// Krakow
 		
         drawRadioBox("◯  1", 5, 8, area7, couleur);	// Krakow
-        drawRadioBox("1 ◯  4", 86, 52, area7, couleur);	// Tunel - Miechow		
+        drawRadioBox("1 ◯  4", 51, 52, area7, couleur);	// Tunel - Miechow		
         drawRadioBox("4 ◯  5", 143, 50, area7, couleur);	// Kozlow - Sprowa
-        drawRadioBox("◯  4", 65, 44, area7, couleur);	// Wolbrom
+        drawRadioBox("◯  4", 61, 42, area7, couleur);	// Wolbrom
         drawRadioBox("4 ◯ ", 150, 47, area7, couleur);	// Kozlow - Sedziszow		
         drawRadioBox("4 ◯ ", 150, 53, area7, couleur);	// Kozlow - Sedziszow
 
@@ -1297,7 +1484,7 @@ couleur = 1;
         drawRadioBox("2 ◯ ", 138, 52, area8, couleur);	// Grodzisk
         drawRadioBox("7 ◯  2", 96, 6, area8, couleur);	// Galkowek
         drawRadioBox("7 ◯  2", 104, 15, area8, couleur);	// Zakowice Polu. F
-        drawRadioBox("◯  7", 43, 23, area8, couleur);	// Lodz Olechow
+        drawRadioBox("◯  2", 0, 27, area8, couleur);	// Piotrków
         drawRadioBox("◯  4", 77, 37, area8, couleur);	// Beichow
         drawRadioBox("2 ◯  4", 83, 41, area8, couleur);	// Skerniewice
         drawRadioBox("2 ◯  4", 104, 40, area8, couleur);	// Skerniewice
@@ -1397,7 +1584,7 @@ couleur = 1;
         drawRadioBox("◯  2", 18, 5, area8, couleur);	// Grodzisk
         drawRadioBox("2 ◯  7", 58, 51, area8, couleur);	// Galkowek
         drawRadioBox("2 ◯  7", 50, 42, area8, couleur);	// Zakowice Polu. F
-        drawRadioBox("7 ◯ ", 113, 34, area8, couleur);	// Lodz Olechow
+        drawRadioBox("7 ◯ ", 109, 30, area8, couleur);	// Lodz Olechow
         drawRadioBox("4 ◯ ", 79, 20, area8, couleur);	// Beichow
         drawRadioBox("4 ◯  2", 16, 17, area8, couleur);	// Puszcza
         drawRadioBox("◯  4", 1, 8, area8, couleur);	// Puszcza
@@ -1415,9 +1602,9 @@ couleur = 1;
 		
     }
 	
-    if (settings.drawScanLines) {
-        drawScanLines();
-    }
+///    if (settings.drawScanLines) {
+///        drawScanLines();
+///    }
 
 // Heures et minutes
 
@@ -1581,11 +1768,11 @@ function getTrainsCoords(data) {
 if (typeof train.Vehicles[1] != "undefined") {
         } else  {
 loco6 = train8[train2];
-loco5 = locoHLP(loco6);
+loco5 = locoLE(loco6);
 	if (loco5 != "no")  {
 		train8[train2] = loco5;
 		loco4 = train9[train2];
-		train9[train2] = "HLP " + loco4;
+		train9[train2] = "L.E " + loco4;
     } else  {
     }
         }
@@ -1692,7 +1879,7 @@ switch (typeTrain)  {
 		return vmax;
 }
 
-function locoHLP(loco)  {
+function locoLE(loco)  {
 
 switch (loco)  {
 	case "E186":
@@ -1734,6 +1921,9 @@ switch (loco)  {
 	case "ED250":
 		loco5 = "no";
 		break;
+	case "36wed":
+		loco5 = "no";
+		break;
 	default:
 		loco5 = "no";	
 }	
@@ -1741,138 +1931,177 @@ switch (loco)  {
 }
 
 function EntryMap(Station)  {
-
+/// Origine du train  =>  Station d'entrée sur Simrail
 switch (Station)  {
-	case "Warszawa":
+	case "Białysto":
 		Entry = "Warszawa"; // OK
+		break;
+	case "Bielsko":
+		Entry = "Kato.Brynów"; // OK
+		break;		
+	case "Bełchów":
+		Entry = "Bełchów"; // OK
+		break;
+	case "Bohumin":
+		Entry = "Kato.Brynów"; // OK
+		break;	
+	case "Brzesko ":
+		Entry = "Kraków Olsza"; // OK
+		break;		
+	case "Chorzew ":
+		Entry = "Łódź Chojny";  // OK
+		break;	
+	case "Częstoch":
+		if (globalThis_area0 == "L001_KO_Zw")  {
+			Entry = "Myszków";
+			break;
+		}
+		if (globalThis_area0 == "L001_L017_LW_Gr")  {
+			Entry = "Piotrków";
+			break;
+		}
+	case "Dąbrowa ":
+		Entry = "D.G. Tow"; // OK
+		break;
+	case "Gdańsk":
+		Entry = "Łask"; // OK
 		break;
 	case "Gdynia G":
 	case "Gdynia P":
 		Entry = "Warszawa"; // OK
-		break;
-	case "Białysto":
-		Entry = "Warszawa"; // OK
-		break;
-	case "Zielonka":
-		Entry = "Warszawa"; // OK
-		break;
-	case "Ożarów M":
-		Entry = "Warszawa Gol."; // OK
-		break;
-	case "Katowice":
-		Entry = "Katowice"; // OK
-		break;
-	case "Bohumin":
-		Entry = "Kato.Brynów"; // OK
-		break;
-	case "Tychy":
-	case "Tychy Lo":
-		Entry = "Kato.Brynów"; // OK
-		break;
+		break;	
 	case "Gliwice":
 		Entry = "Kato.Tow KTC"; // OK
 		break;
 	case "Gliwice ":
 		Entry = "Kato.Tow KTC"; // OK
 		break;		
+	case "Henryków":
+		Entry = "Piotrków";  // OK
+		break;
+	case "Jaworzno":
+		Entry = "S.Maczki";  // OK
+		break;
+	case "Jędrzejó":
+		Entry = "Sędziszów"; // OK
+		break;	
+	case "Jelania ":
+		Entry = "Żelislawice"; // OK
+		break;			
 	case "KWK Staszic":
 		Entry = "KWK Staszic" // OK
 		break;
-	case "Bielsko":
-		Entry = "Kato.Brynów"; // OK
+	case "Kalisz":
+		Entry = "Sędzice"; // OK
+		break;		
+	case "Katowice":
+		Entry = "Katowice"; // OK
 		break;
-	case "Kraków P":
-		Entry = "Kraków Główny"; // OK
-		break
+	case "Kielce":
+		Entry = "Sędziszów"; // OK
+		break;	
 	case "Kraków G":
 		Entry = "Kraków Główny"; // OK
-		break
-	case "Zakopane":
-		Entry = "Kraków Główny"; // OK
-		break;
-	case "Kraków O":
-		Entry = "Kraków Olsza"; // OK
-		break
-	case "Wola Rzę":
-		Entry = "Kraków Olsza"; // OK
-		break
-	case "Brzesko ":
-		Entry = "Kraków Olsza"; // OK
-		break;
-	case "Kraków N":
-		Entry = "Dłubnia"; // OK
-		break
+		break	
 	case "Kraków M":
 		if (globalThis_area0 == "L001_KO_Zw")  {
 			Entry = "S.Maczki";
 			break;
 		}
 		if (globalThis_area0 == "L001_L017_LW_Gr")  {
-			Entry = "Rokiciny";
+			Entry = "Piotrków";
+			break;
+		}	
+	case "Kraków N":
+		Entry = "Dłubnia"; // OK
+		break
+	case "Kraków O":
+		Entry = "Kraków Olsza"; // OK
+		break
+	case "Kraków P":
+		if (globalThis_area0 == "L001_KO_Zw")  {
+			Entry = "S.Maczki";
 			break;
 		}
-	case "Kielce":
-		Entry = "Sędziszów"; // OK
-		break;
-	case "Sitkówka":
-		Entry = "Sędziszów"; // OK
-		break;
-	case "Jędrzejó":
-		Entry = "Sędziszów"; // OK
-		break;
-	case "Radom":
-		Entry = "Sędziszów"; // OK
+		if (globalThis_area0 == "LL008_KG_Kz")  {
+			Entry = "Kraków Główny";
+			break;
+		}
+		if (globalThis_area0 == "L001_L017_LW_Gr")  {
+			Entry = "Piotrków";
+			break;
+		}
+	case "Kutno":
+		Entry = "Zgierz"; // OK
 		break;
 	case "Łódź Cho":
 		Entry = "Łódź Olechów"; // OK
 		break;
 	case "Łódź Chojny":
 		Entry = "Łódź Olechów"; // OK
-		break;
-	case "Szczecin":
-		Entry = "Łódź Chojny";  // OK
-		break;
-	case "Małaszew":
-		Entry = "Łódź Chojny";  // OK
-		break;
-	case "Wrocław ":
-		Entry = "Łódź Chojny";  // OK
-		break;
-	case "Chorzew ":
-		Entry = "Łódź Chojny";  // OK
-		break;
-	case "Henryków":
-		Entry = "Łódź Chojny";  // OK
-		break;
+		break;	
 	case "Łódź Fab":
 		Entry = "Łódź Fabryczna"; // OK
 		break;
 	case "Łódź Fabryczna":
 		Entry = "Łódź Fabryczna"; // OK
 		break;
+	case "Łódź Widzew":
+		Entry = "Łódź Widzew"; // OK
+		break;
+	case "Łowicz G":
+		Entry = "Zgierz"; // OK
+		break;		
+	case "Lublin":
+		Entry = "Mikołajów";  // OK
+		break;	
+	case "Małaszew":
+		Entry = "Puszcza";  // OK
+		break;
+	case "Małkinia":
+		Entry = "Marków";  // OK
+		break;
+	case "Mszczonó":
+		Entry = "Marków"; // OK
+		break;		
+	case "Myszków":
+		Entry = "Myszków"; // OK
+		break;		
+	case "Nałęczów":
+		Entry = "Idzikowice"; // OK
+		break;
+	case "Ożarów M":
+		Entry = "Warszawa Gol."; // OK
+		break;
+	case "Piława G":
+		Entry = "Szeligi"; // OK
+		break;
 	case "Poznań G":
 		if (globalThis_area0 == "L001_L017_LW_Gr")  {
-			Entry = "Łódź Chojny";
+			Entry = "Sieradz";
 			break;
 		}
 		if (globalThis_area0 == "L001_KO_Zw")  {
 			Entry = "Myszków";
 			break;
-		}
-	case "Myszków":
-		Entry = "Myszków"; // OK
+		}		
+	case "Puławy":
+		Entry = "Czarnca"; // OK
 		break;
-	case "Częstoch":
-		Entry = "Myszków"; // OK
+	case "Puszcza ":
+		Entry = "Puszcza"; // OK
+		break;	
+	case "Radom":
+		Entry = "Sędziszów"; // OK
+		break;	
+	case "Radomsko":
+		Entry = "Piotrków"; // OK
+		break;	
+	case "Sitkówka":
+		Entry = "Sędziszów"; // OK
 		break;
-	case "Wrocław ":
-		Entry = "Myszków"; // OK
-		break;
-	case "Częstoch":
-		Entry = "Myszków"; // OK
-		break;
-	case "Trzebini":
-		Entry = "Myszków"; // OK
+	case "Skarżysk":
+		Entry = "Słotwiny"; // OK
 		break;
 	case "Sosnowie":
 		Entry = "S.Maczki"; // OK
@@ -1880,54 +2109,49 @@ switch (Station)  {
 	case "S.Maczki":
 		Entry = "S.Maczki"; // OK
 		break;
-	case "Jaworzno":
-		Entry = "S.Maczki";  // OK
-		break;
-	case "Lublin":
-		Entry = "Czarnca";  // OK
-		break;
-	case "Puławy":
-		Entry = "Czarnca"; // OK
-		break;
-	case "Nałęczów":
-		Entry = "Idzikowice"; // OK
-		break;
-	case "Mszczonó":
-		Entry = "Marków"; // OK
-		break;
-	case "Małkinia":
-		Entry = "Marków";  // OK
-		break;
-	case "Tychy Fi":
-		Entry = "Staszic"; // OK
-		break;
-	case "Skarżysk":
-		Entry = "Słotwiny"; // OK
-		break;
-	case "Dąbrowa ":
-		Entry = "D.G. Tow"; // OK
-		break;
-	case "Bełchów":
-		Entry = "Bełchów"; // OK
-		break;
-	case "Puszcza ":
-		Entry = "Puszcza"; // OK
-		break;
-	case "Radomsko":
-		Entry = "Rokiciny"; // OK
-		break;
-	case "Łowicz G":
-		Entry = "Skierniewice"; // OK
-		break;
-	case "Piława G":
-		Entry = "Szeligi"; // OK
-		break;
-	case "Jelenia ":
-		Entry = "Żelislawice"; // OK
+	case "Szczecin":
+		Entry = "Warszawa Włochy";  // OK
 		break;
 	case "Tomaszów":
 		Entry = "Tomaszów"; // OK
 		break;		
+	case "Trzebini":
+		Entry = "S.Maczki"; // OK
+		break;
+	case "Trzebinia":
+		Entry = "S.Maczki"; // OK
+		break;
+	case "Tychy":
+	case "Tychy Lo":
+		Entry = "Kato.Brynów"; // OK
+		break;
+	case "Tychy Fi":
+		Entry = "Staszic"; // OK
+		break;	
+	case "Warszawa":
+		Entry = "Warszawa"; // OK
+		break;
+	case "Wola Rzę":
+		Entry = "Kraków Olsza"; // OK
+		break
+	case "Wrocław ":
+		if (globalThis_area0 == "L001_L017_LW_Gr")  {
+			Entry = "Piotrków";
+			break;
+		}
+		if (globalThis_area0 == "L001_KO_Zw")  {
+			Entry = "Myszków";
+			break;
+		}				
+	case "Zakopane":
+		Entry = "Kraków Główny"; // OK
+		break;
+	case "Zduńska":
+		Entry = "Łask"; // OK
+		break;
+	case "Zielonka":
+		Entry = "Warszawa"; // OK
+		break;
 	default:
 		Entry = "??" + Station;	
 }	
@@ -1935,8 +2159,12 @@ switch (Station)  {
 }
 
 function ExitNoLocal(TrainNoLocal)  {
+/// Numéro du train  =>  Station de sortie sur Simrail
+
+//*** EIJ Passengers rapides
 
 if (TrainNoLocal.length == 4)  {
+/// Train EIJ (4 car.)
 train3 = TrainNoLocal.substring(0, 3);
 //**** dont 3 chiffres !!!
 switch (train3)  {
@@ -1945,15 +2173,16 @@ switch (train3)  {
 		Exit = "Żelisławice";
 		break;
 	case "164":
-		Exit = "Łódź Chojny";
+		Exit = "Sieradz";
 		break;
 	case "166":
-		Exit = "Rokiciny";
+		Exit = "Piotrków";
 		break;
 	default:
-		Exit = "!! " + train3		
+		Exit = "err " + train3		
 }
 train3 = TrainNoLocal.substring(0, 2);
+/// Train EIJ (4 car.)
 //**** dont 2 chiffres !!!
 switch (train3)  {
 	case "37":
@@ -1962,12 +2191,12 @@ switch (train3)  {
 			break;
 		}
 		if (globalThis_area0 == "L001_L017_LW_Gr")  {
-			Exit = "Łódź Chojny";
+			Exit = "Sieradz";
 			break;
 		}
 	case "73":
 		if (globalThis_area0 == "L001_L017_LW_Gr")  {
-			Exit = "Rokiciny";
+			Exit = "Piotrków";
 			break;
 		}
 		if (globalThis_area0 == "L001_KO_Zw")  {
@@ -2000,22 +2229,21 @@ switch (train3)  {
 	case "16":
 		break;
 	default:
-		Exit = "!! " + train3		
+		Exit = "err " + train3		
 }
 }
 
-//*** Passengers
+//*** Passengers normaux
 
 if (TrainNoLocal.length == 5)  {
-//**** dont 5 chiffres !!!
+//**** dont 5 chiffres différents!!!
 switch (TrainNoLocal)  {
 	case "42206":
 		Exit = "Sędziszów";
 	break;
 }
-//**** dont 4 chiffres !!!
 train3 = TrainNoLocal.substring(0, 4);
-//**** dont 4 chiffres !!!
+//**** dont 4 chiffres différents!!!
 switch (train3)  {
 	case "1615":
 	case "1616":
@@ -2026,7 +2254,7 @@ switch (train3)  {
 		break;
 	case "1610":
 	case "1611":
-		Exit = "Łódź Chojny";
+		Exit = "Sieradz";
 		break;
 	case "1613":
 	case "1614":
@@ -2034,7 +2262,7 @@ switch (train3)  {
 	case "9321":
 	case "9322":
 	case "9323":
-		Exit = "Rokiciny";
+		Exit = "Piotrków";
 		break;
 	case "4010":
 	case "4011":
@@ -2083,14 +2311,14 @@ switch (train3)  {
 		Exit = "Sędziszów";
 		break;
 	default:
-		Exit = "!! " + train3
+		Exit = "err " + train3
 }
 train3 = TrainNoLocal.substring(0, 3);
-//**** dont 3 chiffres !!!
+//**** dont 3 chiffres différents !!!
 switch (train3)  {
 	case "741":
 		if (globalThis_area0 == "L001_L017_LW_Gr")  {
-			Exit = "Rokiciny";
+			Exit = "Piotrków";
 			break;
 		}
 		if (globalThis_area0 == "L001_KO_Zw")  {
@@ -2146,7 +2374,7 @@ switch (train3)  {
 		break;		
 	case "105":
 	case "212":
-		Exit = "Łódź Fabryczna";
+		Exit = "Łódź Widzew";
 		break;		
 	case "122":
 		Exit = "Mikołajów";
@@ -2171,14 +2399,14 @@ switch (train3)  {
 	case "932":
 		break;		
 	default:
-		Exit = "!! " + train3
+		Exit = "err " + train3
 }
 }
 
 //*** Fret
 
 if (TrainNoLocal.length == 6)  {
-//**** dont 6 chiffres !!!
+//**** 6 chiffres dont 6 chiffres  différents   Łódź Widzew!!!
 train3 = TrainNoLocal.substring(0, 6); 
 switch (train3)  {
 	case "335001":
@@ -2235,7 +2463,7 @@ switch (train3)  {
 			break;
 }
 train3 = TrainNoLocal.substring(0, 4);
-//**** dont 4 chiffres !!! 
+//**** 6 chiffres dont 4 chiffres  différents!!! 
 switch (train3)  {
 	case "4120":
 		if (globalThis_area0 == "L001_L017_LW_Gr")  {
@@ -2250,7 +2478,7 @@ switch (train3)  {
 			Exit = "Marków";
 			break;
 	case "1440":
-		Exit = "Rokiciny";
+		Exit = "Piotrków";
 		break;
 	case "1442":
 		Exit = "Staszic";
@@ -2268,10 +2496,10 @@ switch (train3)  {
 	case "3360":
 			break;
 	default:
-		Exit = "!! " + train3		
+		Exit = "err " + train3		
 }
 train3 = TrainNoLocal.substring(0, 3);
-//**** dont 3 chiffres !!!
+//**** 6 chiffres dont 3 chiffres différents!!!
 switch (train3)  {		
 	case "234":
 		Exit = "Kraków Olsza";
@@ -2329,6 +2557,14 @@ switch (train3)  {
 	case "446":
 		Exit = "Staszic";
 		break;
+	case "152":
+	case "154":
+		Exit = "Łask";
+		break;
+	case "512":
+	case "514":
+		Exit = "Józefinów";
+		break;
 	case "144":
 	case "335":
 	case "336":
@@ -2338,7 +2574,7 @@ switch (train3)  {
 	case "4121":
 		break;
 	default:
-		Exit = "!! " + train3		
+		Exit = "err " + train3		
 }	
 }	
 	return Exit
@@ -2684,6 +2920,10 @@ case "5431_Zy_D4":
 case "5431_Zy_F1":
 case "5431_Zy_F4":
 // autres stations
+case "L17_137":
+case "L17_124":
+case "L17_167":
+case "L17_152":
 case "L1_518":
 case "L1_533":
 case "L1_484":
@@ -2705,13 +2945,27 @@ case "L1_894":
 case "L1_909":
 case "L1_922":
 case "L1_988":
-case "L1_1003":
-case "L1_1102":
+
 case "L1_1115":
-case "L17_137":
-case "L17_124":
-case "L17_167":
-case "L17_152":
+case "3594_Ro_K":
+case "L1_1155":
+case "L1_1199":
+case "L1_1243":
+case "L1_1315P":
+case "L1_1343P":
+case "L1_1385P":
+case "3223_PT_E":
+
+case "3223_PT_D":
+case "L1_1386":
+case "L1_1328":
+case "60_Ba_F":
+case "L1_1226":
+case "L1_1186":
+case "3594_Ro_F":
+case "L1_1102":
+
+
 
 	signal = true;
 	break;
@@ -2771,7 +3025,7 @@ function drawSettings() {
         if (settingName === true) {
             settingName = "YES   ";
         } else if (settingName === false) {
-            settingName = "NO   ";
+            settingName = "NO    ";
         }
         settingName = settingName.toUpperCase();
         settingName = settingName.substring(0, 6);
@@ -2802,9 +3056,9 @@ function drawKeysUsed(area) {
     for (let row in text) {
         for (let char in text[row].split("'")[0]) {		
 		ctx.fillStyle = coloursPalette[settings.colour][1];		
-    if (settings.drawScanLines) {
-        drawScanLines();
-    }
+///    if (settings.drawScanLines) {
+///        drawScanLines();
+///    }
     }
 }
 }
@@ -2896,7 +3150,7 @@ function drawTrains(trainsToDraw) {
         if (settingName === true) {
             settingName = "YES   ";
         } else if (settingName === false) {
-            settingName = "NO   ";
+            settingName = "NO    ";
         }
         settingName = settingName.toUpperCase();
         settingName = settingName.substring(0, 6);
@@ -3008,9 +3262,9 @@ drawstationuser(area4, "Będzin", "B", 76, 3, 6)
 drawstationuser(area4, "Dąbrowa Górnicza", "DG", 109, 3, 16)
 //drawstation2mots(area4, "S.Południowy ", 43, 21, 14)
 drawstationuser(area4, "S.Południowy", "Spł1", 43, 21, 13)
-drawstationuser(area4, "Juliusz", "Ju", 62, 33, 7)
+drawstationuser(area4, "Juliusz", "Ju", 62, 34, 7)
 drawstationuser(area4, "Dorota", "Dra", 71, 53, 6)
-drawstationuser(area4, "DGHK", "DGHK", 100, 51, 4)
+drawstationuser(area4, "DGHK", "DGHK", 99, 52, 4)
 drawstationuser(area4, "Dąbrowa Górnicza Ząbkowice", "DZ", 111, 53, 26)
 //drawstation2mots(area4, "S.Kazimierz", 72, 22, 12)
 drawstationuser(area4, "S.Kazimierz", "SKz", 72, 22, 12)
@@ -3044,7 +3298,7 @@ drawstation2mots(area5, "D.G.Poludniowa", 131, 25, 14)
 drawstation2mots(area6, "L062 - L064 - L065 : S.Południowy - Sędziszów-Psary-Koniecpol", 1, 0, 61)
 drawstation2mots(area6, "------------------", 1, 1, 18)
 drawstationuser(area6, "S.Południowy", "Spł1", 10, 11, 13)
-drawstationuser(area6, "Julius", "Ju", 50, 13, 6)
+drawstationuser(area6, "Julius", "Ju", 50, 14, 6)
 drawstationuser(area6, "S.Kazimierz", "SKz", 64, 2, 12)
 drawstationuser(area6, "D.G.Wschodnia", "DW", 106, 2, 14)
 drawstationuser(area6, "Sławków", "Sl", 134, 11, 7)
@@ -3053,13 +3307,13 @@ drawstationuser(area6, "Tunel", "Tl", 44, 53, 5)
 drawstationuser(area6, "Kozłów >>", "Kz", 81, 55, 9)
 drawstationuser(area6, "<< Klimontów", "Kz", 98, 49, 12)
 drawstationuser(area6, "<< Starzyny", "Str", 109, 37, 11)
-drawstationuser(area6, "Sprowa >>", "Str", 102, 33, 9)
+drawstationuser(area6, "Sprowa >>", "Str", 102, 34, 9)
 drawstationuser(area6, "Psary", "Ps", 136, 28, 5)
 drawstation2mots(area6, "S.Główny", 5, 2, 8)
 drawstation2mots(area6, "<-Dorota", 102, 11, 8)
 drawstation2mots(area6, "D.G.Strzemieszyce", 84, 13, 17)
 drawstation2mots(area6, "S.Dańdówka", 34, 4, 10)
-drawstation2mots(area6, "S.Porąbka", 49, 5, 9)
+drawstation2mots(area6, "S.Porąbka", 53, 5, 9)
 
 drawstation2mots(area7, "L008 : Kraków - Kozłów", 1, 0, 22)
 drawstation2mots(area7, "----", 1, 1, 4)
@@ -3083,7 +3337,7 @@ drawstationuser(area8, "<< Galkówek", "G", 77, 5, 11)
 drawstationuser(area8, "Żakowice", "ZP", 85, 17, 8)
 drawstationuser(area8, "Południowe", "ZP", 84, 18, 10)
 drawstationuser(area8, "Koluski", "KO", 126, 4, 7)
-drawstationuser(area8, "Rogów", "Rg", 33, 27, 5)
+drawstationuser(area8, "Rogów", "Rg", 33, 31, 5)
 drawstationuser(area8, "Skierniewice", "Sk", 102, 47, 12)
 drawstationuser(area8, "Plyćwia", "Pl", 11, 40, 7)
 drawstationuser(area8, "Radziwillów >>", "Zr", 9, 54, 14)
@@ -3091,19 +3345,31 @@ drawstationuser(area8, "Mazowiecki", "Zr", 9, 55, 10)
 drawstationuser(area8, "<< Żyrardów", "Zr", 66, 48, 11)
 drawstation2mots(area8, " Puszcza ", 151, 51, 9)
 drawstation2mots(area8, "Mariańska", 151, 52, 9)
+drawstationuser(area8, "Baby", "Ba", 35, 24, 4)
 
-drawstation2mots(area9, "SCREEN UNDER CONSTRUCTION ...", 51, 38, 34)
+
+
+drawstation2mots(area9, "WORK IN PROGRESS ...", 51, 38, 20)
 
 		if (settings.showHornZone != true) {
-	drawstation2mots(area8, "│", 56, 9, 1)
+//	drawstation2mots(area8, "│", 56, 9, 1)
 	drawstation2mots(area8, "│", 56, 10, 1)
+//	drawstation2mots(area8, "│", 114, 20, 1)
+	/drawstation2mots(area8, "│", 114, 21, 1)
 		} else {
-	drawstation2mots(area8, "▲", 56, 9, 1)
+//	drawstation2mots(area8, "▲", 56, 9, 1)
 	drawstation2mots(area8, "▲", 56, 10, 1)
+//	drawstation2mots(area8, "▲", 114, 20, 1)
+	drawstation2mots(area8, "▲", 114, 21, 1)
 		}
-
+		if (settings.showSpeedLine != true) {
+	drawstation2mots(area8, " │ │ ", 111, 22, 5)
+	drawstation2mots(area8, " │ ", 111, 23, 3)	
+	drawstation2mots(area8, " │ ", 121, 19, 3)
+	} else {
+		
+	}			
 	if (isCurrentlyFlipped != true) {
-
 		} else {
 			
 drawstation2mots(area1, "L001 : Zawiercie - Katowice", 1, 0, 27)
@@ -3302,7 +3568,8 @@ drawstation2mots(area8, " │       ", 151, 40, 9)
 drawstation2mots(area8, " Mikolajow ", 0, 25, 11)
 drawstation2mots(area8, "    Mk     ", 0, 26, 11)
 drawstation2mots(area8, "     ", 122 , 30, 6)
-drawstationuser(area8, "  Rogów  ", "Rg", 31, 27, 9)
+drawstationuser(area8, "  Rogów  ", "Rg", 31, 31, 9)
+drawstation2mots(area8, "            ", 119, 26, 12)
 drawstation2mots(area8, "            ", 60, 34, 12)
 drawstation2mots(area8, "          ", 64 , 34, 10)
 drawstation2mots(area8, "          ", 64, 35, 10)
@@ -3310,7 +3577,8 @@ drawstationuser(area8, " Żakowice ", "ZP", 85, 17, 10)
 drawstationuser(area8, "Południowe", "ZP", 85, 16, 10)
 drawstation2mots(area8, " ", 75 , 39, 1)  // Żakowice
 drawstation2mots(area8, "            ", 64 , 38, 12)  // Żakowice
-drawstation2mots(area8, "Łódź Olechów", 103, 33, 12)
+drawstation2mots(area8, "Łódź Olechów", 104, 34, 12)
+drawstation2mots(area8, "             ", 103, 33, 13)
 drawstation2mots(area8, "           ", 134, 35, 11)
 drawstationuser(area8, "  Łódź Widzew  ", "LW", 13, 20, 15)
 ////drawstation2mots(area8, "            ", 71, 51, 12)
@@ -3322,6 +3590,7 @@ drawstationuser(area8, "Galkówek >>", "G", 77, 5, 11)
 drawstation2mots(area8, "           ", 72, 52, 11)  // Galkówek
 drawstationuser(area8, "Koluski", "KO", 126, 3, 7)
 drawstation2mots(area8, "       ", 27, 52, 7)
+
 
 	drawstation2mots(area8, "     ", 56, 8, 5)
 	drawstation2mots(area8, "     ", 56, 9, 5)
@@ -3339,8 +3608,7 @@ drawstationuser(area8, "\u25a3 ", "Pl", 17, 47, 2) // Plyćwia
 	drawstation2mots(area8, "▲", 103, 48, 1)
 		}
 
-drawstation2mots(area9, "SCREEN UNDER CONSTRUCTION ...", 51, 18, 34)
-drawstation2mots(area9, "                                  ", 85, 18, 34)
+drawstation2mots(area9, "WORK IN PROGRESS ...              ", 85, 18, 34)
 
 		}
 
@@ -3546,7 +3814,18 @@ function drawNumberBox3(number = null, x, y, speed = -1, signalDirection = 0, tr
 
     if (isSpeedBox)
         number = speed.toFixed(0);
-
+	
+if (globalThis_area0 != "L001_L017_LW_Gr") {
+} else {		
+if ( y != 27 ) {
+   } else {		
+	globalThis.train4 = 1;
+	}
+	if ( y != 25 ) {
+	} else {	
+	globalThis.train4 = -1; 
+	}
+}
 
 	if ((globalThis.train4 == 1)) {	
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
@@ -3671,6 +3950,17 @@ function drawNumberBox4(number = null, x, y, speed = -1, signalDirection = 0, tr
     if (isSpeedBox)
         number = speed.toFixed(0);
 
+if (globalThis_area0 != "L001_L017_LW_Gr") {
+} else {		
+if ( y != 27 ) {
+   } else {		
+	globalThis.train4 = 1;
+	}
+	if ( y != 25 ) {
+	} else {	
+	globalThis.train4 = -1; 
+	}
+}
 
 	if ((globalThis.train4 == 1)) {	
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
@@ -3797,6 +4087,7 @@ function createSpeedBoxFromTrain5(train, isSpeedBox = false, train3) {
     speedBox[2] = y - 1;
 
 
+
 	if (globalThis.train4 === 1) {
 //	if (speedBox2 == x2 + 2) {
 	globalThis.senstrain = -1;
@@ -3865,6 +4156,7 @@ function createSpeedBoxFromTrain6(train, isSpeedBox = false, train3) {
     speedBox[1] = (train[4] === 1 ? (speedBox[1] = x + 2) : (x - 1));
     speedBox2 = (train[4] === 1 ? (speedBox[1] = x2 + 2) : (x2 - 1));
     speedBox[2] = y - 1;
+
 
 
 	if (globalThis.train4 === 1) {
@@ -3937,6 +4229,7 @@ function createSpeedBoxFromTrain8(train, isSpeedBox = false, train3) {
     speedBox[2] = y - 1;
 
 
+
 	if (globalThis.train4 === 1) {
 //	if (speedBox2 == x2 + 2) {
 	globalThis.senstrain = -1;
@@ -3967,8 +4260,20 @@ function drawNumberBox5(number = null, x, y, speed = -1, signalDirection = 0, tr
     if (isSpeedBox)
         numberspeed = speed.toFixed(0);
 
+if (globalThis_area0 != "L001_L017_LW_Gr") {
+} else {		
+if ( y != 27 ) {
+   } else {		
+	globalThis.train4 = 1;
+	}
+	if ( y != 25 ) {
+	} else {	
+	globalThis.train4 = -1; 
+	}
+}
+
 number = train8[train3];
-        if (number.substring(5,8) != "HLP") {
+        if (number.substring(5,8) != "L.E") {
 maxLength = 8;
 	} else {
 maxLength = 12;		
@@ -4017,7 +4322,7 @@ maxLength = 12;
 
 // ****************** Train à l'arret *****************
 	if ((numberspeed < 1)) {
-        if (number.substring(5,8) != "HLP") {
+        if (number.substring(5,8) != "L.E") {
 maxLength = 8
 	} else {
 maxLength = 12		
@@ -4068,11 +4373,23 @@ function drawNumberBox6(number = null, x, y, speed = -1, signalDirection = 0, tr
     if (isSpeedBox)
         numberspeed = speed.toFixed(0);
 
+if (globalThis_area0 != "L001_L017_LW_Gr") {
+} else {		
+if ( y != 27 ) {
+   } else {		
+	globalThis.train4 = 1;
+	}
+	if ( y != 25 ) {
+	} else {	
+	globalThis.train4 = -1; 
+	}
+}
+
 number = "v " + train9[train3] + "";
-        if (number.substring(5,8) != "HLP") {
-maxLengthHLP = 0
+        if (number.substring(5,8) != "L.E") {
+maxLengthLE = 0
 	} else {
-maxLengthHLP = 5		
+maxLengthLE = 5		
 	}
 	if ((globalThis.train4 == 1)) {	
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
@@ -4089,14 +4406,14 @@ maxLengthHLP = 5
 		if (globalThis.user != "user") {
 	//// * = User - not Bot
 	//// number = vitesse
-	maxLength = maxLengthHLP + 6;
+	maxLength = maxLengthLE + 6;
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
 			n = "" + number + "" + ">";
 	humain = false;
 		    } else {
-	maxLength = maxLengthHLP + 8;
+	maxLength = maxLengthLE + 8;
 	ctx.fillStyle = "#48dfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
@@ -4109,14 +4426,14 @@ maxLengthHLP = 5
 		if (globalThis.user != "user") {
 	//// * = User - not Bot
 	//// number = vitesse
-	maxLength = maxLengthHLP + 6;
+	maxLength = maxLengthLE + 6;
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
 			n = "<" + number + "";
 	humain = false;
 		    } else {
-	maxLength = maxLengthHLP + 8;
+	maxLength = maxLengthLE + 8;
 	ctx.fillStyle = "#48dfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
@@ -4128,10 +4445,10 @@ maxLengthHLP = 5
 
 // ****************** Train à l'arret *****************
 	if ((numberspeed < 1)) {
-        if (number.substring(5,8) != "HLP") {
-maxLengthHLP = 0
+        if (number.substring(5,8) != "L.E") {
+maxLengthLE = 0
 	} else {
-maxLengthHLP = 5		
+maxLengthLE = 5		
 	}
 			if (humain) {
 
@@ -4144,18 +4461,18 @@ maxLengthHLP = 5
 
 			if (globalThis.train4 != 1) {
 			if (humain) {
-	maxLength = maxLengthHLP + 8;
+	maxLength = maxLengthLE + 8;
 			n = "<*" + number + "*";
 			} else {
-	maxLength = maxLengthHLP + 6;
+	maxLength = maxLengthLE + 6;
 			n = "<" + number + "";			
 			}
 			} else {
 			if (humain) {
-	maxLength = maxLengthHLP + 8;
+	maxLength = maxLengthLE + 8;
 			n = "*" + number + "" + "*>";
 			} else {
-	maxLength = maxLengthHLP + 6;
+	maxLength = maxLengthLE + 6;
 			n = "" + number + "" + ">";			
 			}
 			}
@@ -4191,12 +4508,24 @@ function drawNumberBox7(number = null, x, y, speed = -1, signalDirection = 0, tr
     if (isSpeedBox)
         numberspeed = speed.toFixed(0);
 
+if (globalThis_area0 != "L001_L017_LW_Gr") {
+} else {		
+if ( y != 27 ) {
+   } else {		
+	globalThis.train4 = 1;
+	}
+	if ( y != 25 ) {
+	} else {	
+	globalThis.train4 = -1; 
+	}
+}
+
 number = train10[train3];
-        if (number.substring(5,8) != "HLP") {
-maxLengthHLP = 0
+        if (number.substring(5,8) != "L.E") {
+maxLengthLE = 0
 number = "" + number;
 	} else {
-maxLengthHLP = 2
+maxLengthLE = 2
 	
 	}
 	if ((globalThis.train4 == 1)) {	
@@ -4214,14 +4543,14 @@ maxLengthHLP = 2
 		if (globalThis.user != "user") {
 	//// * = User - not Bot
 	//// number = vitesse
-	maxLength = maxLengthHLP + 6;
+	maxLength = maxLengthLE + 6;
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
 			n = "" + number + "" + ">";
 	humain = false;
 		    } else {
-	maxLength = maxLengthHLP + 8;
+	maxLength = maxLengthLE + 8;
 	ctx.fillStyle = "#48dfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
@@ -4234,14 +4563,14 @@ maxLengthHLP = 2
 		if (globalThis.user != "user") {
 	//// * = User - not Bot
 	//// number = vitesse
-	maxLength = maxLengthHLP + 6;
+	maxLength = maxLengthLE + 6;
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
 			n = "<" + number + "";
 	humain = false;
 		    } else {
-	maxLength = maxLengthHLP + 8;
+	maxLength = maxLengthLE + 8;
 	ctx.fillStyle = "#48dfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
@@ -4253,10 +4582,10 @@ maxLengthHLP = 2
 
 // ****************** Train à l'arret *****************
 	if ((numberspeed < 1)) {
-        if (number.substring(5,8) != "HLP") {
-maxLengthHLP = 0
+        if (number.substring(5,8) != "L.E") {
+maxLengthLE = 0
 	} else {
-maxLengthHLP = 3		
+maxLengthLE = 3		
 	}
 			if (humain) {
 
@@ -4269,18 +4598,18 @@ maxLengthHLP = 3
 
 			if (globalThis.train4 != 1) {
 			if (humain) {
-	maxLength = maxLengthHLP + 9;
+	maxLength = maxLengthLE + 9;
 			n = "<*" + number + "*";
 			} else {
-	maxLength = maxLengthHLP + 6;
+	maxLength = maxLengthLE + 6;
 			n = "<" + number + "";			
 			}
 			} else {
 			if (humain) {
-	maxLength = maxLengthHLP + 9;
+	maxLength = maxLengthLE + 9;
 			n = "*" + number + "" + "*>";
 			} else {
-	maxLength = maxLengthHLP + 6;
+	maxLength = maxLengthLE + 6;
 			n = "" + number + "" + ">";			
 			}
 			}
@@ -4315,6 +4644,18 @@ function drawNumberBox8(number = null, x, y, speed = -1, signalDirection = 0, tr
 
     if (isSpeedBox)
         numberspeed = speed.toFixed(0);
+
+if (globalThis_area0 != "L001_L017_LW_Gr") {
+} else {		
+if ( y != 27 ) {
+   } else {		
+	globalThis.train4 = 1;
+	}
+	if ( y != 25 ) {
+	} else {	
+	globalThis.train4 = -1; 
+	}
+}
 
 switch (globalThis.Key) {
 	case "o":
@@ -4484,17 +4825,17 @@ function drawVitalSymbol(updateVitalSymbol) {
     }
 }
 
-function drawScanLines() {
-    const lineWidth = 2;
-    ctx.strokeStyle = 'rgba(' + [0, 0, 0, 0.2] + ')';
-    ctx.lineWidth = lineWidth;
-    ctx.beginPath();
-    for (let i = 0; i < screenHeight / lineWidth / 2; i++) {
-        ctx.moveTo(0, i * lineWidth * 2);
-        ctx.lineTo(screenWidth, i * lineWidth * 2);
-    }
-    ctx.stroke();
-}
+///function drawScanLines() {
+///    const lineWidth = 2;
+///    ctx.strokeStyle = 'rgba(' + [0, 0, 0, 0.2] + ')';
+///    ctx.lineWidth = lineWidth;
+///    ctx.beginPath();
+///    for (let i = 0; i < screenHeight / lineWidth / 2; i++) {
+///        ctx.moveTo(0, i * lineWidth * 2);
+///        ctx.lineTo(screenWidth, i * lineWidth * 2);
+///    }
+///    ctx.stroke();
+///}
 
 function resizeMonitor() {
     let cnv = document.getElementById("cnv");
@@ -4526,7 +4867,7 @@ function flipLayouts() {
         }
         layouts[layoutId] = layouts[layoutId].reverse();
         for (let i in layouts[layoutId]) {
-            let signals = layouts[layoutId][i].split("'");
+			let signals = layouts[layoutId][i].split("'");
             let row = signals.shift();
             let flippedSignals = signals.reverse();
             let flippedRow = "";
@@ -4610,7 +4951,7 @@ function drawserver() {
         if (settingName === true) {
             settingName = "YES   ";
         } else if (settingName === false) {
-            settingName = "NO   ";
+            settingName = "NO    ";
         }
         settingName = settingName.toUpperCase();
         settingName = settingName.substring(0, 6);
