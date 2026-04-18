@@ -7,7 +7,7 @@
 *   SPDX-License-Identifier: CC-BY-NC-SA-4.0
 *  Avec Stations-User
 *
-* Traduit et adapté par RWag64.
+* Translated and adapted by RWag64.
 *
 * v 2.9.5 En
 **/
@@ -1356,7 +1356,7 @@ area5 = "L062_L171_SG_Tl";
 area6 = "L062_L064_SPł_Sd";
 area7 = "L008_KG_Kz";
 area8 = "L001_L017_LW_Gr";
-area9 = "L017_LW";
+area9 = "L014_L017_LW";
 
 couleur = 1;
 	if (isCurrentlyFlipped != true) {
@@ -1388,7 +1388,7 @@ area5 = "L062_L171_SG_Tl";
 area6 = "L062_L064_SPł_Sd";
 area7 = "L008_KG_Kz";
 area8 = "L001_L017_LW_Gr";
-area9 = "L017_LW";
+area9 = "L014_L017_LW";
 
 couleur = 1;
 
@@ -1491,7 +1491,13 @@ couleur = 1;
         drawRadioBox("4 ◯  2", 139, 40, area8, couleur);	// Puszcza
         drawRadioBox("2 ◯  4", 131, 49, area8, couleur);	// Puszcza
         drawRadioBox("4 ◯ ", 156, 49, area8, couleur);	// Puszcza
-		
+
+        drawRadioBox("1 ◯  4", 42, 7, area9, couleur);	// Zgierz
+        drawRadioBox("4 ◯  7", 125, 7, area9, couleur);	// Lodz Widzew
+		drawRadioBox("7 ◯  5", 153, 17, area9, couleur);	// Lodz Widzew
+        drawRadioBox("1 ◯  5", 26, 20, area9, couleur);	// Lodz Zabieniec
+        drawRadioBox("5 ◯  7", 146, 29, area9, couleur);	// Lodz Chony		
+
 		} else {
 
 couleur = 1;
@@ -1612,15 +1618,20 @@ const time = new Date();
 
 heures = (time.getHours());
 minutes = (time.getMinutes());
-        if (settings.server != "int1") {
+ 
+ if (settings.server != "int1") {
 		} else {
 			heures = heures - 1;
         }
         if (settings.server != "int3") {
 		} else {
-			heures = heures - 7;
+			heures = heures - 9;
         }
-        if (settings.server != "int6") {
+        if (settings.server != "int4") {
+		} else {
+			heures = heures + 11;
+        } 
+		if (settings.server != "int6-off") {
 		} else {
 			heures = heures + 7;
         }
@@ -1628,13 +1639,21 @@ minutes = (time.getMinutes());
 		} else {
 			heures = heures - 3;
         }
-        if (settings.server != "pl1") {
+        if (settings.server != "de2") {
 		} else {
 			heures = heures - 6;
+        }
+        if (settings.server != "pl1") {
+		} else {
+			heures = heures - 10;
         }
         if (settings.server != "pl4") {
 		} else {
 			heures = heures - 3;
+        }
+        if (settings.server != "pl5") {
+		} else {
+			heures = heures - 5;
         }
         if (heures < 0) {
 			heures = heures + 24;
@@ -1648,7 +1667,7 @@ minutes = (time.getMinutes());
         if (minutes <= 9) {
 			minutes = "0" + minutes;
         }
-n = (heures + ":" + minutes);
+  n = (heures + ":" + minutes);
 
 x = 78;
 y = 0;
@@ -2965,7 +2984,57 @@ case "L1_1186":
 case "3594_Ro_F":
 case "L1_1102":
 
-
+// Lodz
+case "3827_Si_D":
+case "5291_ZW_R":
+case "5291_ZW_H2":
+case "292_Bo_D":
+case "2360_La_E":
+case "2360_La_F":
+case "802_Db_D":
+case "3093_Pa_R":
+case "3093_Pa_E":
+case "3093_Pa_F":
+case "3093_Pa_M":
+case "2330_Lb_E":
+case "2330_Lb_F":
+case "3577_Rt_E":
+case "3577_Rt_F":
+case "2432_LK_G4":
+case "2463_LZ_S":
+case "5311_Zg_D":
+case "5311_Zg_E":
+case "5311_Zg_F":
+case "5311_Zg_G":
+case "5311_Zg_H":
+case "5311_Zg_K":
+case "5311_Zg_L":
+case "5311_Zg_M":
+case "2437_LM_D": // Marizyn
+case "2437_LM_F":
+case "2432_LK_J151":  // Kalista
+case "2432_LK_J152":
+case "2432_LK_J154":
+case "2432_LK_H152":
+case "2432_LK_K8":
+case "2432_LK_K6":
+case "2432_LK_K4":
+case "2432_LK_K2":
+case "2432_LK_K1":
+case "2432_LK_K3":
+case "2426_LCH_B":  // Chony
+case "2426_LCH_C":
+case "2426_LCH_D":
+case "2426_LCH_J":
+case "2426_LCH_K":
+case "2426_LCH_M":
+case "2439_LOC_Y1":
+case "2439_LOA_E12":
+case "2426_LCH_P":
+case "2439_LOA_D":
+case "2439_LOB_N11":
+case "2439_LOC_T21":
+case "2439_LOC_X2":
 
 	signal = true;
 	break;
@@ -3187,7 +3256,7 @@ area5 = "L062_L171_SG_Tl";
 area6 = "L062_L064_SPł_Sd";
 area7 = "L008_KG_Kz";
 area8 = "L001_L017_LW_Gr";
-area9 = "L017_LW";
+area9 = "L014_L017_LW";
 
        for (let station of stationToDraw) {
 		
@@ -3347,9 +3416,16 @@ drawstation2mots(area8, " Puszcza ", 151, 51, 9)
 drawstation2mots(area8, "Mariańska", 151, 52, 9)
 drawstationuser(area8, "Baby", "Ba", 35, 24, 4)
 
-
-
-drawstation2mots(area9, "WORK IN PROGRESS ...", 51, 38, 20)
+drawstationuser(area9, "Zgierz", "Zg", 24, 14, 6)
+drawstationuser(area9, "Łódź Marysin >>", "Zg", 92, 6, 12)
+drawstationuser(area9, "<< Łódź Widzew", "LW", 137, 18, 11)
+drawstationuser(area9, "Łódź Chony", "LCH", 130, 33, 10)
+drawstationuser(area9, "Łódź Żabieniec", "LZ", 21, 24, 14)
+drawstationuser(area9, "Łódź Kaliska", "LK", 60, 26, 12)
+drawstationuser(area9, "Łódź Lubliniek", "Lb", 73, 34, 14)
+drawstationuser(area9, "Łask", "La", 28, 34, 4)
+drawstationuser(area9, "Pabianice", "Pa", 57, 33, 9)
+drawstationuser(area9, "Zdunska Wola", "ZW", 26, 44, 12)
 
 		if (settings.showHornZone != true) {
 //	drawstation2mots(area8, "│", 56, 9, 1)
@@ -5082,7 +5158,18 @@ function keyboard(e) {
 		globalThis.showExit = false;
             break;
         case "9":
-            setAreaTo = "L017_LW";
+            setAreaTo = "L014_L017_LW";
+		globalThis.Key = "9";
+		globalThis.showLoco = false;
+		globalThis.showSpeed = false;
+		globalThis.showTypeTrain = false;
+		globalThis.showOrigine = false;
+		globalThis.showDestination = false;
+		globalThis.showEntry = false;
+		globalThis.showExit = false;
+            break;
+        case "0":
+            setAreaTo = "L001_L017_PT_LW";
 		globalThis.Key = "9";
 		globalThis.showLoco = false;
 		globalThis.showSpeed = false;
