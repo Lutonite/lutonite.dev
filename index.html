@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Loïc Herman (@lutonite) — Senior Software Engineer</title>
+	<meta name="description" content="Loïc Herman — senior software engineer working on systems integration tools. Java, TypeScript, Go, Rust, Kubernetes, and more.">
+
+	<meta property="og:title" content="Loïc Herman (@lutonite)">
+	<meta property="og:description" content="Senior software engineer working on systems integration tools.">
+	<meta property="og:type" content="website">
+	<meta property="og:url" content="https://lutonite.dev">
+
+	<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='18' fill='%230b0f14'/%3E%3Ctext x='50' y='66' font-family='monospace' font-size='46' font-weight='700' fill='%23e8a33d' text-anchor='middle'%3E%3E_%3C/text%3E%3C/svg%3E">
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+	<div class="crt-overlay" aria-hidden="true"></div>
+
+	<div class="window">
+
+		<header class="chrome">
+			<div class="chrome-title">lutonite@dev:&nbsp;~</div>
+			<nav class="chrome-nav" aria-label="Sections">
+				<a href="#about">cd ~/about</a>
+				<a href="#stack">cd ~/stack</a>
+				<a href="#projects">cd ~/projects</a>
+				<a href="#contact">cd ~/contact</a>
+			</nav>
+			<div class="chrome-controls" aria-hidden="true">
+				<span class="win-btn win-min">
+					<svg viewBox="0 0 10 10"><polyline points="1.5,3.5 5,7 8.5,3.5"/></svg>
+				</span>
+				<span class="win-btn win-max">
+					<svg viewBox="0 0 10 10"><rect x="1.5" y="1.5" width="7" height="7" transform="rotate(45 5 5)"/></svg>
+				</span>
+				<a href="https://l6e.ch/yes.html" style="border: none; text-decoration: none;" target="_blank" rel="noopener noreferrer">
+					<span class="win-btn win-close">
+						<svg viewBox="0 0 10 10"><line x1="1.5" y1="1.5" x2="8.5" y2="8.5"/><line x1="8.5" y1="1.5" x2="1.5" y2="8.5"/></svg>
+					</span>
+				</a>
+			</div>
+		</header>
+
+		<main class="term-body">
+
+			<section class="hero" id="hero" aria-label="Introduction">
+				<p class="line">
+					<span class="prompt">lutonite@dev:~$</span>
+					<span class="cmd" id="hero-cmd"></span><span class="caret" id="hero-caret">&#9608;</span>
+				</p>
+				<div class="hero-output" id="hero-output">
+					<p class="out-name">Loïc Herman <span class="handle">@lutonite</span></p>
+					<p class="out-role">Senior Software Engineer <span class="dim">—</span> Systems Integration</p>
+					<p class="out-loc dim"># Vaud, Switzerland</p>
+				</div>
+				<p class="line hero-next">
+					<span class="prompt">lutonite@dev:~$</span>
+					<span class="caret caret-static">&#9608;</span>
+				</p>
+			</section>
+
+			<section class="block" id="about" aria-labelledby="about-label">
+				<p class="comment" id="about-label"># about</p>
+				<p class="line"><span class="prompt">$</span> <span class="cmd-static">cat about.md</span></p>
+				<div class="prose">
+					<p>I work on the tools that keep large systems talking to each other — mostly for a cantonal government IT department in Switzerland, where I split my time between TypeScript/Angular front-ends and Java/Spring services running on Kubernetes.</p>
+					<p>I like picking up a new language when a problem calls for one; Rust and Haskell are recent excuses. Outside of work I tinker with side projects, mess with home infrastructure, and occasionally build small websites for local associations.</p>
+				</div>
+			</section>
+
+			<section class="block" id="stack" aria-labelledby="stack-label">
+				<p class="comment" id="stack-label"># stack</p>
+				<p class="line"><span class="prompt">$</span> <span class="cmd-static">ls ./stack</span></p>
+
+				<div class="listing">
+					<p class="comment sub"># languages</p>
+					<ul class="tokens tokens-lang">
+						<li>java</li><li>typescript</li><li>go</li><li>rust</li><li>kotlin</li><li>c++</li><li>c#</li><li>haskell</li>
+					</ul>
+
+					<p class="comment sub"># frameworks</p>
+					<ul class="tokens tokens-fw">
+						<li>angular</li><li>nuxt</li><li>spring</li><li>hibernate</li><li>nest</li>
+					</ul>
+
+					<p class="comment sub"># infra &amp; data</p>
+					<ul class="tokens tokens-infra">
+						<li>kubernetes</li><li>ansible</li><li>terraform</li><li>postgresql</li><li>oracle</li>
+					</ul>
+				</div>
+			</section>
+
+			<section class="block" id="projects" aria-labelledby="projects-label">
+				<p class="comment" id="projects-label"># projects</p>
+				<p class="line"><span class="prompt">$</span> <span class="cmd-static">ls -la ./projects</span></p>
+
+				<div class="listing">
+					<a class="project-row" href="https://github.com/heig-lherman" target="_blank" rel="noopener noreferrer">
+						<span class="perms">drwxr-xr-x</span>
+						<span class="proj-name">heig-lherman/*</span>
+						<span class="arrow">&rarr;</span>
+						<span class="proj-desc">practical works from my engineering studies at HEIG-VD</span>
+					</a>
+					<p class="comment sub project-more"># more projects coming soon</p>
+				</div>
+			</section>
+
+			<section class="block" id="contact" aria-labelledby="contact-label">
+				<p class="comment" id="contact-label"># contact</p>
+				<p class="line"><span class="prompt">$</span> <span class="cmd-static">cat contact.txt</span></p>
+
+				<div class="listing contact-listing">
+					<button class="contact-row" type="button" data-copy="me@l6e.dev">
+						<span class="key">email</span>
+						<span class="val">me@l6e.dev</span>
+						<span class="copy-hint" aria-hidden="true">copy</span>
+					</button>
+					<button class="contact-row" type="button" data-copy="@lutonite">
+						<span class="key">discord</span>
+						<span class="val">@lutonite</span>
+						<span class="copy-hint" aria-hidden="true">copy</span>
+					</button>
+				</div>
+			</section>
+
+		</main>
+
+		<footer class="term-footer">
+			<span class="status-dot" aria-hidden="true"></span>
+			<span class="prompt">lutonite@dev:~$</span>
+			<span class="dim">-- connection active --</span>
+		</footer>
+
+	</div>
+
+	<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+	<script src="assets/js/main.js"></script>
+</body>
+</html>

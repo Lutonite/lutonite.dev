@@ -1,0 +1,564 @@
+/* ---------------------------------------------------------
+   lutonite.dev — terminal-window portfolio
+--------------------------------------------------------- */
+
+:root {
+	--bg: #0b0f14;
+	--panel: #121820;
+	--panel-alt: #0e131a;
+	--border: #26313f;
+
+	--amber: #e8a33d;
+	--teal: #5ec8c1;
+	--violet: #9d8cff;
+
+	--text: #c9d1d9;
+	--text-dim: #64707d;
+	--text-bright: #f2f5f7;
+
+	--font-mono: 'IBM Plex Mono', 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+	--radius: 10px;
+	--window-max: 900px;
+}
+
+* {
+	box-sizing: border-box;
+}
+
+html {
+	color-scheme: dark;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	background:
+		radial-gradient(circle at 1px 1px, rgba(201, 209, 217, 0.06) 1px, transparent 0) 0 0 / 24px 24px,
+		var(--bg);
+	color: var(--text);
+	font-family: var(--font-mono);
+	font-size: 16px;
+	line-height: 1.65;
+	-webkit-font-smoothing: antialiased;
+	padding: 40px 20px 64px;
+}
+
+::selection {
+	background: rgba(232, 163, 61, 0.28);
+	color: var(--text-bright);
+}
+
+a {
+	color: var(--teal);
+	text-decoration: none;
+	border-bottom: 1px solid rgba(94, 200, 193, 0.35);
+	transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+a:hover,
+a:focus-visible {
+	color: var(--text-bright);
+	border-color: var(--teal);
+}
+
+:focus-visible {
+	outline: 2px solid var(--amber);
+	outline-offset: 2px;
+}
+
+/* subtle CRT scanline texture */
+.crt-overlay {
+	position: fixed;
+	inset: 0;
+	pointer-events: none;
+	z-index: 50;
+	background: repeating-linear-gradient(
+		to bottom,
+		rgba(255, 255, 255, 0.018) 0px,
+		rgba(255, 255, 255, 0.018) 1px,
+		transparent 1px,
+		transparent 3px
+	);
+	mix-blend-mode: overlay;
+}
+
+/* ---------------------------------------------------------
+   Window chrome
+--------------------------------------------------------- */
+
+.window {
+	max-width: var(--window-max);
+	margin: 0 auto;
+	background: var(--panel);
+	border: 1px solid var(--border);
+	border-radius: var(--radius);
+	box-shadow:
+		0 0 0 1px rgba(0, 0, 0, 0.4),
+		0 30px 80px -30px rgba(0, 0, 0, 0.7),
+		0 0 60px -20px rgba(232, 163, 61, 0.08);
+	overflow: hidden;
+}
+
+.chrome {
+	position: sticky;
+	top: 0;
+	z-index: 10;
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 12px 18px;
+	background: var(--panel-alt);
+	border-bottom: 1px solid var(--border);
+	backdrop-filter: blur(6px);
+}
+
+.chrome-title {
+	color: var(--text-dim);
+	font-size: 0.82rem;
+	white-space: nowrap;
+	flex: 0 0 auto;
+}
+
+.chrome-nav {
+	margin-left: auto;
+	display: flex;
+	gap: 18px;
+	font-size: 0.82rem;
+}
+
+.chrome-controls {
+	display: flex;
+	gap: 6px;
+	flex: 0 0 auto;
+	margin-left: 18px;
+}
+
+.win-btn {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 22px;
+	height: 22px;
+	border-radius: 4px;
+	border: 1px solid var(--border);
+	background: transparent;
+	transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.win-btn svg {
+	width: 9px;
+	height: 9px;
+	stroke: var(--text-dim);
+	stroke-width: 1.4;
+	fill: none;
+	stroke-linecap: round;
+	transition: stroke 0.15s ease;
+}
+
+.win-max svg {
+	fill: none;
+}
+
+.win-btn:hover {
+	border-color: var(--border);
+	background: rgba(255, 255, 255, 0.05);
+}
+
+.win-btn:hover svg {
+	stroke: var(--text-bright);
+}
+
+.win-close:hover {
+	background: rgba(217, 123, 108, 0.16);
+	border-color: rgba(217, 123, 108, 0.4);
+}
+
+.win-close:hover svg {
+	stroke: #d97b6c;
+}
+
+.chrome-nav a {
+	color: var(--text-dim);
+	border-bottom: none;
+	white-space: nowrap;
+}
+
+.chrome-nav a:hover,
+.chrome-nav a:focus-visible {
+	color: var(--amber);
+}
+
+@media (max-width: 640px) {
+	.chrome-nav {
+		display: none;
+	}
+}
+
+/* ---------------------------------------------------------
+   Terminal body
+--------------------------------------------------------- */
+
+.term-body {
+	padding: 28px clamp(18px, 4vw, 40px) 8px;
+}
+
+.block {
+	padding-top: 40px;
+	opacity: 0;
+	transform: translateY(10px);
+	transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.block.in-view {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.line {
+	margin: 0 0 6px;
+	word-break: break-word;
+}
+
+.prompt {
+	color: var(--amber);
+	font-weight: 600;
+	margin-right: 4px;
+}
+
+.cmd-static {
+	color: var(--text-bright);
+}
+
+.comment {
+	color: var(--text-dim);
+	margin: 0 0 10px;
+	font-size: 0.95rem;
+}
+
+.comment.sub {
+	margin-top: 18px;
+	margin-bottom: 8px;
+	font-size: 0.85rem;
+}
+
+/* ---------------------------------------------------------
+   Hero
+--------------------------------------------------------- */
+
+.hero {
+	padding-bottom: 8px;
+}
+
+.cmd {
+	color: var(--text-bright);
+}
+
+.caret {
+	display: inline-block;
+	color: var(--amber);
+	animation: blink 1s steps(1) infinite;
+}
+
+.caret-static {
+	opacity: 0.85;
+}
+
+@keyframes blink {
+	0%, 49% { opacity: 1; }
+	50%, 100% { opacity: 0; }
+}
+
+.hero-output {
+	margin: 10px 0 18px;
+	padding-left: 2px;
+	opacity: 0;
+	transform: translateY(6px);
+	transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+.hero-output.show {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.out-name {
+	margin: 0 0 4px;
+	font-size: clamp(1.5rem, 4.5vw, 2.35rem);
+	font-weight: 600;
+	color: var(--text-bright);
+	line-height: 1.25;
+}
+
+.handle {
+	color: var(--teal);
+	font-weight: 400;
+	font-size: 0.6em;
+	vertical-align: middle;
+}
+
+.out-role {
+	margin: 0 0 6px;
+	font-size: clamp(1rem, 2.6vw, 1.2rem);
+	color: var(--amber);
+}
+
+.out-loc {
+	margin: 0;
+	font-size: 0.9rem;
+}
+
+.dim {
+	color: var(--text-dim);
+}
+
+.hero-next {
+	margin-top: 4px;
+}
+
+/* ---------------------------------------------------------
+   Prose
+--------------------------------------------------------- */
+
+.prose {
+	max-width: 68ch;
+}
+
+.prose p {
+	margin: 0 0 14px;
+	color: var(--text);
+}
+
+/* ---------------------------------------------------------
+   Skill tokens ("ls" style listing)
+--------------------------------------------------------- */
+
+.listing {
+	margin-top: 4px;
+}
+
+.tokens {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px 18px;
+}
+
+.tokens li {
+	position: relative;
+	padding-left: 14px;
+	font-size: 0.95rem;
+}
+
+.tokens li::before {
+	content: '\2022';
+	position: absolute;
+	left: 0;
+	opacity: 0.55;
+}
+
+.tokens-lang li { color: var(--teal); }
+.tokens-fw li { color: var(--amber); }
+.tokens-infra li { color: var(--violet); }
+
+/* ---------------------------------------------------------
+   Projects
+--------------------------------------------------------- */
+
+.project-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 8px 12px;
+	padding: 12px 14px;
+	margin: 0 0 6px;
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.015);
+	color: var(--text);
+	border-bottom: 1px solid var(--border);
+	transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.project-row:hover,
+.project-row:focus-visible {
+	border-color: var(--teal);
+	background: rgba(94, 200, 193, 0.06);
+	color: var(--text);
+}
+
+.perms {
+	color: var(--text-dim);
+	font-size: 0.85rem;
+}
+
+.proj-name {
+	color: var(--amber);
+	font-weight: 600;
+}
+
+.arrow {
+	color: var(--text-dim);
+}
+
+.proj-desc {
+	color: var(--text);
+}
+
+.project-more {
+	padding-left: 14px;
+	font-size: 0.85rem;
+	opacity: 0.7;
+}
+
+/* ---------------------------------------------------------
+   Contact
+--------------------------------------------------------- */
+
+.contact-listing {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	max-width: 420px;
+}
+
+.contact-row {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	width: 100%;
+	padding: 10px 14px;
+	border: 1px solid var(--border);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.015);
+	color: var(--text);
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
+	transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.contact-row:hover,
+.contact-row:focus-visible {
+	border-color: var(--amber);
+	background: rgba(232, 163, 61, 0.06);
+}
+
+.contact-row .key {
+	color: var(--text-dim);
+	width: 64px;
+	flex: 0 0 auto;
+}
+
+.contact-row .val {
+	color: var(--teal);
+	flex: 1 1 auto;
+}
+
+.contact-row .copy-hint {
+	color: var(--text-dim);
+	font-size: 0.78rem;
+	opacity: 0;
+	transition: opacity 0.15s ease;
+}
+
+.contact-row:hover .copy-hint,
+.contact-row:focus-visible .copy-hint {
+	opacity: 1;
+}
+
+/* ---------------------------------------------------------
+   Footer
+--------------------------------------------------------- */
+
+.term-footer {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 28px clamp(18px, 4vw, 40px) 30px;
+	font-size: 0.85rem;
+	border-top: 1px solid var(--border);
+	margin-top: 32px;
+}
+
+.status-dot {
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: var(--teal);
+	box-shadow: 0 0 8px 1px rgba(94, 200, 193, 0.6);
+	animation: pulse 2.4s ease-in-out infinite;
+	flex: 0 0 auto;
+}
+
+@keyframes pulse {
+	0%, 100% { opacity: 1; }
+	50% { opacity: 0.35; }
+}
+
+/* ---------------------------------------------------------
+   Toast
+--------------------------------------------------------- */
+
+.toast {
+	position: fixed;
+	left: 50%;
+	bottom: 28px;
+	transform: translate(-50%, 12px);
+	background: var(--panel-alt);
+	border: 1px solid var(--border);
+	color: var(--amber);
+	padding: 8px 16px;
+	border-radius: 6px;
+	font-size: 0.85rem;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.2s ease, transform 0.2s ease;
+	z-index: 60;
+}
+
+.toast.show {
+	opacity: 1;
+	transform: translate(-50%, 0);
+}
+
+/* ---------------------------------------------------------
+   Responsive
+--------------------------------------------------------- */
+
+@media (max-width: 560px) {
+	body {
+		padding: 16px 10px 48px;
+	}
+
+	.term-body {
+		padding-left: 16px;
+		padding-right: 16px;
+	}
+
+	.contact-row .key {
+		width: 56px;
+	}
+}
+
+/* ---------------------------------------------------------
+   Reduced motion
+--------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+	.caret {
+		animation: none;
+		opacity: 1;
+	}
+
+	.status-dot {
+		animation: none;
+	}
+
+	.block,
+	.hero-output {
+		transition: none;
+	}
+}
