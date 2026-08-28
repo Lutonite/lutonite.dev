@@ -3,15 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Octal RPN - a base-8 postfix calculator</title>
+<title>LTP-16C - a base-8 and base-10 postfix calculator and solver</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2064%2064'%3E%3Crect%20width='64'%20height='64'%20rx='14'%20fill='%23191713'/%3E%3Crect%20x='3'%20y='3'%20width='58'%20height='58'%20rx='11'%20fill='%23A9B595'/%3E%3Cg%20fill='%231B2417'%3E%3Cpolygon%20points='21.75,8.75,33.25,8.75,36.5,12,33.25,15.25,21.75,15.25,18.5,12'/%3E%3Cpolygon%20points='36.5,14.5,39.75,17.75,39.75,28.25,36.5,31.5,33.25,28.25,33.25,17.75'/%3E%3Cpolygon%20points='36.5,34.5,39.75,37.75,39.75,48.25,36.5,51.5,33.25,48.25,33.25,37.75'/%3E%3C/g%3E%3Ccircle%20cx='45.5'%20cy='51.5'%20r='3.25'%20fill='%23C79A3E'/%3E%3C/svg%3E">
 <style>
   :root{
     --shell:#2C2924;
     --shell-2:#1E1B18;
-    --bezel:#141210;
     --bone:#D5CEBD;
     --bone-dim:rgba(213,206,189,.52);
     --bone-faint:rgba(213,206,189,.22);
+    --seam:rgba(213,206,189,.10);
     --gold:#C79A3E;
     --blue:#7C9CBE;
     --lcd-a:#B4BFA1;
@@ -20,16 +21,12 @@
     --ink-off:rgba(27,36,23,.085);
     --ink-dim:rgba(27,36,23,.55);
     --rust:#7A3220;
-    --key:#CFC8B8;
-    --key-op:#4A4F45;
-    --key-util:#3A3833;
-    --radius:16px;
+    --line:18px;
     --mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,Consolas,monospace;
     --sans:"Helvetica Neue",Inter,system-ui,-apple-system,Segoe UI,sans-serif;
   }
 
   *{box-sizing:border-box}
-
   html,body{margin:0;padding:0}
 
   body{
@@ -43,36 +40,26 @@
     padding:clamp(16px,4vw,44px) clamp(12px,4vw,32px) 64px;
   }
 
-  /* ---------- masthead ---------- */
   .masthead{
-    max-width:892px;margin:0 auto clamp(18px,3vw,30px);
+    max-width:900px;margin:0 auto clamp(18px,3vw,30px);
     display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;
     border-bottom:1px solid rgba(213,206,189,.12);padding-bottom:12px;
   }
-  .masthead h1{
-    margin:0;font-size:13px;font-weight:700;
-    letter-spacing:.30em;text-transform:uppercase;
-  }
-  .masthead p{
-    margin:0;font-family:var(--mono);font-size:12px;
-    color:var(--bone-dim);letter-spacing:.04em;
-  }
+  .masthead h1{margin:0;font-size:13px;font-weight:700;letter-spacing:.30em;text-transform:uppercase}
+  .masthead p{margin:0;font-family:var(--mono);font-size:12px;color:var(--bone-dim);letter-spacing:.04em}
 
-  /* ---------- layout ---------- */
-  .rig{
-    max-width:892px;margin:0 auto;
-    display:grid;gap:26px;
-    grid-template-columns:minmax(0,470px) minmax(0,396px);
-    align-items:start;
+  /* ---------- one instrument ---------- */
+  .workspace{
+    max-width:900px;margin:0 auto;
+    display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);
+    gap:24px;align-items:start;
   }
-  @media(max-width:840px){ .rig{grid-template-columns:minmax(0,470px);justify-content:center} }
-
-  /* ---------- device ---------- */
   .device{
+    min-width:0;
     background:linear-gradient(178deg,var(--shell) 0%,var(--shell-2) 100%);
-    border:1px solid rgba(213,206,189,.10);
-    border-radius:var(--radius);
-    padding:clamp(14px,3.2vw,20px);
+    border:1px solid var(--seam);
+    border-radius:16px;
+    padding:clamp(14px,3vw,22px);
     box-shadow:
       0 1px 0 rgba(255,255,255,.06) inset,
       0 -1px 0 rgba(0,0,0,.5) inset,
@@ -82,14 +69,26 @@
   .nameplate{
     display:flex;align-items:center;gap:10px;
     padding-bottom:11px;margin-bottom:14px;
-    border-bottom:1px solid rgba(213,206,189,.10);
+    border-bottom:1px solid var(--seam);
     font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;
   }
   .nameplate .mark{color:var(--gold);letter-spacing:.12em;font-weight:700}
   .nameplate .sep{color:var(--bone-faint)}
-  .nameplate .spec{margin-left:auto;color:var(--bone-dim);letter-spacing:.16em}
 
-  /* ---------- lcd ---------- */
+  .toggle{
+    margin-left:auto;display:flex;
+    border:1px solid rgba(213,206,189,.16);border-radius:999px;overflow:hidden;
+  }
+  .toggle button{
+    appearance:none;border:0;cursor:pointer;background:transparent;
+    color:var(--bone-dim);font-family:var(--sans);
+    font-size:9px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+    padding:4px 12px;
+  }
+  .toggle button.on{background:var(--gold);color:#1A1713}
+  .toggle button:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+
+  /* ---------- display: every band a fixed height ---------- */
   .lcd{
     position:relative;overflow:hidden;
     background:linear-gradient(178deg,var(--lcd-a),var(--lcd-b));
@@ -106,120 +105,171 @@
   }
 
   .ann{
-    display:flex;gap:12px;flex-wrap:wrap;
-    font-size:9px;font-weight:700;letter-spacing:.17em;
+    display:flex;flex-wrap:nowrap;overflow:hidden;
+    height:12px;align-items:center;
+    gap:clamp(7px,2.2vw,14px);
+    font-size:clamp(7.5px,2.1vw,9px);font-weight:700;letter-spacing:.16em;
     color:var(--ink);
   }
-  .ann span{opacity:.13;transition:opacity .1s}
+  .ann span{opacity:.13;white-space:nowrap;transition:opacity .1s}
   .ann span.on{opacity:.82}
   .ann span.warn.on{color:var(--rust);opacity:1}
+  #ann-base,#ann-mode{min-width:38px}
+  #ann-count{min-width:56px}
 
-  .readout{
-    display:flex;justify-content:flex-end;align-items:flex-end;
-    gap:2px;min-height:46px;margin:9px 0 8px;
+  .readout{display:flex;align-items:flex-end;gap:12px;height:48px;margin:9px 0 8px}
+  .ctx{
+    flex:0 0 auto;padding-bottom:7px;
+    font-family:var(--mono);font-size:13px;letter-spacing:.06em;
+    color:var(--ink-dim);white-space:nowrap;
   }
-  .cell{flex:1 1 0;min-width:0;max-width:32px}
+  .cells{flex:1;min-width:0;display:flex;justify-content:flex-end;align-items:flex-end;gap:2px}
+  .cell{flex:1 1 0;min-width:0;max-width:34px}
   .cell svg{display:block;width:100%;height:auto}
-  .cell .seg{fill:var(--ink-off)}
-  .cell .seg.lit{fill:var(--ink)}
-  .cell .dp{fill:var(--ink-off)}
-  .cell .dp.lit{fill:var(--ink)}
+  .cell .seg,.cell .dp{fill:var(--ink-off)}
+  .cell .seg.lit,.cell .dp.lit{fill:var(--ink)}
 
-  .notes{
-    border-top:1px solid rgba(27,36,23,.18);padding-top:8px;
-    font-family:var(--mono);font-size:12px;color:var(--ink);
-    display:grid;gap:3px;
+  .notes{border-top:1px solid rgba(27,36,23,.18);padding-top:8px}
+  .note{
+    display:flex;gap:10px;align-items:baseline;
+    height:var(--line);font-family:var(--mono);font-size:12px;color:var(--ink);
   }
-  .note{display:flex;gap:10px;align-items:baseline}
-  .note[hidden]{display:none}
   .note b{
-    flex:0 0 54px;font-weight:700;font-size:9px;letter-spacing:.14em;
+    flex:0 0 56px;font-weight:700;font-size:9px;letter-spacing:.14em;
     text-transform:uppercase;color:var(--ink-dim);font-family:var(--sans);
   }
-  .note span{word-break:break-all;line-height:1.45}
+  .note span{
+    flex:1;min-width:0;line-height:var(--line);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
   .note.fault span{color:var(--rust);font-weight:700}
 
-  /* ---------- entry ---------- */
-  .entry{display:block;margin:16px 0 14px}
-  .entry .legend{
-    display:block;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;
-    color:var(--bone-dim);margin-bottom:7px;
-  }
+  /* ---------- the one entry line ---------- */
+  .entry{margin:18px 0 0}
   .slot{
     display:flex;align-items:center;gap:9px;
     background:#161411;border:1px solid rgba(0,0,0,.6);
-    border-radius:7px;padding:11px 13px;
+    border-radius:7px;padding:12px 13px;
     box-shadow:0 1px 0 rgba(255,255,255,.05);
   }
   .slot::before{content:"\25B8";color:var(--gold);font-size:11px}
   .slot:focus-within{border-color:rgba(199,154,62,.65);box-shadow:0 0 0 2px rgba(199,154,62,.18)}
-  #expr{
+  .slot input{
     flex:1;min-width:0;border:0;background:transparent;outline:none;
     color:var(--bone);font-family:var(--mono);font-size:16px;letter-spacing:.09em;
     caret-color:var(--gold);
   }
-  #expr::placeholder{color:rgba(213,206,189,.28);letter-spacing:.06em}
+  .slot input::placeholder{color:rgba(213,206,189,.28);letter-spacing:.06em}
 
-  /* ---------- keypad ---------- */
-  .keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .reads{
+    margin:9px 0 0;height:var(--line);line-height:var(--line);
+    font-family:var(--mono);font-size:12.5px;color:var(--gold);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  }
+
+  /* ---------- decks ---------- */
+  .decks{
+    margin-top:16px;
+  }
+  @media(max-width:760px){
+    .workspace{grid-template-columns:minmax(0,1fr)}
+  }
+
+  .keypad{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-content:start}
   .key{
-    position:relative;
     appearance:none;border:0;cursor:pointer;
-    border-radius:7px;padding:13px 4px 12px;
-    font-family:var(--mono);font-size:17px;font-weight:600;
+    border-radius:7px;padding:13px 3px 12px;
+    font-family:var(--mono);font-size:16px;font-weight:600;
     background:linear-gradient(180deg,#DCD5C5,#C2BAA8);
     color:#221F1B;
     box-shadow:0 2px 0 #8F8878,0 4px 8px rgba(0,0,0,.4);
-    transition:transform .05s,box-shadow .05s;
+    transition:transform .05s,box-shadow .05s,opacity .12s;
   }
-  .key:active{transform:translateY(2px);box-shadow:0 0 0 #8F8878,0 2px 5px rgba(0,0,0,.4)}
+  .key:not([disabled]):active{transform:translateY(2px);box-shadow:0 0 0 #8F8878,0 2px 5px rgba(0,0,0,.4)}
   .key:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   .key.op{
     background:linear-gradient(180deg,#565C51,#41463C);color:var(--bone);
     box-shadow:0 2px 0 #24271F,0 4px 8px rgba(0,0,0,.45);
   }
-  .key.op:active{box-shadow:0 0 0 #24271F,0 2px 5px rgba(0,0,0,.45)}
+  .key.op:not([disabled]):active{box-shadow:0 0 0 #24271F,0 2px 5px rgba(0,0,0,.45)}
   .key.util{
     background:linear-gradient(180deg,#413E38,#302E29);color:var(--bone);
-    font-size:14px;box-shadow:0 2px 0 #1B1916,0 4px 8px rgba(0,0,0,.45);
+    font-size:13px;box-shadow:0 2px 0 #1B1916,0 4px 8px rgba(0,0,0,.45);
   }
-  .key.util:active{box-shadow:0 0 0 #1B1916,0 2px 5px rgba(0,0,0,.45)}
-  .key.name{
-    font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.16em;
-    text-transform:uppercase;
-  }
-  .key.wide{grid-column:1/-1;padding:10px 4px}
+  .key.util:not([disabled]):active{box-shadow:0 0 0 #1B1916,0 2px 5px rgba(0,0,0,.45)}
+  .key[disabled]{cursor:default;opacity:.26;box-shadow:0 1px 0 rgba(0,0,0,.35)}
   .key .tag{
     display:block;font-family:var(--sans);font-size:8px;font-weight:700;
     letter-spacing:.14em;color:var(--gold);margin-bottom:3px;
   }
   .key.util .tag{color:var(--blue)}
+  .key.name{font-family:var(--sans);font-size:10.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase}
+  .key sup{font-size:.62em}
+  .key.span2{grid-column:span 2}
 
-  /* ---------- side panels ---------- */
-  .card{
+  /* ---------- panel ---------- */
+  .panel{
+    display:flex;flex-direction:column;min-height:0;
     background:rgba(255,255,255,.022);
-    border:1px solid rgba(213,206,189,.10);
+    border:1px solid var(--seam);
     border-radius:12px;padding:15px 16px 16px;
   }
-  .card + .card{margin-top:18px}
-  .card h2{
-    margin:0 0 12px;font-size:9.5px;font-weight:700;
-    letter-spacing:.24em;text-transform:uppercase;color:var(--bone-dim);
+  @media(max-width:760px){ .panel{min-height:360px} }
+  .panel h2{
+    margin:0 0 9px;font-size:9px;font-weight:700;
+    letter-spacing:.22em;text-transform:uppercase;color:var(--bone-faint);
   }
+  .values{margin-bottom:14px;padding-bottom:13px;border-bottom:1px solid var(--seam)}
+  .values[hidden]{display:none}
+  .vars{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:10px}
+  .var span{
+    display:block;font-family:var(--mono);font-size:11px;letter-spacing:.12em;
+    color:var(--bone-dim);margin-bottom:5px;
+  }
+  .var input{
+    width:100%;border:1px solid rgba(0,0,0,.6);border-radius:7px;
+    background:#161411;padding:9px 11px;outline:none;
+    color:var(--bone);font-family:var(--mono);font-size:15px;letter-spacing:.08em;
+    caret-color:var(--gold);
+  }
+  .var input::placeholder{color:rgba(213,206,189,.22)}
+  .var input:focus{border-color:rgba(199,154,62,.65);box-shadow:0 0 0 2px rgba(199,154,62,.18)}
+  .var.solved input{border-color:rgba(199,154,62,.3)}
+  .var.solved input::placeholder{color:var(--gold);opacity:1}
 
+  .tape{flex:1;display:flex;flex-direction:column;min-height:0}
+  .tape-body{
+    flex:1;min-height:132px;overflow-y:auto;
+    scrollbar-width:thin;scrollbar-color:rgba(213,206,189,.2) transparent;
+  }
   .trace{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px}
   .trace th{
     text-align:left;font-family:var(--sans);font-size:8.5px;font-weight:700;
     letter-spacing:.16em;text-transform:uppercase;color:var(--bone-faint);
-    padding-bottom:6px;border-bottom:1px solid rgba(213,206,189,.10);
+    padding-bottom:6px;border-bottom:1px solid var(--seam);
+    position:sticky;top:0;
   }
   .trace td{padding:5px 0;border-bottom:1px solid rgba(213,206,189,.06);vertical-align:top}
-  .trace td:first-child{width:52px;color:var(--gold);white-space:nowrap;padding-right:10px}
+  .trace td:first-child{width:66px;color:var(--gold);white-space:nowrap;padding-right:10px}
   .trace td:last-child{color:var(--bone);word-break:break-all}
   .trace tr.bad td:first-child{color:#C86B4E}
-  .trace tr.pend td{color:var(--bone-faint)}
+  .trace tr.pend td,.trace tr.head td{color:var(--bone-faint)}
   .empty{font-family:var(--mono);font-size:12px;color:var(--bone-faint);margin:0}
 
+  /* ---------- cards ---------- */
+  .cards{
+    max-width:900px;margin:24px auto 0;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(252px,1fr));gap:20px;
+  }
+  .card{
+    background:rgba(255,255,255,.022);
+    border:1px solid var(--seam);
+    border-radius:12px;padding:15px 16px 16px;
+  }
+  .card h2{
+    margin:0 0 12px;font-size:9.5px;font-weight:700;
+    letter-spacing:.24em;text-transform:uppercase;color:var(--bone-dim);
+  }
   .chips{display:flex;flex-wrap:wrap;gap:7px}
   .chip{
     appearance:none;cursor:pointer;
@@ -229,65 +279,70 @@
   }
   .chip:hover{border-color:rgba(199,154,62,.6);color:#EFE7D4}
   .chip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-
   .rules{margin:0;display:grid;gap:11px}
   .rules div{display:grid;gap:3px}
-  .rules dt{
-    font-size:8.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
-    color:var(--bone-faint);
-  }
+  .rules dt{font-size:8.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--bone-faint)}
   .rules dd{margin:0;font-size:13px;line-height:1.5;color:var(--bone-dim)}
   .rules code{font-family:var(--mono);color:var(--bone);font-size:12.5px}
 
   .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
 
-  @media(prefers-reduced-motion:reduce){
-    *{transition:none!important;animation:none!important}
-  }
+  @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
 </style>
 </head>
 <body>
 
 <header class="masthead">
-  <h1>Octal RPN</h1>
-  <p>base 8 &middot; postfix &middot; exact fractions</p>
+  <h1>LTP-16C</h1>
+  <p>postfix &middot; base 8 or 10 &middot; exact fractions &middot; solvable functions</p>
 </header>
 
-<main class="rig">
-  <section class="device" aria-label="Calculator">
-    <div class="nameplate">
-      <span class="mark">OCT&middot;8</span>
-      <span class="sep">/</span>
-      <span>Reverse Polish</span>
-      <span class="spec">8 digits &middot; no 8, no 9</span>
+<div class="workspace">
+<main class="device" aria-label="RPN calculator and function solver">
+
+  <div class="nameplate">
+    <span class="mark">OCT&middot;8</span>
+    <span class="sep">/</span>
+    <span>Reverse Polish &amp; Solver</span>
+    <div class="toggle" id="base-toggle" role="group" aria-label="Number base">
+      <button type="button" class="on" data-base="8">Oct</button>
+      <button type="button" data-base="10">Dec</button>
+    </div>
+  </div>
+
+  <div class="lcd">
+    <div class="ann" aria-hidden="true">
+      <span id="ann-base" class="on">OCT</span>
+      <span id="ann-mode" class="on">RPN</span>
+      <span id="ann-count">STACK</span>
+      <span id="ann-rep">REPEAT</span>
+      <span id="ann-trunc">TRUNC</span>
+      <span id="ann-err" class="warn">ERROR</span>
     </div>
 
-    <div class="lcd">
-      <div class="ann" aria-hidden="true">
-        <span class="on">OCT</span>
-        <span class="on">RPN</span>
-        <span id="ann-stack">STACK</span>
-        <span id="ann-rep">REPEATING</span>
-        <span id="ann-trunc">TRUNCATED</span>
-        <span id="ann-err" class="warn">ERROR</span>
-      </div>
-
-      <div class="readout" id="readout" aria-hidden="true"></div>
-
-      <div class="notes">
-        <p class="sr" id="spoken" aria-live="polite"></p>
-        <div class="note" id="note-oct"><b>Octal</b><span>0</span></div>
-        <div class="note" id="note-dec"><b>Base 10</b><span>0</span></div>
-      </div>
+    <div class="readout">
+      <span class="ctx" id="ctx" aria-hidden="true"></span>
+      <div class="cells" id="cells" aria-hidden="true"></div>
     </div>
 
-    <label class="entry">
-      <span class="legend">Expression</span>
-      <span class="slot">
-        <input id="expr" type="text" inputmode="text" autocomplete="off"
-               autocapitalize="off" spellcheck="false" placeholder="1 4 /">
-      </span>
-    </label>
+    <div class="notes">
+      <p class="sr" id="spoken" aria-live="polite"></p>
+      <div class="note" id="note-a"><b>Octal</b><span>0</span></div>
+      <div class="note" id="note-b"><b>Base 10</b><span>0</span></div>
+    </div>
+  </div>
+
+  <div class="entry">
+    <span class="slot">
+      <input id="entry" type="text" inputmode="text" autocomplete="off"
+             autocapitalize="characters" spellcheck="false"
+             placeholder="1 4 /   or   X0 1 - 2 ^ 2 * 1 - = X1 FUNC"
+             aria-label="Expression or function definition">
+    </span>
+    <p class="reads" id="reads"></p>
+  </div>
+
+  <div class="decks">
 
     <div class="keypad" id="keypad">
       <button class="key" data-ins="0">0</button>
@@ -298,71 +353,102 @@
       <button class="key" data-ins="5">5</button>
       <button class="key" data-ins="6">6</button>
       <button class="key" data-ins="7">7</button>
+      <button class="key" data-ins="8" data-dec>8</button>
+      <button class="key" data-ins="9" data-dec>9</button>
+      <button class="key" data-ins="X" data-main aria-label="Variable">X</button>
       <button class="key name" data-act="neg" aria-label="Change the sign of this value">NEG</button>
       <button class="key util" data-ins=".">.</button>
-      <button class="key util" data-ins=" " aria-label="Space"><span class="tag">SPC</span>&#9141;</button>
+      <button class="key util" data-ins=" " data-main aria-label="Space"><span class="tag">SPC</span>&#9141;</button>
       <button class="key util" data-act="back" aria-label="Delete one character">&#9003;</button>
-      <button class="key op" data-ins="+" aria-label="Add"><span class="tag">+</span>&plus;</button>
-      <button class="key op" data-ins="-" aria-label="Subtract"><span class="tag">-</span>&minus;</button>
-      <button class="key op" data-ins="*" aria-label="Multiply"><span class="tag">*</span>&times;</button>
-      <button class="key op" data-ins="/" aria-label="Divide"><span class="tag">/</span>&divide;</button>
-      <button class="key util name wide" data-act="clear">Clear</button>
+      <button class="key op" data-ins="+" data-main aria-label="Add"><span class="tag">+</span>&plus;</button>
+      <button class="key op" data-ins="-" data-main aria-label="Subtract"><span class="tag">-</span>&minus;</button>
+      <button class="key op" data-ins="*" data-main aria-label="Multiply"><span class="tag">*</span>&times;</button>
+      <button class="key op" data-ins="/" data-main aria-label="Divide"><span class="tag">/</span>&divide;</button>
+      <button class="key op" data-ins="^" data-main aria-label="Raise to a power"><span class="tag">^</span>y<sup>x</sup></button>
+      <button class="key op span2" data-ins="=" data-main aria-label="Make this a function"><span class="tag">=</span>&equals;</button>
+      <button class="key util name" data-ins="FUNC" data-main>Func</button>
+      <button class="key util name span2" data-act="clear">Clear</button>
+    </div>
+
+  </div>
+</main>
+
+<section class="panel" aria-label="Working">
+  <div class="values" id="values" hidden>
+    <h2>Values</h2>
+    <div class="vars" id="vars"></div>
+  </div>
+  <div class="tape">
+    <h2 id="tape-title">Stack trace</h2>
+    <div class="tape-body" id="trace-wrap">
+      <p class="empty">Type an expression to watch the stack build.</p>
+    </div>
+  </div>
+</section>
+</div>
+
+<div class="cards">
+  <section class="card">
+    <h2>Try one</h2>
+    <div class="chips" id="chips">
+      <button class="chip">1 4 /</button>
+      <button class="chip">17 3 +</button>
+      <button class="chip">2 3 ^</button>
+      <button class="chip">10 -5 +</button>
+      <button class="chip">1 3 /</button>
+      <button class="chip">X0 1 - 2 ^ 2 * 1 - = X1 FUNC</button>
+      <button class="chip">X0 X1 * = 144 FUNC</button>
     </div>
   </section>
 
-  <aside>
-    <section class="card">
-      <h2>Stack trace</h2>
-      <div id="trace-wrap">
-        <p class="empty">Type an expression to watch the stack build.</p>
+  <section class="card">
+    <h2>How it reads</h2>
+    <dl class="rules">
+      <div>
+        <dt>One line, two jobs</dt>
+        <dd>Type an expression and it computes. Put an <code>=</code> in it and the same line becomes a function to solve.</dd>
       </div>
-    </section>
-
-    <section class="card">
-      <h2>Try one</h2>
-      <div class="chips" id="chips">
-        <button class="chip">1 4 /</button>
-        <button class="chip">3 4 /</button>
-        <button class="chip">17 3 +</button>
-        <button class="chip">2.4 1.4 *</button>
-        <button class="chip">100 4 / 2 -</button>
-        <button class="chip">10 -5 +</button>
-        <button class="chip">-3 4 /</button>
-        <button class="chip">1 3 /</button>
+      <div>
+        <dt>Order</dt>
+        <dd>Values first, operator last. <code>1 4 /</code> divides 1 by 4. Put a space between every token.</dd>
       </div>
-    </section>
+      <div>
+        <dt>Base</dt>
+        <dd>Oct takes <code>0</code>&ndash;<code>7</code>, so <code>10</code> is eight and <code>0.4</code> is one half. Dec wakes the 8 and 9 keys. The other base is always on the second display line.</dd>
+      </div>
+      <div>
+        <dt>Negative and powers</dt>
+        <dd>NEG writes the minus flush against the digits, as in <code>10 -5 +</code>; spaced out it subtracts. <code>2 3 ^</code> is a power, <code>4 0.4 ^</code> a square root.</dd>
+      </div>
+    </dl>
+  </section>
 
-    <section class="card">
-      <h2>How it reads</h2>
-      <dl class="rules">
-        <div>
-          <dt>Order</dt>
-          <dd>Values first, operator last. <code>1 4 /</code> divides 1 by 4. Put a space between every token.</dd>
-        </div>
-        <div>
-          <dt>Digits</dt>
-          <dd>Only <code>0</code>&ndash;<code>7</code>. <code>10</code> is eight, <code>100</code> is sixty&#8209;four.</dd>
-        </div>
-        <div>
-          <dt>Fractions</dt>
-          <dd>Base 8 after the point too, so <code>0.4</code> is one half and <code>0.2</code> is one quarter.</dd>
-        </div>
-        <div>
-          <dt>Negative values</dt>
-          <dd>NEG flips the sign of the value you're keying in and writes it flush against the digits: <code>10 -5 +</code>. A <code>-</code> with spaces around it subtracts.</dd>
-        </div>
-        <div>
-          <dt>Repeating results</dt>
-          <dd>Parentheses mark digits that run forever: <code>1 3 /</code> gives <code>0.(25)</code>.</dd>
-        </div>
-      </dl>
-    </section>
-  </aside>
-</main>
+  <section class="card">
+    <h2>Function syntax</h2>
+    <dl class="rules">
+      <div>
+        <dt>Definition</dt>
+        <dd>Both sides in RPN with <code>=</code> between them. <code>FUNC</code> at the end is optional.</dd>
+      </div>
+      <div>
+        <dt>Variables</dt>
+        <dd>The X key then a digit: <code>X0</code>, <code>X1</code>, <code>X2</code>. Each one gets a field.</dd>
+      </div>
+      <div>
+        <dt>Solving</dt>
+        <dd>Fill in every value but one. The empty field shows its answer in gold, whichever side of the <code>=</code> it sits on, and the trace lists each step undone.</dd>
+      </div>
+      <div>
+        <dt>Two answers</dt>
+        <dd>Undoing an even power gives a pair, so the display lists both tuples.</dd>
+      </div>
+    </dl>
+  </section>
+</div>
 
 <script>
 /* ============================================================
-   CORE - exact rational arithmetic, octal parsing, formatting
+   CORE - exact rational arithmetic
    ============================================================ */
 
 class CalcError extends Error {}
@@ -376,74 +462,107 @@ function rat(n, d){
   return { n: n / g, d: d / g };
 }
 
-const OPS = new Map([
-  ['+', (a, b) => rat(a.n * b.d + b.n * a.d, a.d * b.d)],
-  ['-', (a, b) => rat(a.n * b.d - b.n * a.d, a.d * b.d)],
-  ['*', (a, b) => rat(a.n * b.n, a.d * b.d)],
-  ['/', (a, b) => {
+const R = {
+  add: (a, b) => rat(a.n * b.d + b.n * a.d, a.d * b.d),
+  sub: (a, b) => rat(a.n * b.d - b.n * a.d, a.d * b.d),
+  mul: (a, b) => rat(a.n * b.n, a.d * b.d),
+  div: (a, b) => {
     if (b.n === 0n) throw new CalcError("Can't divide by zero");
     return rat(a.n * b.d, a.d * b.n);
-  }]
+  }
+};
+
+/* ---------- powers and exact roots ---------- */
+
+const BITS = 20000;   // keeps a runaway exponent from locking the page up
+
+function bits(n){ return (n < 0n ? -n : n).toString(2).length; }
+
+function ipow(a, p){
+  if (p < 0n) {
+    if (a.n === 0n) throw new CalcError("Can't raise zero to a negative power");
+    return ipow(rat(a.d, a.n), -p);
+  }
+  if (p > 10000n || (bits(a.n) + bits(a.d)) * Number(p) > BITS)
+    throw new CalcError('That power is too big to work out exactly');
+  return rat(a.n ** p, a.d ** p);
+}
+
+/* Whole part of the k-th root of a non-negative BigInt. */
+function iroot(n, k){
+  if (n < 2n) return n;
+  let hi = 2n;
+  while (hi ** k <= n) hi <<= 1n;
+  let lo = hi >> 1n;
+  while (lo < hi) {
+    const mid = (lo + hi + 1n) >> 1n;
+    if (mid ** k <= n) lo = mid; else hi = mid - 1n;
+  }
+  return lo;
+}
+
+/* Exact k-th root of a rational, or a fault. Principal root only. */
+function nthRoot(v, k){
+  if (k < 1n) throw new CalcError('That root is not something this can undo');
+  if (k > 4096n) throw new CalcError('That root is too fine to work out exactly');
+  const neg = v.n < 0n;
+  if (neg && k % 2n === 0n) throw new CalcError('No even root of a negative value');
+  const n = neg ? -v.n : v.n;
+  const rn = iroot(n, k), rd = iroot(v.d, k);
+  if (rn ** k !== n || rd ** k !== v.d) throw new CalcError('That root has no exact value');
+  return rat(neg ? -rn : rn, rd);
+}
+
+function ratPow(a, b){
+  if (b.d === 1n) return ipow(a, b.n);
+  return nthRoot(ipow(a, b.n), b.d);   // a^(p/q) = the q-th root of a^p
+}
+
+const OPS = new Map([
+  ['+', R.add], ['-', R.sub], ['*', R.mul], ['/', R.div], ['^', ratPow]
 ]);
 
-const NUMBER = /^[+-]?(?:[0-7]+(?:\.[0-7]*)?|\.[0-7]+)$/;
+/* ---------- reading numbers in a chosen base ---------- */
 
-function parseOctal(tok){
+const RE_CACHE = new Map();
+function numRe(base){
+  const key = String(base);
+  if (!RE_CACHE.has(key)) {
+    const d = '0-' + (base - 1n);
+    RE_CACHE.set(key, new RegExp('^[+-]?(?:[' + d + ']+(?:\\.[' + d + ']*)?|\\.[' + d + ']+)$'));
+  }
+  return RE_CACHE.get(key);
+}
+
+function digitsToBig(s, base){
+  let v = 0n;
+  for (const c of s) v = v * base + BigInt(c);
+  return v;
+}
+
+function parseNum(tok, base){
   let s = tok, sign = 1n;
   if (s[0] === '+') s = s.slice(1);
   else if (s[0] === '-') { sign = -1n; s = s.slice(1); }
   const dot = s.indexOf('.');
   const ip = dot === -1 ? s : s.slice(0, dot);
   const fp = dot === -1 ? '' : s.slice(dot + 1);
-  const den = 8n ** BigInt(fp.length);
-  const num = (ip ? BigInt('0o' + ip) : 0n) * den + (fp ? BigInt('0o' + fp) : 0n);
+  const den = base ** BigInt(fp.length);
+  const num = digitsToBig(ip || '0', base) * den + digitsToBig(fp || '0', base);
   return rat(sign * num, den);
 }
 
-function rejectToken(tok){
-  if (/[89]/.test(tok)) throw new CalcError('8 and 9 are not octal digits: ' + tok);
-  if (/^[+\-*/]/.test(tok) && tok.length > 1 && !NUMBER.test(tok))
-    throw new CalcError('Put a space around each operator: ' + tok);
-  throw new CalcError('Not a value or an operator: ' + tok);
+const VAR_RE = /^X\d+$/i;
+
+function badToken(tok, base){
+  if (base === 8n && /[89]/.test(tok)) return '8 and 9 are not octal digits: ' + tok;
+  if (/^[+\-*/^]/.test(tok) && tok.length > 1) return 'Put a space around each operator: ' + tok;
+  if (/^X/i.test(tok)) return 'Not a variable name: ' + tok + ' \u2014 use X and a number';
+  return 'Not a value or an operator: ' + tok;
 }
 
-/* Runs the whole expression, keeping every intermediate stack.
-   Never throws: a failure is reported in the returned record. */
-function evaluate(src){
-  const tokens = src.trim().split(/\s+/).filter(Boolean);
-  const stack = [];
-  const steps = [];
-  for (let i = 0; i < tokens.length; i++) {
-    const tok = tokens[i];
-    const last = i === tokens.length - 1;
-    try {
-      if (OPS.has(tok)) {
-        /* A trailing sign with nothing to work on isn't subtraction gone
-           wrong - it's a value being keyed in. Hold, don't fault. */
-        if (stack.length < 2 && last && (tok === '-' || tok === '+')) {
-          steps.push({ tok, pending: true });
-          return { stack, steps, error: null, pending: true };
-        }
-        if (stack.length < 2)
-          throw new CalcError(tok + ' needs two values, found ' + stack.length);
-        const b = stack.pop(), a = stack.pop();
-        stack.push(OPS.get(tok)(a, b));
-      } else if (NUMBER.test(tok)) {
-        stack.push(parseOctal(tok));
-      } else {
-        rejectToken(tok);
-      }
-    } catch (err) {
-      if (!(err instanceof CalcError)) throw err;
-      steps.push({ tok, bad: true });
-      return { stack, steps, error: err.message };
-    }
-    steps.push({ tok, stack: stack.slice() });
-  }
-  return { stack, steps, error: null };
-}
+/* ---------- writing numbers out ---------- */
 
-/* Positional expansion of a rational in any base, with cycle detection. */
 function expand(r, base, maxDigits){
   const neg = r.n < 0n;
   const n = neg ? -r.n : r.n, d = r.d;
@@ -462,9 +581,9 @@ function expand(r, base, maxDigits){
   return { neg, ip, digits, cycle, truncated };
 }
 
-/* Exact notation: 0.(25) repeats forever, 0.1234... was cut short. */
+/* Exact notation: 0.(25) repeats forever, 0.1234… was cut short. */
 function notate(e){
-  let out = (e.neg ? '-' : '') + e.ip;
+  const out = (e.neg ? '-' : '') + e.ip;
   if (!e.digits.length) return out;
   if (e.cycle >= 0)
     return out + '.' + e.digits.slice(0, e.cycle).join('') + '(' + e.digits.slice(e.cycle).join('') + ')';
@@ -483,8 +602,203 @@ function plain(e, fill){
   return (e.neg ? '-' : '') + e.ip + (frac ? '.' + frac : '');
 }
 
-const octal = r => expand(r, 8n, 48);
-const decimal = r => expand(r, 10n, 48);
+const show = (r, base, digits) => notate(expand(r, base, digits || 12));
+
+/* ============================================================
+   EXPRESSIONS - a stack machine that keeps both the running
+   value and the tree that produced it
+   ============================================================ */
+
+function evaluate(src, base){
+  const tokens = src.trim().split(/\s+/).filter(Boolean);
+  const stack = [];
+  const steps = [];
+  for (let i = 0; i < tokens.length; i++) {
+    const tok = tokens[i];
+    const last = i === tokens.length - 1;
+    try {
+      if (OPS.has(tok)) {
+        /* A trailing sign with nothing to work on isn't subtraction gone
+           wrong - it's a value being keyed in. Hold, don't fault. */
+        if (stack.length < 2 && last && (tok === '-' || tok === '+')) {
+          steps.push({ tok, pending: true });
+          return { stack, steps, error: null, pending: 'Sign set. Key in the digits.' };
+        }
+        if (stack.length < 2)
+          throw new CalcError(tok + ' needs two values, found ' + stack.length);
+        const b = stack.pop(), a = stack.pop();
+        stack.push({
+          v: OPS.get(tok)(a.v, b.v),
+          node: { k: 'op', op: tok, a: a.node, b: b.node }
+        });
+      } else if (numRe(base).test(tok)) {
+        const v = parseNum(tok, base);
+        stack.push({ v, node: { k: 'num', v } });
+      } else if (VAR_RE.test(tok)) {
+        throw new CalcError(tok.toUpperCase() + ' needs an = to be solved for');
+      } else {
+        throw new CalcError(badToken(tok, base));
+      }
+    } catch (err) {
+      if (!(err instanceof CalcError)) throw err;
+      steps.push({ tok, bad: true });
+      return { stack, steps, error: err.message };
+    }
+    steps.push({ tok, stack: stack.map(e => e.v) });
+  }
+  return { stack, steps, error: null };
+}
+
+/* ============================================================
+   FUNCTIONS - the same tokens, built into a tree so it can be
+   walked backwards as well as forwards
+   ============================================================ */
+
+function splitDefinition(src){
+  let toks = src.trim().split(/\s+/).filter(Boolean);
+  if (!toks.length) throw new CalcError('');
+  if (toks[toks.length - 1].toUpperCase() === 'FUNC') toks = toks.slice(0, -1);
+  const at = toks.indexOf('=');
+  if (at === -1) throw new CalcError('Put spaces around the =');
+  if (toks.lastIndexOf('=') !== at) throw new CalcError('Only one = per definition');
+  return { left: toks.slice(0, at), right: toks.slice(at + 1) };
+}
+
+function buildAst(tokens, base, side){
+  const st = [];
+  for (const tok of tokens) {
+    if (OPS.has(tok)) {
+      if (st.length < 2) throw new CalcError(side + ' side: ' + tok + ' needs two values');
+      const b = st.pop(), a = st.pop();
+      st.push({ k: 'op', op: tok, a, b });
+    } else if (VAR_RE.test(tok)) {
+      st.push({ k: 'var', name: tok.toUpperCase() });
+    } else if (numRe(base).test(tok)) {
+      st.push({ k: 'num', v: parseNum(tok, base) });
+    } else {
+      throw new CalcError(side + ' side: ' + badToken(tok, base));
+    }
+  }
+  if (!st.length) throw new CalcError(side + ' side is empty');
+  if (st.length > 1) throw new CalcError(side + ' side leaves ' + st.length + ' values unused');
+  return st[0];
+}
+
+function collectVars(node, into){
+  if (node.k === 'var') into.add(node.name);
+  else if (node.k === 'op') { collectVars(node.a, into); collectVars(node.b, into); }
+  return into;
+}
+
+function countVar(node, name){
+  if (node.k === 'var') return node.name === name ? 1 : 0;
+  if (node.k === 'op') return countVar(node.a, name) + countVar(node.b, name);
+  return 0;
+}
+
+function evalNode(node, env){
+  if (node.k === 'num') return node.v;
+  if (node.k === 'var') {
+    const v = env.get(node.name);
+    if (!v) throw new CalcError(node.name + ' has no value');
+    return v;
+  }
+  return OPS.get(node.op)(evalNode(node.a, env), evalNode(node.b, env));
+}
+
+/* Post-order walk that records the stack the way the expression machine
+   would build it, so a function traces like an expression does. */
+function traceEval(node, env, base, steps, stack){
+  if (node.k !== 'op') {
+    const v = node.k === 'num' ? node.v : env.get(node.name);
+    if (!v) throw new CalcError(node.name + ' has no value');
+    stack.push(v);
+    steps.push({ tok: node.k === 'num' ? show(node.v, base, 8) : node.name, stack: stack.slice() });
+    return;
+  }
+  traceEval(node.a, env, base, steps, stack);
+  traceEval(node.b, env, base, steps, stack);
+  const b = stack.pop(), a = stack.pop();
+  stack.push(OPS.get(node.op)(a, b));
+  steps.push({ tok: node.op, stack: stack.slice() });
+}
+
+/* One operation undone. Even roots give two answers, so this returns a list. */
+function undo(op, target, known, inLeft){
+  switch (op) {
+    case '+': return [R.sub(target, known)];
+    case '-': return [inLeft ? R.add(target, known) : R.sub(known, target)];
+    case '*':
+      if (known.n === 0n) throw new CalcError("Can't undo a multiply by zero");
+      return [R.div(target, known)];
+    case '/':
+      if (!inLeft && target.n === 0n) throw new CalcError("Can't undo a divide into zero");
+      return [inLeft ? R.mul(target, known) : R.div(known, target)];
+    case '^': {
+      if (!inLeft) throw new CalcError("Can't solve for a value in the exponent");
+      if (known.n === 0n) throw new CalcError("Can't undo a zeroth power");
+      if (known.d !== 1n) return [ratPow(target, rat(known.d, known.n))];
+      let v = target, k = known.n;
+      if (k < 0n) {
+        if (v.n === 0n) throw new CalcError("Can't undo a negative power of zero");
+        v = rat(v.d, v.n); k = -k;
+      }
+      const root = nthRoot(v, k);
+      return k % 2n === 0n ? [root, rat(-root.n, root.d)] : [root];
+    }
+  }
+  throw new CalcError("Can't undo " + op);
+}
+
+/* Walk the one path down to the unknown, peeling off an operation each
+   step and carrying every value that still fits. */
+function solveFor(name, root, target, env, base, trace){
+  let node = root;
+  let targets = [target];
+  while (node.k === 'op') {
+    const inLeft = countVar(node.a, name) > 0;
+    const known = evalNode(inLeft ? node.b : node.a, env);
+    const next = [];
+    const seen = new Set();
+    for (const t of targets)
+      for (const v of undo(node.op, t, known, inLeft)) {
+        const key = v.n + '/' + v.d;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        next.push(v);
+      }
+    if (trace) trace.push({
+      label: inLeft
+        ? '_ ' + node.op + ' ' + show(known, base, 6)
+        : show(known, base, 6) + ' ' + node.op + ' _',
+      values: next
+    });
+    targets = next;
+    node = inLeft ? node.a : node.b;
+  }
+  if (node.k !== 'var' || node.name !== name) throw new CalcError('Nothing to solve for');
+  return targets;
+}
+
+/* ---------- infix read-back ---------- */
+
+const PREC = { '+': 1, '-': 1, '*': 2, '/': 2, '^': 3 };
+const precOf = n => (n.k === 'op' ? PREC[n.op] : 9);
+
+function toInfix(node, base){
+  if (node.k === 'var') return node.name;
+  if (node.k === 'num') return show(node.v, base, 8);
+  const p = PREC[node.op];
+  const right = node.op === '^';
+  return side(node.a, right ? p + 1 : p, base) + ' ' + node.op + ' '
+       + side(node.b, right ? p : (node.op === '+' || node.op === '*' ? p : p + 1), base);
+}
+
+function side(node, min, base){
+  const s = toInfix(node, base);
+  const bare = node.k === 'num' && node.v.n < 0n;
+  return (precOf(node) < min || bare) ? '(' + s + ')' : s;
+}
 
 /* ============================================================
    UI
@@ -500,26 +814,52 @@ const SEG = {
   f:'8,10 13,15 13,42 8,47 3,42 3,15',
   g:'14,45 46,45 51,50 46,55 14,55 9,50'
 };
-/* Only 0-7 can ever light up. The 8 and the 9 have nowhere to go. */
+/* 8 and 9 are wired but unreachable in base 8 - nothing can key them in. */
 const MASK = {
   '0':'abcdef', '1':'bc', '2':'abdeg', '3':'abcdg',
   '4':'bcfg', '5':'acdfg', '6':'acdefg', '7':'abc',
+  '8':'abcdefg', '9':'abcdfg',
   '-':'g', ' ':''
 };
 const CELLS = 12;
 
-const readout = document.getElementById('readout');
-const input   = document.getElementById('expr');
-const noteOct = document.querySelector('#note-oct span');
-const noteDec = document.querySelector('#note-dec span');
-const spoken  = document.getElementById('spoken');
+const cellBox  = document.getElementById('cells');
+const ctxLabel = document.getElementById('ctx');
+const noteA    = document.querySelector('#note-a span');
+const noteB    = document.querySelector('#note-b span');
+const labelA   = document.querySelector('#note-a b');
+const labelB   = document.querySelector('#note-b b');
+const spoken   = document.getElementById('spoken');
 const traceWrap = document.getElementById('trace-wrap');
+const tapeTitle = document.getElementById('tape-title');
+const valuesBox = document.getElementById('values');
+const varsBox   = document.getElementById('vars');
+const readsOut  = document.getElementById('reads');
+const entry     = document.getElementById('entry');
+const keypad    = document.getElementById('keypad');
 const ann = {
-  stack: document.getElementById('ann-stack'),
+  base:  document.getElementById('ann-base'),
+  mode:  document.getElementById('ann-mode'),
+  count: document.getElementById('ann-count'),
   rep:   document.getElementById('ann-rep'),
   trunc: document.getElementById('ann-trunc'),
   err:   document.getElementById('ann-err')
 };
+
+let base = 8n;
+let target = entry;                 // which field the keypad types into
+const entered = new Map();          // variable name -> what the user typed
+let fieldKey = '';
+
+const otherBase  = () => (base === 8n ? 10n : 8n);
+const baseName   = () => (base === 8n ? 'Octal' : 'Decimal');
+const otherName  = () => (base === 8n ? 'Base 10' : 'Base 8');
+
+function esc(s){
+  return String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;' }[c]));
+}
+
+/* ---------- seven-segment readout ---------- */
 
 function makeCell(ch, dot){
   const lit = MASK[ch] || '';
@@ -543,123 +883,332 @@ function paint(text){
     cells.push({ ch: ch in MASK ? ch : ' ', dot: false });
   }
   while (cells.length < CELLS) cells.unshift({ ch: ' ', dot: false });
-  readout.replaceChildren(...cells.map(c => makeCell(c.ch, c.dot)));
+  cellBox.replaceChildren(...cells.map(c => makeCell(c.ch, c.dot)));
   return clipped;
 }
 
 function setAnn(el, on, label){
   el.classList.toggle('on', !!on);
-  if (label) el.textContent = label;
+  if (label !== undefined) el.textContent = label;
 }
 
-function renderTrace(steps){
-  if (!steps.length) {
-    traceWrap.innerHTML = '<p class="empty">Type an expression to watch the stack build.</p>';
+/* Both note lines always exist, so the display never changes height. */
+function paintLcd(s){
+  ctxLabel.textContent = s.ctx || '';
+  const clipped = paint(s.digits || '');
+  setAnn(ann.base, true, base === 10n ? 'DEC' : 'OCT');
+  setAnn(ann.mode, true, s.mode);
+  setAnn(ann.count, s.count > 1, s.count > 1 ? s.countLabel + ' ' + s.count : s.countLabel);
+  setAnn(ann.rep, !!s.rep);
+  setAnn(ann.trunc, !!s.trunc || clipped);
+  setAnn(ann.err, !!s.fault);
+  labelA.textContent = s.aLabel;
+  noteA.textContent = s.aText;
+  noteA.title = s.aText;
+  noteA.parentElement.classList.toggle('fault', !!s.fault);
+  labelB.textContent = s.bLabel || otherName();
+  noteB.textContent = s.bText === undefined ? '\u2014' : s.bText;
+  noteB.title = noteB.textContent;
+  spoken.textContent = s.spoken || s.aText;
+}
+
+function setReads(text){
+  readsOut.textContent = text;
+  readsOut.title = text;
+}
+
+function renderTrace(title, head, rows){
+  tapeTitle.textContent = title;
+  if (!rows.length) {
+    traceWrap.innerHTML = '<p class="empty">' + head + '</p>';
     return;
   }
-  const rows = steps.map(s => {
-    const cls = s.bad ? ' class="bad"' : (s.pending ? ' class="pend"' : '');
-    const shown = s.bad ? '&mdash;'
-      : s.pending ? 'waiting for digits'
-      : (s.stack.length ? s.stack.map(v => notate(expand(v, 8n, 10))).join('  ') : '&nbsp;');
-    return '<tr' + cls + '><td>' + esc(s.tok) + '</td><td>' + shown + '</td></tr>';
-  }).join('');
   traceWrap.innerHTML =
-    '<table class="trace"><thead><tr><th>Token</th><th>Stack after</th></tr></thead><tbody>'
-    + rows + '</tbody></table>';
+    '<table class="trace"><thead><tr><th>' + head[0] + '</th><th>' + head[1] + '</th></tr></thead><tbody>'
+    + rows.join('') + '</tbody></table>';
 }
 
-function esc(s){
-  return s.replace(/[&<>]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[c]));
+/* ---------- variable fields ---------- */
+
+function syncFields(names){
+  const key = names.join(',');
+  if (key === fieldKey) return;
+  fieldKey = key;
+  varsBox.innerHTML = names.map(n =>
+    '<label class="var"><span>' + esc(n) + '</span>' +
+    '<input type="text" inputmode="text" autocomplete="off" spellcheck="false" ' +
+    'data-var="' + esc(n) + '" value="' + esc(entered.get(n) || '') + '" placeholder="\u2014"></label>'
+  ).join('');
 }
 
-function showNote(label, text, fault, second){
-  noteOct.previousElementSibling.textContent = label;
-  noteOct.textContent = text;
-  noteOct.parentElement.classList.toggle('fault', !!fault);
-  if (second === undefined) {
-    noteDec.parentElement.hidden = true;
-  } else {
-    noteDec.parentElement.hidden = false;
-    noteDec.textContent = second;
+/* The answer lands in the field it belongs to, in gold. */
+function setFieldHints(name, text){
+  for (const label of varsBox.querySelectorAll('.var')) {
+    const field = label.querySelector('input');
+    const mine = field.dataset.var === name;
+    label.classList.toggle('solved', mine);
+    field.placeholder = mine ? text : '\u2014';
   }
 }
 
-function update(){
-  const { stack, steps, error, pending } = evaluate(input.value);
-  renderTrace(steps);
-  setAnn(ann.stack, stack.length > 1, stack.length > 1 ? 'STACK ' + stack.length : 'STACK');
+/* ============================================================
+   One render for one entry line: an = makes it a function.
+   ============================================================ */
+
+function render(){
+  const raw = entry.value;
+  /* X on its own is a variable half-typed - hold rather than fault. */
+  const half = /(^|\s)X$/i.test(raw);
+  const src = half ? raw.replace(/X$/i, '') : raw;
+
+  const s = src.includes('=') ? renderFunction(src) : renderExpression(src);
+  if (half && !s.fault) {
+    s.digits = '';
+    s.aLabel = 'Entry';
+    s.aText = 'Name the variable. Key in a number.';
+    s.bText = '\u2014';
+    s.spoken = 'Waiting for a variable number';
+  }
+  paintLcd(s);
+  refreshKeys();
+}
+
+function renderExpression(src){
+  const { stack, steps, error, pending } = evaluate(src, base);
+
+  renderTrace('Stack trace', steps.length ? ['Token', 'Stack after'] : 'Type an expression to watch the stack build.',
+    steps.map(st => {
+      const cls = st.bad ? ' class="bad"' : (st.pending ? ' class="pend"' : '');
+      const cell = st.bad ? '&mdash;'
+        : st.pending ? 'waiting for digits'
+        : (st.stack.length ? st.stack.map(v => esc(show(v, base, 10))).join('  ') : '&nbsp;');
+      return '<tr' + cls + '><td>' + esc(st.tok) + '</td><td>' + cell + '</td></tr>';
+    }));
+
+  valuesBox.hidden = true;
+  setReads(error || pending || !stack.length ? '' :
+    stack.map(e => toInfix(e.node, base)).join('   \u00b7   '));
+
+  const s = {
+    mode: 'RPN', ctx: '', digits: '', count: stack.length, countLabel: 'STACK',
+    aLabel: baseName(), aText: '0', bText: '0'
+  };
 
   if (error) {
-    paint('');
-    setAnn(ann.err, true);
-    setAnn(ann.rep, false);
-    setAnn(ann.trunc, false);
-    setAnn(ann.stack, false, 'STACK');
-    showNote('Fault', error, true);
-    spoken.textContent = error;
-    return;
+    s.fault = true; s.count = 0;
+    s.aLabel = 'Fault'; s.aText = error; s.bText = '\u2014';
+  } else if (pending) {
+    s.digits = '-';
+    s.aLabel = 'Entry'; s.aText = pending; s.bText = '\u2014';
+    s.spoken = 'Negative sign set, waiting for digits';
+  } else if (stack.length) {
+    const top = stack[stack.length - 1].v;
+    const o = expand(top, base, 48);
+    s.digits = plain(o, CELLS);
+    s.rep = o.cycle >= 0;
+    s.trunc = o.truncated;
+    s.aText = notate(o) + (stack.length > 1 ? '   (top of ' + stack.length + ')' : '');
+    s.bText = show(top, otherBase(), 48);
+    s.spoken = baseName() + ' ' + notate(o);
+  } else {
+    s.digits = '0';
   }
-
-  setAnn(ann.err, false);
-  setAnn(ann.rep, false);
-  setAnn(ann.trunc, false);
-
-  if (pending) {
-    paint('-');
-    showNote('Entry', 'Sign set. Key in the digits.');
-    spoken.textContent = 'Negative sign set, waiting for digits';
-    return;
-  }
-
-  if (!stack.length) {
-    paint('0');
-    showNote('Octal', '0', false, '0');
-    spoken.textContent = 'Ready';
-    return;
-  }
-
-  const top = stack[stack.length - 1];
-  const o = octal(top), d = decimal(top);
-  const clipped = paint(plain(o, CELLS));
-
-  setAnn(ann.rep, o.cycle >= 0);
-  setAnn(ann.trunc, clipped || o.truncated);
-
-  showNote(
-    'Octal',
-    notate(o) + (stack.length > 1 ? '   (top of ' + stack.length + ')' : ''),
-    false,
-    notate(d)
-  );
-  spoken.textContent = 'Octal ' + notate(o) + ', base ten ' + notate(d);
+  return s;
 }
 
-/* Insert at the caret, keeping tokens apart without doubling spaces. */
-function insert(text){
-  const start = input.selectionStart ?? input.value.length;
-  const end   = input.selectionEnd ?? input.value.length;
-  let chunk = text;
-  if ('+-*/'.includes(text)) {
-    const before = input.value.slice(0, start);
-    chunk = (before && !before.endsWith(' ') ? ' ' : '') + text + ' ';
+function fault(text, ctx){
+  return {
+    mode: 'SOLVE', ctx: ctx || '', digits: '', count: 0, countLabel: 'SOLNS',
+    fault: true, aLabel: 'Fault', aText: text, bText: '\u2014'
+  };
+}
+
+function renderFunction(src){
+  let parts, left, right;
+  try {
+    parts = splitDefinition(src);
+    left  = buildAst(parts.left, base, 'Left');
+    right = buildAst(parts.right, base, 'Right');
+  } catch (err) {
+    if (!(err instanceof CalcError)) throw err;
+    valuesBox.hidden = true;
+    fieldKey = '';
+    varsBox.innerHTML = '';
+    setReads('');
+    renderTrace('Working', 'Write both sides in RPN with an = between them.', []);
+    return err.message ? fault(err.message) : {
+      mode: 'SOLVE', ctx: '', digits: '', count: 0, countLabel: 'SOLNS',
+      aLabel: 'Function', aText: 'Define a function to solve it', bText: '\u2014'
+    };
   }
-  input.value = input.value.slice(0, start) + chunk + input.value.slice(end);
+
+  const names = [...collectVars(left, collectVars(right, new Set()))]
+    .sort((a, b) => a.localeCompare(b, 'en', { numeric: true }));
+  syncFields(names);
+  valuesBox.hidden = !names.length;
+  setReads(toInfix(left, base) + ' = ' + toInfix(right, base));
+
+  /* Every filled field is a known; the empty one is what we solve for. */
+  const env = new Map();
+  const blank = [];
+  for (const n of names) {
+    const raw = (entered.get(n) || '').trim();
+    if (!raw) { blank.push(n); continue; }
+    if (!numRe(base).test(raw)) {
+      setFieldHints(null, '\u2014');
+      renderTrace('Working', 'Fix ' + n + ' to solve.', []);
+      return fault(n + ': ' + badToken(raw, base));
+    }
+    env.set(n, parseNum(raw, base));
+  }
+
+  if (blank.length !== 1) {
+    setFieldHints(null, '\u2014');
+    if (blank.length > 1) {
+      renderTrace('Working', 'Leave exactly one field empty to solve for it.', []);
+      return {
+        mode: 'SOLVE', ctx: '', digits: '', count: 0, countLabel: 'SOLNS',
+        aLabel: 'Function', aText: 'Leave one field empty \u2014 ' + blank.length + ' are blank',
+        bText: '\u2014'
+      };
+    }
+    try {
+      const a = evalNode(left, env), b = evalNode(right, env);
+      const same = a.n === b.n && a.d === b.d;
+      renderTrace('Working', 'Both sides worked out. Empty a field to solve for it.', []);
+      return {
+        mode: 'SOLVE', ctx: '', digits: plain(expand(a, base, 48), CELLS),
+        count: 0, countLabel: 'SOLNS', fault: !same,
+        aLabel: same ? 'Checks' : 'Fault',
+        aText: show(a, base) + (same ? ' = ' : ' \u2260 ') + show(b, base),
+        bText: show(a, otherBase()) + (same ? ' = ' : ' \u2260 ') + show(b, otherBase())
+      };
+    } catch (err) {
+      if (!(err instanceof CalcError)) throw err;
+      renderTrace('Working', 'Nothing to undo yet.', []);
+      return fault(err.message);
+    }
+  }
+
+  const unknown = blank[0];
+
+  try {
+    const occurrences = countVar(left, unknown) + countVar(right, unknown);
+    if (occurrences > 1)
+      throw new CalcError(unknown + ' appears ' + occurrences + ' times; this solver needs it once');
+
+    const inLeft = countVar(left, unknown) === 1;
+    const known = inLeft ? right : left;
+
+    const evalSteps = [];
+    traceEval(known, env, base, evalSteps, []);
+    const target = evalSteps[evalSteps.length - 1].stack[0];
+
+    const trace = [];
+    const answers = solveFor(unknown, inLeft ? left : right, target, env, base, trace);
+    if (!answers.length) throw new CalcError('No value of ' + unknown + ' fits');
+
+    const row = (label, values, cls) =>
+      '<tr' + (cls ? ' class="' + cls + '"' : '') + '><td>' + esc(label) + '</td><td>'
+      + (Array.isArray(values) ? values.map(v => esc(show(v, base, 10))).join('  ') : values)
+      + '</td></tr>';
+
+    const rows = evalSteps.map(st => row(st.tok, st.stack));
+    if (trace.length) {
+      rows.push(row('undo', 'to reach ' + esc(unknown), 'head'));
+      for (const t of trace) rows.push(row(t.label, t.values));
+    }
+    renderTrace('Working', ['Step', 'Value'], rows);
+
+    const tuple = (v, b) => {
+      const full = new Map(env);
+      full.set(unknown, v);
+      return '(' + names.map(n => show(full.get(n), b)).join(', ') + ')';
+    };
+
+    setFieldHints(unknown, answers.slice(0, 2).map(v => show(v, base, 8)).join(' or ')
+      + (answers.length > 2 ? '\u2026' : ''));
+
+    const first = expand(answers[0], base, 48);
+    return {
+      mode: 'SOLVE',
+      ctx: unknown + ' =',
+      digits: plain(first, CELLS),
+      count: answers.length,
+      countLabel: 'SOLNS',
+      rep: first.cycle >= 0,
+      trunc: first.truncated,
+      aLabel: 'Solve',
+      aText: tuple(answers[0], base),
+      bLabel: answers.length > 1 ? 'Also' : otherName(),
+      bText: answers.length > 1
+        ? tuple(answers[1], base) + (answers.length > 2 ? '  +' + (answers.length - 2) + ' more' : '')
+        : tuple(answers[0], otherBase()),
+      spoken: unknown + ' is ' + show(answers[0], base)
+    };
+  } catch (err) {
+    if (!(err instanceof CalcError)) throw err;
+    setFieldHints(unknown, '?');
+    renderTrace('Working', err.message, []);
+    return fault(err.message, unknown + ' =');
+  }
+}
+
+/* ---------- the keypad drives whichever field is live ---------- */
+
+const isVarField = el => !!(el && el.dataset && el.dataset.var !== undefined);
+
+function commit(){
+  if (isVarField(target)) entered.set(target.dataset.var, target.value);
+  render();
+}
+
+function refreshKeys(){
+  if (!target.isConnected) target = entry;
+  const onMain = target === entry;
+  for (const key of keypad.querySelectorAll('.key')) {
+    let ok = true;
+    if (key.dataset.dec !== undefined) ok = base === 10n;
+    if (key.dataset.main !== undefined) ok = onMain;
+    key.disabled = !ok;
+  }
+}
+
+document.addEventListener('focusin', ev => {
+  const el = ev.target;
+  if (el === entry || isVarField(el)) { target = el; refreshKeys(); }
+});
+
+function insert(text){
+  if (!target.isConnected) target = entry;
+  const start = target.selectionStart ?? target.value.length;
+  const end   = target.selectionEnd ?? target.value.length;
+  let chunk = text;
+  const before = target.value.slice(0, start);
+  if ('+-*/^='.includes(text) && text.length === 1) {
+    chunk = (before && !before.endsWith(' ') ? ' ' : '') + text + ' ';
+  } else if (text === 'FUNC') {
+    chunk = (before && !before.endsWith(' ') ? ' ' : '') + text;
+  } else if (text === ' ' && (!before || before.endsWith(' '))) {
+    chunk = '';   // one separator is enough
+  }
+  target.value = before + chunk + target.value.slice(end);
   const caret = start + chunk.length;
-  input.setSelectionRange(caret, caret);
-  input.focus();
-  update();
+  target.setSelectionRange(caret, caret);
+  target.focus();
+  commit();
 }
 
 /* NEG flips the sign of the value the caret is touching. With no value
    there yet, it lays down the minus so the digits that follow join it. */
-const NUM_AT_CARET = /([+-]?(?:[0-7]+(?:\.[0-7]*)?|\.[0-7]+))$/;
-
 function negate(){
-  const caret = input.selectionStart ?? input.value.length;
-  const head = input.value.slice(0, caret);
-  const tail = input.value.slice(caret);
-  const found = head.match(NUM_AT_CARET);
+  if (!target.isConnected) target = entry;
+  const d = '0-' + (base - 1n);
+  const numAtCaret = new RegExp('([+-]?(?:[' + d + ']+(?:\\.[' + d + ']*)?|\\.[' + d + ']+))$');
+  const caret = target.selectionStart ?? target.value.length;
+  const head = target.value.slice(0, caret);
+  const tail = target.value.slice(caret);
+  const found = head.match(numAtCaret);
   const held = /(^|\s)[+-]$/.test(head);
   let next, pos;
   if (held) {
@@ -675,45 +1224,66 @@ function negate(){
     next = head + gap + '-' + tail;
     pos = caret + gap.length + 1;
   }
-  input.value = next;
-  input.setSelectionRange(pos, pos);
-  input.focus();
-  update();
+  target.value = next;
+  target.setSelectionRange(pos, pos);
+  target.focus();
+  commit();
 }
 
-document.getElementById('keypad').addEventListener('click', ev => {
+keypad.addEventListener('click', ev => {
   const key = ev.target.closest('.key');
-  if (!key) return;
+  if (!key || key.disabled) return;
+  if (!target.isConnected) target = entry;
   if (key.dataset.ins !== undefined) return insert(key.dataset.ins);
   if (key.dataset.act === 'neg') return negate();
-  if (key.dataset.act === 'clear') { input.value = ''; input.focus(); return update(); }
+  if (key.dataset.act === 'clear') { target.value = ''; target.focus(); return commit(); }
   if (key.dataset.act === 'back') {
-    const start = input.selectionStart ?? input.value.length;
-    const end   = input.selectionEnd ?? input.value.length;
+    const start = target.selectionStart ?? target.value.length;
+    const end   = target.selectionEnd ?? target.value.length;
     if (start === end && start > 0) {
-      input.value = input.value.slice(0, start - 1) + input.value.slice(end);
-      input.setSelectionRange(start - 1, start - 1);
+      target.value = target.value.slice(0, start - 1) + target.value.slice(end);
+      target.setSelectionRange(start - 1, start - 1);
     } else {
-      input.value = input.value.slice(0, start) + input.value.slice(end);
-      input.setSelectionRange(start, start);
+      target.value = target.value.slice(0, start) + target.value.slice(end);
+      target.setSelectionRange(start, start);
     }
-    input.focus();
-    update();
+    target.focus();
+    commit();
   }
 });
 
 document.getElementById('chips').addEventListener('click', ev => {
   const chip = ev.target.closest('.chip');
   if (!chip) return;
-  input.value = chip.textContent.trim();
-  input.focus();
-  update();
+  entry.value = chip.textContent.trim();
+  target = entry;
+  entry.focus();
+  render();
 });
 
-input.addEventListener('input', update);
-input.value = '1 4 /';
-update();
-if (window.matchMedia('(min-width: 841px)').matches) input.focus();
+entry.addEventListener('input', render);
+
+varsBox.addEventListener('input', ev => {
+  const field = ev.target.closest('input[data-var]');
+  if (!field) return;
+  entered.set(field.dataset.var, field.value);
+  render();
+});
+
+document.getElementById('base-toggle').addEventListener('click', ev => {
+  const btn = ev.target.closest('button[data-base]');
+  if (!btn) return;
+  base = BigInt(btn.dataset.base);
+  for (const b of ev.currentTarget.querySelectorAll('button'))
+    b.classList.toggle('on', b === btn);
+  render();
+});
+
+/* ---------- start ---------- */
+
+entry.value = '1 4 /';
+render();
+if (!window.matchMedia || window.matchMedia('(min-width: 821px)').matches) entry.focus();
 
 }
 </script>
