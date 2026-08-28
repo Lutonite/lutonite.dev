@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Octal RPN - a base-8 postfix calculator</title>
+<style>
+  :root{
+    --shell:#2C2924;
+    --shell-2:#1E1B18;
+    --bezel:#141210;
+    --bone:#D5CEBD;
+    --bone-dim:rgba(213,206,189,.52);
+    --bone-faint:rgba(213,206,189,.22);
+    --gold:#C79A3E;
+    --blue:#7C9CBE;
+    --lcd-a:#B4BFA1;
+    --lcd-b:#9EAB89;
+    --ink:#1B2417;
+    --ink-off:rgba(27,36,23,.085);
+    --ink-dim:rgba(27,36,23,.55);
+    --rust:#7A3220;
+    --key:#CFC8B8;
+    --key-op:#4A4F45;
+    --key-util:#3A3833;
+    --radius:16px;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono","Roboto Mono",Menlo,Consolas,monospace;
+    --sans:"Helvetica Neue",Inter,system-ui,-apple-system,Segoe UI,sans-serif;
+  }
+
+  *{box-sizing:border-box}
+
+  html,body{margin:0;padding:0}
+
+  body{
+    min-height:100vh;
+    background:
+      radial-gradient(1100px 700px at 50% -10%, #23201C 0%, #0E0D0B 62%),
+      #0E0D0B;
+    color:var(--bone);
+    font-family:var(--sans);
+    -webkit-font-smoothing:antialiased;
+    padding:clamp(16px,4vw,44px) clamp(12px,4vw,32px) 64px;
+  }
+
+  /* ---------- masthead ---------- */
+  .masthead{
+    max-width:892px;margin:0 auto clamp(18px,3vw,30px);
+    display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 16px;
+    border-bottom:1px solid rgba(213,206,189,.12);padding-bottom:12px;
+  }
+  .masthead h1{
+    margin:0;font-size:13px;font-weight:700;
+    letter-spacing:.30em;text-transform:uppercase;
+  }
+  .masthead p{
+    margin:0;font-family:var(--mono);font-size:12px;
+    color:var(--bone-dim);letter-spacing:.04em;
+  }
+
+  /* ---------- layout ---------- */
+  .rig{
+    max-width:892px;margin:0 auto;
+    display:grid;gap:26px;
+    grid-template-columns:minmax(0,470px) minmax(0,396px);
+    align-items:start;
+  }
+  @media(max-width:840px){ .rig{grid-template-columns:minmax(0,470px);justify-content:center} }
+
+  /* ---------- device ---------- */
+  .device{
+    background:linear-gradient(178deg,var(--shell) 0%,var(--shell-2) 100%);
+    border:1px solid rgba(213,206,189,.10);
+    border-radius:var(--radius);
+    padding:clamp(14px,3.2vw,20px);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,.06) inset,
+      0 -1px 0 rgba(0,0,0,.5) inset,
+      0 28px 60px -26px #000;
+  }
+
+  .nameplate{
+    display:flex;align-items:center;gap:10px;
+    padding-bottom:11px;margin-bottom:14px;
+    border-bottom:1px solid rgba(213,206,189,.10);
+    font-size:9.5px;letter-spacing:.24em;text-transform:uppercase;
+  }
+  .nameplate .mark{color:var(--gold);letter-spacing:.12em;font-weight:700}
+  .nameplate .sep{color:var(--bone-faint)}
+  .nameplate .spec{margin-left:auto;color:var(--bone-dim);letter-spacing:.16em}
+
+  /* ---------- lcd ---------- */
+  .lcd{
+    position:relative;overflow:hidden;
+    background:linear-gradient(178deg,var(--lcd-a),var(--lcd-b));
+    border-radius:7px;
+    padding:11px 13px 12px;
+    box-shadow:
+      0 2px 7px rgba(0,0,0,.5) inset,
+      0 0 0 1px rgba(0,0,0,.55),
+      0 0 0 4px #191713;
+  }
+  .lcd::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:repeating-linear-gradient(180deg,rgba(27,36,23,.05) 0 1px,transparent 1px 3px);
+  }
+
+  .ann{
+    display:flex;gap:12px;flex-wrap:wrap;
+    font-size:9px;font-weight:700;letter-spacing:.17em;
+    color:var(--ink);
+  }
+  .ann span{opacity:.13;transition:opacity .1s}
+  .ann span.on{opacity:.82}
+  .ann span.warn.on{color:var(--rust);opacity:1}
+
+  .readout{
+    display:flex;justify-content:flex-end;align-items:flex-end;
+    gap:2px;min-height:46px;margin:9px 0 8px;
+  }
+  .cell{flex:1 1 0;min-width:0;max-width:32px}
+  .cell svg{display:block;width:100%;height:auto}
+  .cell .seg{fill:var(--ink-off)}
+  .cell .seg.lit{fill:var(--ink)}
+  .cell .dp{fill:var(--ink-off)}
+  .cell .dp.lit{fill:var(--ink)}
+
+  .notes{
+    border-top:1px solid rgba(27,36,23,.18);padding-top:8px;
+    font-family:var(--mono);font-size:12px;color:var(--ink);
+    display:grid;gap:3px;
+  }
+  .note{display:flex;gap:10px;align-items:baseline}
+  .note[hidden]{display:none}
+  .note b{
+    flex:0 0 54px;font-weight:700;font-size:9px;letter-spacing:.14em;
+    text-transform:uppercase;color:var(--ink-dim);font-family:var(--sans);
+  }
+  .note span{word-break:break-all;line-height:1.45}
+  .note.fault span{color:var(--rust);font-weight:700}
+
+  /* ---------- entry ---------- */
+  .entry{display:block;margin:16px 0 14px}
+  .entry .legend{
+    display:block;font-size:9.5px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--bone-dim);margin-bottom:7px;
+  }
+  .slot{
+    display:flex;align-items:center;gap:9px;
+    background:#161411;border:1px solid rgba(0,0,0,.6);
+    border-radius:7px;padding:11px 13px;
+    box-shadow:0 1px 0 rgba(255,255,255,.05);
+  }
+  .slot::before{content:"\25B8";color:var(--gold);font-size:11px}
+  .slot:focus-within{border-color:rgba(199,154,62,.65);box-shadow:0 0 0 2px rgba(199,154,62,.18)}
+  #expr{
+    flex:1;min-width:0;border:0;background:transparent;outline:none;
+    color:var(--bone);font-family:var(--mono);font-size:16px;letter-spacing:.09em;
+    caret-color:var(--gold);
+  }
+  #expr::placeholder{color:rgba(213,206,189,.28);letter-spacing:.06em}
+
+  /* ---------- keypad ---------- */
+  .keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+  .key{
+    position:relative;
+    appearance:none;border:0;cursor:pointer;
+    border-radius:7px;padding:13px 4px 12px;
+    font-family:var(--mono);font-size:17px;font-weight:600;
+    background:linear-gradient(180deg,#DCD5C5,#C2BAA8);
+    color:#221F1B;
+    box-shadow:0 2px 0 #8F8878,0 4px 8px rgba(0,0,0,.4);
+    transition:transform .05s,box-shadow .05s;
+  }
+  .key:active{transform:translateY(2px);box-shadow:0 0 0 #8F8878,0 2px 5px rgba(0,0,0,.4)}
+  .key:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .key.op{
+    background:linear-gradient(180deg,#565C51,#41463C);color:var(--bone);
+    box-shadow:0 2px 0 #24271F,0 4px 8px rgba(0,0,0,.45);
+  }
+  .key.op:active{box-shadow:0 0 0 #24271F,0 2px 5px rgba(0,0,0,.45)}
+  .key.util{
+    background:linear-gradient(180deg,#413E38,#302E29);color:var(--bone);
+    font-size:14px;box-shadow:0 2px 0 #1B1916,0 4px 8px rgba(0,0,0,.45);
+  }
+  .key.util:active{box-shadow:0 0 0 #1B1916,0 2px 5px rgba(0,0,0,.45)}
+  .key.name{
+    font-family:var(--sans);font-size:11px;font-weight:700;letter-spacing:.16em;
+    text-transform:uppercase;
+  }
+  .key.wide{grid-column:1/-1;padding:10px 4px}
+  .key .tag{
+    display:block;font-family:var(--sans);font-size:8px;font-weight:700;
+    letter-spacing:.14em;color:var(--gold);margin-bottom:3px;
+  }
+  .key.util .tag{color:var(--blue)}
+
+  /* ---------- side panels ---------- */
+  .card{
+    background:rgba(255,255,255,.022);
+    border:1px solid rgba(213,206,189,.10);
+    border-radius:12px;padding:15px 16px 16px;
+  }
+  .card + .card{margin-top:18px}
+  .card h2{
+    margin:0 0 12px;font-size:9.5px;font-weight:700;
+    letter-spacing:.24em;text-transform:uppercase;color:var(--bone-dim);
+  }
+
+  .trace{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:12.5px}
+  .trace th{
+    text-align:left;font-family:var(--sans);font-size:8.5px;font-weight:700;
+    letter-spacing:.16em;text-transform:uppercase;color:var(--bone-faint);
+    padding-bottom:6px;border-bottom:1px solid rgba(213,206,189,.10);
+  }
+  .trace td{padding:5px 0;border-bottom:1px solid rgba(213,206,189,.06);vertical-align:top}
+  .trace td:first-child{width:52px;color:var(--gold);white-space:nowrap;padding-right:10px}
+  .trace td:last-child{color:var(--bone);word-break:break-all}
+  .trace tr.bad td:first-child{color:#C86B4E}
+  .trace tr.pend td{color:var(--bone-faint)}
+  .empty{font-family:var(--mono);font-size:12px;color:var(--bone-faint);margin:0}
+
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{
+    appearance:none;cursor:pointer;
+    font-family:var(--mono);font-size:12px;letter-spacing:.05em;
+    color:var(--bone);background:rgba(213,206,189,.06);
+    border:1px solid rgba(213,206,189,.14);border-radius:999px;padding:5px 11px;
+  }
+  .chip:hover{border-color:rgba(199,154,62,.6);color:#EFE7D4}
+  .chip:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+
+  .rules{margin:0;display:grid;gap:11px}
+  .rules div{display:grid;gap:3px}
+  .rules dt{
+    font-size:8.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--bone-faint);
+  }
+  .rules dd{margin:0;font-size:13px;line-height:1.5;color:var(--bone-dim)}
+  .rules code{font-family:var(--mono);color:var(--bone);font-size:12.5px}
+
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+  @media(prefers-reduced-motion:reduce){
+    *{transition:none!important;animation:none!important}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <h1>Octal RPN</h1>
+  <p>base 8 &middot; postfix &middot; exact fractions</p>
+</header>
+
+<main class="rig">
+  <section class="device" aria-label="Calculator">
+    <div class="nameplate">
+      <span class="mark">OCT&middot;8</span>
+      <span class="sep">/</span>
+      <span>Reverse Polish</span>
+      <span class="spec">8 digits &middot; no 8, no 9</span>
+    </div>
+
+    <div class="lcd">
+      <div class="ann" aria-hidden="true">
+        <span class="on">OCT</span>
+        <span class="on">RPN</span>
+        <span id="ann-stack">STACK</span>
+        <span id="ann-rep">REPEATING</span>
+        <span id="ann-trunc">TRUNCATED</span>
+        <span id="ann-err" class="warn">ERROR</span>
+      </div>
+
+      <div class="readout" id="readout" aria-hidden="true"></div>
+
+      <div class="notes">
+        <p class="sr" id="spoken" aria-live="polite"></p>
+        <div class="note" id="note-oct"><b>Octal</b><span>0</span></div>
+        <div class="note" id="note-dec"><b>Base 10</b><span>0</span></div>
+      </div>
+    </div>
+
+    <label class="entry">
+      <span class="legend">Expression</span>
+      <span class="slot">
+        <input id="expr" type="text" inputmode="text" autocomplete="off"
+               autocapitalize="off" spellcheck="false" placeholder="1 4 /">
+      </span>
+    </label>
+
+    <div class="keypad" id="keypad">
+      <button class="key" data-ins="0">0</button>
+      <button class="key" data-ins="1">1</button>
+      <button class="key" data-ins="2">2</button>
+      <button class="key" data-ins="3">3</button>
+      <button class="key" data-ins="4">4</button>
+      <button class="key" data-ins="5">5</button>
+      <button class="key" data-ins="6">6</button>
+      <button class="key" data-ins="7">7</button>
+      <button class="key name" data-act="neg" aria-label="Change the sign of this value">NEG</button>
+      <button class="key util" data-ins=".">.</button>
+      <button class="key util" data-ins=" " aria-label="Space"><span class="tag">SPC</span>&#9141;</button>
+      <button class="key util" data-act="back" aria-label="Delete one character">&#9003;</button>
+      <button class="key op" data-ins="+" aria-label="Add"><span class="tag">+</span>&plus;</button>
+      <button class="key op" data-ins="-" aria-label="Subtract"><span class="tag">-</span>&minus;</button>
+      <button class="key op" data-ins="*" aria-label="Multiply"><span class="tag">*</span>&times;</button>
+      <button class="key op" data-ins="/" aria-label="Divide"><span class="tag">/</span>&divide;</button>
+      <button class="key util name wide" data-act="clear">Clear</button>
+    </div>
+  </section>
+
+  <aside>
+    <section class="card">
+      <h2>Stack trace</h2>
+      <div id="trace-wrap">
+        <p class="empty">Type an expression to watch the stack build.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Try one</h2>
+      <div class="chips" id="chips">
+        <button class="chip">1 4 /</button>
+        <button class="chip">3 4 /</button>
+        <button class="chip">17 3 +</button>
+        <button class="chip">2.4 1.4 *</button>
+        <button class="chip">100 4 / 2 -</button>
+        <button class="chip">10 -5 +</button>
+        <button class="chip">-3 4 /</button>
+        <button class="chip">1 3 /</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>How it reads</h2>
+      <dl class="rules">
+        <div>
+          <dt>Order</dt>
+          <dd>Values first, operator last. <code>1 4 /</code> divides 1 by 4. Put a space between every token.</dd>
+        </div>
+        <div>
+          <dt>Digits</dt>
+          <dd>Only <code>0</code>&ndash;<code>7</code>. <code>10</code> is eight, <code>100</code> is sixty&#8209;four.</dd>
+        </div>
+        <div>
+          <dt>Fractions</dt>
+          <dd>Base 8 after the point too, so <code>0.4</code> is one half and <code>0.2</code> is one quarter.</dd>
+        </div>
+        <div>
+          <dt>Negative values</dt>
+          <dd>NEG flips the sign of the value you're keying in and writes it flush against the digits: <code>10 -5 +</code>. A <code>-</code> with spaces around it subtracts.</dd>
+        </div>
+        <div>
+          <dt>Repeating results</dt>
+          <dd>Parentheses mark digits that run forever: <code>1 3 /</code> gives <code>0.(25)</code>.</dd>
+        </div>
+      </dl>
+    </section>
+  </aside>
+</main>
+
+<script>
+/* ============================================================
+   CORE - exact rational arithmetic, octal parsing, formatting
+   ============================================================ */
+
+class CalcError extends Error {}
+
+function bgcd(a, b){ while (b) { const t = a % b; a = b; b = t; } return a < 0n ? -a : a; }
+
+function rat(n, d){
+  if (d === 0n) throw new CalcError("Can't divide by zero");
+  if (d < 0n) { n = -n; d = -d; }
+  const g = bgcd(n < 0n ? -n : n, d) || 1n;
+  return { n: n / g, d: d / g };
+}
+
+const OPS = new Map([
+  ['+', (a, b) => rat(a.n * b.d + b.n * a.d, a.d * b.d)],
+  ['-', (a, b) => rat(a.n * b.d - b.n * a.d, a.d * b.d)],
+  ['*', (a, b) => rat(a.n * b.n, a.d * b.d)],
+  ['/', (a, b) => {
+    if (b.n === 0n) throw new CalcError("Can't divide by zero");
+    return rat(a.n * b.d, a.d * b.n);
+  }]
+]);
+
+const NUMBER = /^[+-]?(?:[0-7]+(?:\.[0-7]*)?|\.[0-7]+)$/;
+
+function parseOctal(tok){
+  let s = tok, sign = 1n;
+  if (s[0] === '+') s = s.slice(1);
+  else if (s[0] === '-') { sign = -1n; s = s.slice(1); }
+  const dot = s.indexOf('.');
+  const ip = dot === -1 ? s : s.slice(0, dot);
+  const fp = dot === -1 ? '' : s.slice(dot + 1);
+  const den = 8n ** BigInt(fp.length);
+  const num = (ip ? BigInt('0o' + ip) : 0n) * den + (fp ? BigInt('0o' + fp) : 0n);
+  return rat(sign * num, den);
+}
+
+function rejectToken(tok){
+  if (/[89]/.test(tok)) throw new CalcError('8 and 9 are not octal digits: ' + tok);
+  if (/^[+\-*/]/.test(tok) && tok.length > 1 && !NUMBER.test(tok))
+    throw new CalcError('Put a space around each operator: ' + tok);
+  throw new CalcError('Not a value or an operator: ' + tok);
+}
+
+/* Runs the whole expression, keeping every intermediate stack.
+   Never throws: a failure is reported in the returned record. */
+function evaluate(src){
+  const tokens = src.trim().split(/\s+/).filter(Boolean);
+  const stack = [];
+  const steps = [];
+  for (let i = 0; i < tokens.length; i++) {
+    const tok = tokens[i];
+    const last = i === tokens.length - 1;
+    try {
+      if (OPS.has(tok)) {
+        /* A trailing sign with nothing to work on isn't subtraction gone
+           wrong - it's a value being keyed in. Hold, don't fault. */
+        if (stack.length < 2 && last && (tok === '-' || tok === '+')) {
+          steps.push({ tok, pending: true });
+          return { stack, steps, error: null, pending: true };
+        }
+        if (stack.length < 2)
+          throw new CalcError(tok + ' needs two values, found ' + stack.length);
+        const b = stack.pop(), a = stack.pop();
+        stack.push(OPS.get(tok)(a, b));
+      } else if (NUMBER.test(tok)) {
+        stack.push(parseOctal(tok));
+      } else {
+        rejectToken(tok);
+      }
+    } catch (err) {
+      if (!(err instanceof CalcError)) throw err;
+      steps.push({ tok, bad: true });
+      return { stack, steps, error: err.message };
+    }
+    steps.push({ tok, stack: stack.slice() });
+  }
+  return { stack, steps, error: null };
+}
+
+/* Positional expansion of a rational in any base, with cycle detection. */
+function expand(r, base, maxDigits){
+  const neg = r.n < 0n;
+  const n = neg ? -r.n : r.n, d = r.d;
+  const ip = (n / d).toString(Number(base));
+  let rem = n % d;
+  const digits = [], seen = new Map();
+  let cycle = -1, truncated = false;
+  while (rem !== 0n) {
+    if (seen.has(rem)) { cycle = seen.get(rem); break; }
+    if (digits.length >= maxDigits) { truncated = true; break; }
+    seen.set(rem, digits.length);
+    rem *= base;
+    digits.push((rem / d).toString(Number(base)));
+    rem %= d;
+  }
+  return { neg, ip, digits, cycle, truncated };
+}
+
+/* Exact notation: 0.(25) repeats forever, 0.1234... was cut short. */
+function notate(e){
+  let out = (e.neg ? '-' : '') + e.ip;
+  if (!e.digits.length) return out;
+  if (e.cycle >= 0)
+    return out + '.' + e.digits.slice(0, e.cycle).join('') + '(' + e.digits.slice(e.cycle).join('') + ')';
+  return out + '.' + e.digits.join('') + (e.truncated ? '\u2026' : '');
+}
+
+/* Flat digit run for the seven-segment display. A repeating tail is rolled
+   out to `fill` digits, the way a real readout would just keep going. */
+function plain(e, fill){
+  let frac = e.digits.join('');
+  if (fill && e.cycle >= 0) {
+    const loop = frac.slice(e.cycle);
+    while (frac.length < fill) frac += loop;
+    frac = frac.slice(0, fill);
+  }
+  return (e.neg ? '-' : '') + e.ip + (frac ? '.' + frac : '');
+}
+
+const octal = r => expand(r, 8n, 48);
+const decimal = r => expand(r, 10n, 48);
+
+/* ============================================================
+   UI
+   ============================================================ */
+if (typeof document !== 'undefined') {
+
+const SEG = {
+  a:'14,3 46,3 51,8 46,13 14,13 9,8',
+  b:'52,10 57,15 57,42 52,47 47,42 47,15',
+  c:'52,53 57,58 57,85 52,90 47,85 47,58',
+  d:'14,87 46,87 51,92 46,97 14,97 9,92',
+  e:'8,53 13,58 13,85 8,90 3,85 3,58',
+  f:'8,10 13,15 13,42 8,47 3,42 3,15',
+  g:'14,45 46,45 51,50 46,55 14,55 9,50'
+};
+/* Only 0-7 can ever light up. The 8 and the 9 have nowhere to go. */
+const MASK = {
+  '0':'abcdef', '1':'bc', '2':'abdeg', '3':'abcdg',
+  '4':'bcfg', '5':'acdfg', '6':'acdefg', '7':'abc',
+  '-':'g', ' ':''
+};
+const CELLS = 12;
+
+const readout = document.getElementById('readout');
+const input   = document.getElementById('expr');
+const noteOct = document.querySelector('#note-oct span');
+const noteDec = document.querySelector('#note-dec span');
+const spoken  = document.getElementById('spoken');
+const traceWrap = document.getElementById('trace-wrap');
+const ann = {
+  stack: document.getElementById('ann-stack'),
+  rep:   document.getElementById('ann-rep'),
+  trunc: document.getElementById('ann-trunc'),
+  err:   document.getElementById('ann-err')
+};
+
+function makeCell(ch, dot){
+  const lit = MASK[ch] || '';
+  const svg = ['<svg viewBox="0 0 76 100" xmlns="http://www.w3.org/2000/svg">'];
+  for (const key of 'abcdefg')
+    svg.push('<polygon class="seg' + (lit.includes(key) ? ' lit' : '') + '" points="' + SEG[key] + '"/>');
+  svg.push('<circle class="dp' + (dot ? ' lit' : '') + '" cx="67" cy="92" r="5.5"/></svg>');
+  const cell = document.createElement('div');
+  cell.className = 'cell';
+  cell.innerHTML = svg.join('');
+  return cell;
+}
+
+/* Draws a digit run right-aligned; the point rides on the digit before it. */
+function paint(text){
+  const cells = [];
+  let clipped = false;
+  for (const ch of text) {
+    if (ch === '.' && cells.length) { cells[cells.length - 1].dot = true; continue; }
+    if (cells.length >= CELLS) { clipped = true; break; }
+    cells.push({ ch: ch in MASK ? ch : ' ', dot: false });
+  }
+  while (cells.length < CELLS) cells.unshift({ ch: ' ', dot: false });
+  readout.replaceChildren(...cells.map(c => makeCell(c.ch, c.dot)));
+  return clipped;
+}
+
+function setAnn(el, on, label){
+  el.classList.toggle('on', !!on);
+  if (label) el.textContent = label;
+}
+
+function renderTrace(steps){
+  if (!steps.length) {
+    traceWrap.innerHTML = '<p class="empty">Type an expression to watch the stack build.</p>';
+    return;
+  }
+  const rows = steps.map(s => {
+    const cls = s.bad ? ' class="bad"' : (s.pending ? ' class="pend"' : '');
+    const shown = s.bad ? '&mdash;'
+      : s.pending ? 'waiting for digits'
+      : (s.stack.length ? s.stack.map(v => notate(expand(v, 8n, 10))).join('  ') : '&nbsp;');
+    return '<tr' + cls + '><td>' + esc(s.tok) + '</td><td>' + shown + '</td></tr>';
+  }).join('');
+  traceWrap.innerHTML =
+    '<table class="trace"><thead><tr><th>Token</th><th>Stack after</th></tr></thead><tbody>'
+    + rows + '</tbody></table>';
+}
+
+function esc(s){
+  return s.replace(/[&<>]/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[c]));
+}
+
+function showNote(label, text, fault, second){
+  noteOct.previousElementSibling.textContent = label;
+  noteOct.textContent = text;
+  noteOct.parentElement.classList.toggle('fault', !!fault);
+  if (second === undefined) {
+    noteDec.parentElement.hidden = true;
+  } else {
+    noteDec.parentElement.hidden = false;
+    noteDec.textContent = second;
+  }
+}
+
+function update(){
+  const { stack, steps, error, pending } = evaluate(input.value);
+  renderTrace(steps);
+  setAnn(ann.stack, stack.length > 1, stack.length > 1 ? 'STACK ' + stack.length : 'STACK');
+
+  if (error) {
+    paint('');
+    setAnn(ann.err, true);
+    setAnn(ann.rep, false);
+    setAnn(ann.trunc, false);
+    setAnn(ann.stack, false, 'STACK');
+    showNote('Fault', error, true);
+    spoken.textContent = error;
+    return;
+  }
+
+  setAnn(ann.err, false);
+  setAnn(ann.rep, false);
+  setAnn(ann.trunc, false);
+
+  if (pending) {
+    paint('-');
+    showNote('Entry', 'Sign set. Key in the digits.');
+    spoken.textContent = 'Negative sign set, waiting for digits';
+    return;
+  }
+
+  if (!stack.length) {
+    paint('0');
+    showNote('Octal', '0', false, '0');
+    spoken.textContent = 'Ready';
+    return;
+  }
+
+  const top = stack[stack.length - 1];
+  const o = octal(top), d = decimal(top);
+  const clipped = paint(plain(o, CELLS));
+
+  setAnn(ann.rep, o.cycle >= 0);
+  setAnn(ann.trunc, clipped || o.truncated);
+
+  showNote(
+    'Octal',
+    notate(o) + (stack.length > 1 ? '   (top of ' + stack.length + ')' : ''),
+    false,
+    notate(d)
+  );
+  spoken.textContent = 'Octal ' + notate(o) + ', base ten ' + notate(d);
+}
+
+/* Insert at the caret, keeping tokens apart without doubling spaces. */
+function insert(text){
+  const start = input.selectionStart ?? input.value.length;
+  const end   = input.selectionEnd ?? input.value.length;
+  let chunk = text;
+  if ('+-*/'.includes(text)) {
+    const before = input.value.slice(0, start);
+    chunk = (before && !before.endsWith(' ') ? ' ' : '') + text + ' ';
+  }
+  input.value = input.value.slice(0, start) + chunk + input.value.slice(end);
+  const caret = start + chunk.length;
+  input.setSelectionRange(caret, caret);
+  input.focus();
+  update();
+}
+
+/* NEG flips the sign of the value the caret is touching. With no value
+   there yet, it lays down the minus so the digits that follow join it. */
+const NUM_AT_CARET = /([+-]?(?:[0-7]+(?:\.[0-7]*)?|\.[0-7]+))$/;
+
+function negate(){
+  const caret = input.selectionStart ?? input.value.length;
+  const head = input.value.slice(0, caret);
+  const tail = input.value.slice(caret);
+  const found = head.match(NUM_AT_CARET);
+  const held = /(^|\s)[+-]$/.test(head);
+  let next, pos;
+  if (held) {
+    next = head.slice(0, -1) + tail;
+    pos = caret - 1;
+  } else if (found) {
+    const was = found[1];
+    const now = was[0] === '-' ? was.slice(1) : '-' + was.replace(/^\+/, '');
+    next = head.slice(0, found.index) + now + tail;
+    pos = caret + now.length - was.length;
+  } else {
+    const gap = head && !/\s$/.test(head) ? ' ' : '';
+    next = head + gap + '-' + tail;
+    pos = caret + gap.length + 1;
+  }
+  input.value = next;
+  input.setSelectionRange(pos, pos);
+  input.focus();
+  update();
+}
+
+document.getElementById('keypad').addEventListener('click', ev => {
+  const key = ev.target.closest('.key');
+  if (!key) return;
+  if (key.dataset.ins !== undefined) return insert(key.dataset.ins);
+  if (key.dataset.act === 'neg') return negate();
+  if (key.dataset.act === 'clear') { input.value = ''; input.focus(); return update(); }
+  if (key.dataset.act === 'back') {
+    const start = input.selectionStart ?? input.value.length;
+    const end   = input.selectionEnd ?? input.value.length;
+    if (start === end && start > 0) {
+      input.value = input.value.slice(0, start - 1) + input.value.slice(end);
+      input.setSelectionRange(start - 1, start - 1);
+    } else {
+      input.value = input.value.slice(0, start) + input.value.slice(end);
+      input.setSelectionRange(start, start);
+    }
+    input.focus();
+    update();
+  }
+});
+
+document.getElementById('chips').addEventListener('click', ev => {
+  const chip = ev.target.closest('.chip');
+  if (!chip) return;
+  input.value = chip.textContent.trim();
+  input.focus();
+  update();
+});
+
+input.addEventListener('input', update);
+input.value = '1 4 /';
+update();
+if (window.matchMedia('(min-width: 841px)').matches) input.focus();
+
+}
+</script>
+</body>
+</html>
