@@ -7,10 +7,11 @@
 *   SPDX-License-Identifier: CC-BY-NC-SA-4.0
 *  Avec Stations-User
 *
-* Translated and adapted by RWag64.
+* Traduit et adapté par RWag64.
 *
-* v 2.9.5 En
+* version 3.1 En
 **/
+
 
 var settings = {
     server: "int1",
@@ -234,7 +235,7 @@ function initCoords() {
                         for (let signalName of ("" + signalsList[signalId]).split("%")) {
                             coordinates[id][signalName] = [layouts[id][row][char] == "}" ? char - 5 : char * 1, row * 1];
                             signalDirections[id][signalName] = layouts[id][row][char] == "}" ? 1 : 0;
-                            if (signalName != "§" && id != "Settings" && !allSignals.includes(signalName)) {
+                            if (signalName != "§" && id != "Settings" && !(allSignals.includes(signalName) || fakeSignals.includes(signalName))) {
                                 if (signalName == "undefined") {
                                     logUndefinedSignals.push([row, char]);
                                 } else {
@@ -258,6 +259,7 @@ function initCoords() {
         //}
     }
 }
+
 
 function initCnv() {
     cnv = document.getElementById("cnv");
@@ -471,13 +473,13 @@ numtrain2 = numb.toFixed(0);
             logTrainsWithNoSignal += data.data[i].TrainNoLocal + ", ";
         }
     }
-    if (logTrainsWithNoSignal.length) {
-    }
+////    if (logTrainsWithNoSignal.length) {
+////    }
     return data;
 }
 
-function addClosedTracks(data) {
-}
+//// function addClosedTracks(data) {
+//// }
 
 function recordTrains(data) {
     recorded = structuredClone(data);
@@ -682,6 +684,7 @@ case "‡":
 	ctx.fillStyle = "#ff00ff";
             ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
 break;
+// CCTV caméras
 case "➊":
 // caméra ➊ -1-
 	text[row][char] = "" + cam1 + "";
@@ -763,10 +766,14 @@ case "➒":
 	ctx.fillStyle = "#88f8f8";
             ctx.fillText(n, textSize * char / textSizeRatio * textMargin, textSize * row  * textMargin);
 break;
+// diminution de la vitesse
 case "①":
 // speed 10 -1-
 	text[row][char] = "" + speed1 + "";
 	n = "" + speed1 + "";
+		if (isCurrentlyFlipped != false) {
+		char = char - 3;
+		}
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#FF0000";
@@ -776,6 +783,9 @@ case "②":
 // speed 20 -1-
 	text[row][char] = "" + speed2 + "";
 	n = "" + speed2 + "";
+		if (isCurrentlyFlipped != false) {
+		char = char - 3;
+		}
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#FF0000";
@@ -785,6 +795,9 @@ case "③":
 // speed 30 -1-
 	text[row][char] = "" + speed3 + "";
 	n = "" + speed3 + "";
+		if (isCurrentlyFlipped != false) {
+		char = char - 3;
+		}
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#FF0000";
@@ -794,6 +807,9 @@ case "④":
 // speed 40 -1-
 	text[row][char] = "" + speed4 + "";
 	n = "" + speed4 + "";
+		if (isCurrentlyFlipped != false) {
+		char = char - 3;
+		}
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#FF0000";
@@ -803,6 +819,9 @@ case "⑤":
 // speed 50 -1-
 	text[row][char] = "" + speed5 + "";
 	n = "" + speed5 + "";
+		if (isCurrentlyFlipped != false) {
+		char = char - 3;
+		}
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#FF0000";
@@ -812,6 +831,9 @@ case "⑥":
 // speed 60 -1-
 	text[row][char] = "" + speed6 + "";
 	n = "" + speed6 + "";
+		if (isCurrentlyFlipped != false) {
+		char = char - 3;
+		}
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#FF0000";
@@ -821,6 +843,9 @@ case "⑦":
 // speed 70 -1-
 	text[row][char] = "" + speed7 + "";
 	n = "" + speed7 + "";
+		if (isCurrentlyFlipped != false) {
+		char = char - 3;
+		}
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#FF0000";
@@ -830,6 +855,9 @@ case "⑧":
 // speed 80 -1-
 	text[row][char] = "" + speed8 + "";
 	n = "" + speed8 + "";
+		if (isCurrentlyFlipped != false) {
+		char = char - 3;
+		}
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#FF0000";
@@ -839,6 +867,9 @@ case "⑨":
 // speed 90 -1-
 	text[row][char] = "" + speed9 + "";
 	n = "" + speed9 + "";
+		if (isCurrentlyFlipped != false) {
+		char = char - 3;
+		}
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#FF0000";
@@ -848,6 +879,9 @@ case "⑩":
 // speed 100 -1-
 	text[row][char] = "" + speed10 + "";
 	n = "" + speed10 + "";
+		if (isCurrentlyFlipped != false) {
+		char = char - 4;
+		}
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#FF0000";
@@ -857,6 +891,9 @@ case "⑪":
 // speed 110 -1-
 	text[row][char] = "" + speed11 + "";
 	n = "" + speed11 + "";
+		if (isCurrentlyFlipped != false) {
+		char = char - 4;
+		}
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#FF0000";
@@ -866,6 +903,9 @@ case "⑫":
 // speed 120 -1-
 	text[row][char] = "" + speed12 + "";
 	n = "" + speed12 + "";
+		if (isCurrentlyFlipped != false) {
+		char = char - 4;
+		}
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#FF0000";
@@ -875,6 +915,9 @@ case "⑬":
 // speed 130 -1-
 	text[row][char] = "" + speed13 + "";
 	n = "" + speed13 + "";
+		if (isCurrentlyFlipped != false) {
+		char = char - 4;
+		}
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#FF0000";
@@ -884,6 +927,9 @@ case "⑭":
 // speed 140 -1-
 	text[row][char] = "" + speed14 + "";
 	n = "" + speed14 + "";
+		if (isCurrentlyFlipped != false) {
+		char = char - 4;
+		}
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#FF0000";
@@ -893,6 +939,9 @@ case "⑮":
 // speed 150 -1-
 	text[row][char] = "" + speed15 + "";
 	n = "" + speed15 + "";
+		if (isCurrentlyFlipped != false) {
+		char = char - 4;
+		}
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#FF0000";
@@ -902,6 +951,9 @@ case "⑯":
 // speed 160 -1-
 	text[row][char] = "" + speed16 + "";
 	n = "" + speed16 + "";
+		if (isCurrentlyFlipped != false) {
+		char = char - 4;
+		}
 	ctx.fillStyle = "#000000";
     ctx.fillRect(char * textSize / textSizeRatio * textMargin, row * textSize * textMargin, textSize / textSizeRatio * textMargin * 1, textSize * textMargin);
 	ctx.fillStyle = "#FF0000";
@@ -1357,6 +1409,7 @@ area6 = "L062_L064_SPł_Sd";
 area7 = "L008_KG_Kz";
 area8 = "L001_L017_LW_Gr";
 area9 = "L014_L017_LW";
+area0 = "L003_L015_L016_ZI_KU_SK";
 
 couleur = 1;
 	if (isCurrentlyFlipped != true) {
@@ -1389,6 +1442,7 @@ area6 = "L062_L064_SPł_Sd";
 area7 = "L008_KG_Kz";
 area8 = "L001_L017_LW_Gr";
 area9 = "L014_L017_LW";
+area0 = "L003_L015_L016_ZI_KU_SK";
 
 couleur = 1;
 
@@ -1481,8 +1535,10 @@ couleur = 1;
 
         drawRadioBox("◯  7", 0, 7, area8, couleur);	// Lodz		
         drawRadioBox("◯  7", 0, 20, area8, couleur);	// Lodz
+        drawRadioBox("7 ◯  5", 31, 19, area8, couleur);	// Lodz
         drawRadioBox("2 ◯ ", 138, 52, area8, couleur);	// Grodzisk
         drawRadioBox("7 ◯  2", 96, 6, area8, couleur);	// Galkowek
+        drawRadioBox("5 ◯  7", 69, 15, area8, couleur);	// Galkowek
         drawRadioBox("7 ◯  2", 104, 15, area8, couleur);	// Zakowice Polu. F
         drawRadioBox("◯  2", 0, 27, area8, couleur);	// Piotrków
         drawRadioBox("◯  4", 77, 37, area8, couleur);	// Beichow
@@ -1496,8 +1552,22 @@ couleur = 1;
         drawRadioBox("4 ◯  7", 125, 7, area9, couleur);	// Lodz Widzew
 		drawRadioBox("7 ◯  5", 153, 17, area9, couleur);	// Lodz Widzew
         drawRadioBox("1 ◯  5", 26, 20, area9, couleur);	// Lodz Zabieniec
-        drawRadioBox("5 ◯  7", 146, 29, area9, couleur);	// Lodz Chony		
+        drawRadioBox("5 ◯  7", 146, 29, area9, couleur);	// Lodz Chojny
 
+        drawRadioBox("1 ◯  4", 42, 7, area9, couleur);	// Zgierz
+        drawRadioBox("4 ◯  7", 125, 7, area9, couleur);	// Lodz Widzew
+		drawRadioBox("7 ◯  5", 153, 17, area9, couleur);	// Lodz Widzew
+        drawRadioBox("1 ◯  5", 26, 20, area9, couleur);	// Lodz Zabieniec
+        drawRadioBox("5 ◯  7", 146, 29, area9, couleur);	// Lodz Chojny
+
+        drawRadioBox("1 ◯  4", 2, 4, area0, couleur);	// Zgierz
+        drawRadioBox("4 ◯  2", 139, 44, area0, couleur);	// Skerniewice
+        drawRadioBox("4 ◯  1", 36, 8, area0, couleur);	// Zgierz
+        drawRadioBox("4 ◯  1", 69, 53, area0, couleur);	// Lowicz
+        drawRadioBox("◯  4", 5, 25, area0, couleur);	// Kutno
+        drawRadioBox("3 ◯  4", 42, 38, area0, couleur);	// Lowicz
+        drawRadioBox("4 ◯  3", 50, 22, area0, couleur);	// Kutno
+		
 		} else {
 
 couleur = 1;
@@ -1587,10 +1657,11 @@ couleur = 1;
 
         drawRadioBox("7 ◯ ", 154, 37, area8, couleur);	// Lodz		
         drawRadioBox("7 ◯ ", 154, 50, area8, couleur);	// Lodz
+        drawRadioBox("5 ◯  7", 122, 38, area8, couleur);	// Lodz
         drawRadioBox("◯  2", 18, 5, area8, couleur);	// Grodzisk
         drawRadioBox("2 ◯  7", 58, 51, area8, couleur);	// Galkowek
+        drawRadioBox("7 ◯  5", 83, 42, area8, couleur);	// Galkowek
         drawRadioBox("2 ◯  7", 50, 42, area8, couleur);	// Zakowice Polu. F
-        drawRadioBox("7 ◯ ", 109, 30, area8, couleur);	// Lodz Olechow
         drawRadioBox("4 ◯ ", 79, 20, area8, couleur);	// Beichow
         drawRadioBox("4 ◯  2", 16, 17, area8, couleur);	// Puszcza
         drawRadioBox("◯  4", 1, 8, area8, couleur);	// Puszcza
@@ -1598,6 +1669,14 @@ couleur = 1;
         drawRadioBox("4 ◯  2", 49, 17, area8, couleur);	// Skierniewice	
         drawRadioBox("4 ◯  2", 71, 16, area8, couleur);	// Skierniewice	
 
+        drawRadioBox("4 ◯  1", 152, 51, area0, couleur);	// Zgierz
+        drawRadioBox("2 ◯  4", 5, 7, area0, couleur);	// Skerniewice
+        drawRadioBox("1 ◯  4", 117, 48, area0, couleur);	// Zgierz
+        drawRadioBox("1 ◯  4", 85, 3, area0, couleur);	// Lowicz
+        drawRadioBox("4 ◯ ", 151, 31, area0, couleur);	// Kutno
+        drawRadioBox("4 ◯  3", 112, 18, area0, couleur);	// Lowicz
+        drawRadioBox("3 ◯  4", 104, 34, area0, couleur);	// Kutno
+		
 		}
 				
 	}
@@ -1667,7 +1746,7 @@ minutes = (time.getMinutes());
         if (minutes <= 9) {
 			minutes = "0" + minutes;
         }
-  n = (heures + ":" + minutes);
+n = (heures + ":" + minutes);
 
 x = 78;
 y = 0;
@@ -1818,8 +1897,8 @@ loco5 = locoLE(loco6);
             logSignalsWithMultipleTrains.push(distancesFromSignalsToTrains[i].signalName);
         }
     }
-    if (logSignalsWithMultipleTrains.length) {
-    }
+////    if (logSignalsWithMultipleTrains.length) {
+////    }
 
     return trainsToDraw;
 }
@@ -1924,7 +2003,13 @@ switch (loco)  {
 		break;
 	case "163":
 		loco5 = "163 L.E";
-		break;		
+		break;
+	case "BR185":
+		loco5 = "BR185 L.E";
+		break;
+	case "36wed":
+		loco5 = "no";
+		break;
 	case "EN57":
 		loco5 = "no";
 		break;
@@ -1940,9 +2025,6 @@ switch (loco)  {
 	case "ED250":
 		loco5 = "no";
 		break;
-	case "36wed":
-		loco5 = "no";
-		break;
 	default:
 		loco5 = "no";	
 }	
@@ -1953,6 +2035,9 @@ function EntryMap(Station)  {
 /// Origine du train  =>  Station d'entrée sur Simrail
 switch (Station)  {
 	case "Białysto":
+	case "Wien Wes":
+	case "Praha Hl":
+	case "Mińsk Ma":
 		Entry = "Warszawa"; // OK
 		break;
 	case "Bielsko":
@@ -1964,10 +2049,10 @@ switch (Station)  {
 	case "Bohumin":
 		Entry = "Kato.Brynów"; // OK
 		break;	
-	case "Brzesko ":
+	case "Brzesko":
 		Entry = "Kraków Olsza"; // OK
 		break;		
-	case "Chorzew ":
+	case "Chorzew":
 		Entry = "Łódź Chojny";  // OK
 		break;	
 	case "Częstoch":
@@ -1983,17 +2068,18 @@ switch (Station)  {
 		Entry = "D.G. Tow"; // OK
 		break;
 	case "Gdańsk":
+	case "Gdańsk P":
 		Entry = "Łask"; // OK
 		break;
 	case "Gdynia G":
 	case "Gdynia P":
 		Entry = "Warszawa"; // OK
 		break;	
-	case "Gliwice":
-		Entry = "Kato.Tow KTC"; // OK
-		break;
 	case "Gliwice ":
 		Entry = "Kato.Tow KTC"; // OK
+		break;
+	case "Gliwice":
+		Entry = "Zduńska Wola"; // OK
 		break;		
 	case "Henryków":
 		Entry = "Piotrków";  // OK
@@ -2004,11 +2090,13 @@ switch (Station)  {
 	case "Jędrzejó":
 		Entry = "Sędziszów"; // OK
 		break;	
-	case "Jelania ":
+	case "Jelania":
 		Entry = "Żelislawice"; // OK
 		break;			
 	case "KWK Staszic":
-		Entry = "KWK Staszic" // OK
+	case "KWK ":
+	case "Staszic":
+	Entry = "KWK Staszic"; // OK
 		break;
 	case "Kalisz":
 		Entry = "Sędzice"; // OK
@@ -2016,9 +2104,17 @@ switch (Station)  {
 	case "Katowice":
 		Entry = "Katowice"; // OK
 		break;
+	case "Sędziszó":
+		Entry = "Sędziszów"; // OK
+		break;
+	case "Kielce F":
+	case "Kielce G":
+	case "Kielce H":
+		Entry = "Sędziszów"; // OK
+		break;
 	case "Kielce":
 		Entry = "Sędziszów"; // OK
-		break;	
+		break;		
 	case "Kraków G":
 		Entry = "Kraków Główny"; // OK
 		break	
@@ -2047,7 +2143,7 @@ switch (Station)  {
 			break;
 		}
 		if (globalThis_area0 == "L001_L017_LW_Gr")  {
-			Entry = "Piotrków";
+			Entry = "Rozprza";
 			break;
 		}
 	case "Kutno":
@@ -2056,22 +2152,16 @@ switch (Station)  {
 	case "Łódź Cho":
 		Entry = "Łódź Olechów"; // OK
 		break;
-	case "Łódź Chojny":
-		Entry = "Łódź Olechów"; // OK
-		break;	
 	case "Łódź Fab":
 		Entry = "Łódź Fabryczna"; // OK
 		break;
-	case "Łódź Fabryczna":
-		Entry = "Łódź Fabryczna"; // OK
-		break;
-	case "Łódź Widzew":
+	case "Łódź Wid":
 		Entry = "Łódź Widzew"; // OK
 		break;
 	case "Łowicz G":
 		Entry = "Zgierz"; // OK
 		break;		
-	case "Lublin":
+	case "Lublin G":
 		Entry = "Mikołajów";  // OK
 		break;	
 	case "Małaszew":
@@ -2083,8 +2173,8 @@ switch (Station)  {
 	case "Mszczonó":
 		Entry = "Marków"; // OK
 		break;		
-	case "Myszków":
-		Entry = "Myszków"; // OK
+	case "Myszkówi":
+		Entry = "Myszkówice"; // OK
 		break;		
 	case "Nałęczów":
 		Entry = "Idzikowice"; // OK
@@ -2095,22 +2185,25 @@ switch (Station)  {
 	case "Piława G":
 		Entry = "Szeligi"; // OK
 		break;
+	case "Poznań F":
 	case "Poznań G":
 		if (globalThis_area0 == "L001_L017_LW_Gr")  {
-			Entry = "Sieradz";
+			Entry = "Sędzice";
 			break;
 		}
 		if (globalThis_area0 == "L001_KO_Zw")  {
-			Entry = "Myszków";
+			Entry = "Myszkówice";
 			break;
-		}		
-	case "Puławy":
+		}
+			Entry = "Poznań";
+			break;		
+	case "Puławy ":
 		Entry = "Czarnca"; // OK
 		break;
 	case "Puszcza ":
 		Entry = "Puszcza"; // OK
 		break;	
-	case "Radom":
+	case "Rado":
 		Entry = "Sędziszów"; // OK
 		break;	
 	case "Radomsko":
@@ -2129,7 +2222,7 @@ switch (Station)  {
 		Entry = "S.Maczki"; // OK
 		break;
 	case "Szczecin":
-		Entry = "Warszawa Włochy";  // OK
+		Entry = "Warszawa Gol.";  // OK
 		break;
 	case "Tomaszów":
 		Entry = "Tomaszów"; // OK
@@ -2137,7 +2230,7 @@ switch (Station)  {
 	case "Trzebini":
 		Entry = "S.Maczki"; // OK
 		break;
-	case "Trzebinia":
+	case "Trzebini":
 		Entry = "S.Maczki"; // OK
 		break;
 	case "Tychy":
@@ -2154,280 +2247,578 @@ switch (Station)  {
 		Entry = "Kraków Olsza"; // OK
 		break
 	case "Wrocław ":
+			Entry = "Wrocław";
+			break;	
+	case "Wrocław":
 		if (globalThis_area0 == "L001_L017_LW_Gr")  {
-			Entry = "Piotrków";
+			Entry = "Rozprza";
 			break;
 		}
 		if (globalThis_area0 == "L001_KO_Zw")  {
-			Entry = "Myszków";
+			Entry = "Myszkówice";
 			break;
-		}				
+		}
+			Entry = "Wrocław";
+			break;		
 	case "Zakopane":
 		Entry = "Kraków Główny"; // OK
 		break;
-	case "Zduńska":
+	case "Zduńska ":
 		Entry = "Łask"; // OK
 		break;
 	case "Zielonka":
+	case "Błonie":
 		Entry = "Warszawa"; // OK
 		break;
+	case "Przemyśl":
+		Entry = "Myszkówice"; // OK
+		break;
+	case "Szklarsk":
+		Entry = "Sędzice"; // OK
+		break;
+	case "Jackowic":
+		Entry = "Jackowice"; // OK
+		break;
+	case "Berlin":
+	case "Berlin H":
+		Entry = "Warszawa Goł."; // OK
+		break;
+	case "Krzewie":
+		Entry = "Krzewie"; // OK
+		break;
+	case "Chrzanów":
+		Entry = "S.Maczki"; // OK
+		break;
+	case "Częstoch":
+		Entry = "Rozprza"; // OK
+		break;
+	case "Kołobrze":
+		Entry = "Warszawa"; // OK
+		break;
+	case "Jelenia ":
+		Entry = "Żelisławice"; // OK
+		break;
+	case "Bednary":
+		Entry = "Bednary"; // OK
+		break;
+	case "Sosnowie":
+		Entry = "Sosnowiec Maczki"; // OK
+		break;
+	case "S.Jęzor":
+		Entry = "S.Maczki"; // OK
+		break;
+	case "Mszczonó":
+		Entry = "Marków"; // OK
+		break;
+	case "Żychlin":
+		Entry = "Jackowice"; // OK
+		break;
+	case "Mikołajó":
+		Entry = "Mikołajów"; // OK
+		break;
+	case "Rozprza":
+		Entry = "Rozprza"; // OK
+		break;
+	case "RHorka G":
+		Entry = "Sędzice"; // OK
+		break;			
 	default:
-		Entry = "??" + Station;	
+		Entry = "err " + Station;	
 }	
 	return Entry
 }
 
 function ExitNoLocal(TrainNoLocal)  {
+	
+// train3 = TrainNoLocal;
+///console.log("2314", train3);
+
 /// Numéro du train  =>  Station de sortie sur Simrail
 
 //*** EIJ Passengers rapides
 
+
+/////// 2 fois la meme ligne      train3 = TrainNoLocal.substring(0, 2);
+/// **** EIJ TOUT OK le 22082026 ****
+/// Train EIJ (4 car.)
+//**** dont 2 chiffres !!!
 if (TrainNoLocal.length == 4)  {
 /// Train EIJ (4 car.)
+
 train3 = TrainNoLocal.substring(0, 3);
 //**** dont 3 chiffres !!!
 switch (train3)  {
-	case "160":
-	case "161":
+	case "160": // OK
+	case "161": // OK
 		Exit = "Żelisławice";
 		break;
-	case "164":
-		Exit = "Sieradz";
+//	case "164": // N'EXISTE PLUS
+//		Exit = "Sieradz";
+//		break;
+	case "166": // OK
+		Exit = " Rozprza";
 		break;
-	case "166":
-		Exit = "Piotrków";
+	case "37": 
+	case "73": 
 		break;
 	default:
 		Exit = "err " + train3		
 }
+
 train3 = TrainNoLocal.substring(0, 2);
-/// Train EIJ (4 car.)
 //**** dont 2 chiffres !!!
 switch (train3)  {
-	case "37":
+	case "18": // OK
+			Exit = "Krzewie "; // OK
+			break;
+		if (globalThis_area0 == "L001_Zy_WSD")  {
+			Exit = "Warszawa Goł.";
+			break;
+		}
+	case "37": // OK
+			Exit = "Sędzice"; // OK
+			break;
 		if (globalThis_area0 == "L001_KO_Zw")  {
 			Exit = "Myszków";
 			break;
 		}
-		if (globalThis_area0 == "L001_L017_LW_Gr")  {
-			Exit = "Sieradz";
+	case "73": // OK
+			Exit = "Rozprza"; // OK
 			break;
-		}
-	case "73":
-		if (globalThis_area0 == "L001_L017_LW_Gr")  {
-			Exit = "Piotrków";
-			break;
-		}
 		if (globalThis_area0 == "L001_KO_Zw")  {
 			Exit = "S.Maczki";
 			break;
 		}
-	case "31":
-	case "41":
-	case "45":
-	case "61":
-	case "81":
-	case "91":
+	case "81": // OK
+			Exit = "Bednary"; // OK
+			break;
+		if (globalThis_area0 == "L001_Zy_WSD")  {
+			Exit = "Warszawa";
+			break;
+		}
+	case "31": // OK
+	case "35": // OK
+	case "38": // OK
+	case "41": // OK
+	case "45": // OK
+	case "61": // OK
+	case "81": // OK
+	case "91": // OK
 		Exit = "Warszawa";
 		break;
-	case "13":
+	case "13": // OK
+	case "53": // OK
+	case "63": // OK
+	case "83": // OK
 		Exit = "Kraków Główny";
 		break;
-	case "14":
+	case "14": // OK
 		Exit = "Kato.Brynów";
 		break;
 	case "19":
-		Exit = "Łódź Fabryczna";
+		Exit = "Łódź Widzew";
 		break;
-	case "54":
+	case "36": // OK
+	case "54": // OK
 		Exit = "Kato.Tow KTC";
 		break;
-	case "18":
+	case "18": // OK
 		Exit = "Warszawa Gol.";
 		break;
-	case "16":
+	case "27": // OK
+		Exit = "Kutno";
+		break;
+	case "72": // OK
+		Exit = "Mikołajów";
+		break;
+	case "16": // voir ci-dessous
 		break;
 	default:
 		Exit = "err " + train3		
 }
+
 }
 
 //*** Passengers normaux
-
+/// **** PASSAGERS NORMAUX TOUT OK le 22082026 ****
 if (TrainNoLocal.length == 5)  {
+
+// console.log("2424", train3);
+
+train3 = TrainNoLocal.substring(0, 5);
+
 //**** dont 5 chiffres différents!!!
-switch (TrainNoLocal)  {
-	case "42206":
-		Exit = "Sędziszów";
-	break;
-}
-train3 = TrainNoLocal.substring(0, 4);
-//**** dont 4 chiffres différents!!!
+// console.log("2429", train3);
 switch (train3)  {
-	case "1615":
-	case "1616":
-	case "1617":
-	case "1618":
-	case "1620":
-		Exit = "Żelisławice";
+	case "97700": // OK	
+	case "97708": // OK	
+	case "97710": // OK	
+	case "97714": // OK	
+	case "97718": // OK
+	case "97722": // OK
+	case "97726": // OK	
+	case "97730": // OK
+	case "97734": // OK
+	case "97738": // OK
+		Exit = "Kutno";	
+		break;	
+	case "97702": // OK	
+	case "97712": // OK	
+	case "97716": // OK	
+	case "97720": // OK	
+	case "97724": // OK
+	case "97728": // OK
+	case "97732": // OK	
+		Exit = "Łowicz Główny";	
 		break;
-	case "1610":
-	case "1611":
-		Exit = "Sieradz";
+	case "11101": // OK
+	case "11103": // OK
+	case "11105": // OK
+	case "11601": // OK
+	case "11603": // OK	
+	case "11605": // OK	
+	case "11607": // OK	
+	case "11609": // OK	
+	case "11611": // OK	
+	case "11613": // OK	
+	case "11615": // OK	
+	case "11617": // OK	
+	case "11619": // OK	
+		Exit = "Łódź Fabryczna";	
 		break;
-	case "1613":
-	case "1614":
-	case "9320":
-	case "9321":
-	case "9322":
-	case "9323":
-		Exit = "Piotrków";
+	case "11150": // OK
+	case "11152": // OK
+	case "11154": // OK
+		Exit = "Warszawa";	
 		break;
-	case "4010":
-	case "4011":
-	case "4012":
-	case "4013":
-	case "4014":
-		Exit = "Kato.Brynów";
-		break;
-	case "4060":
-	case "4061":
-	case "4062":
-	case "4063":
-		Exit = "Kato.Tow KTC";
-		break;
-	case "4015":
-	case "4016":
-	case "4017":
-	case "4018":
-	case "4019":
-	case "4065":
-	case "4066":
-	case "4067":
-	case "4068":
-		Exit = "Myszków";
-		break;
-	case "1110":
-	case "1111":
-	case "9325":
-	case "9326":
-	case "9327":
-	case "9328":
-		Exit = "Łódź Fabryczna";
-		break;
-	case "1115":
-	case "1116":
-	case "1915":
-		Exit = "Warszawa";
-		break;
-	case "4210":
-	case "4211":
-	case "4220":
-		Exit = "Czarnca";
-		break;
-	case "4215":
-	case "4216":
-		Exit = "Sędziszów";
+	case "11651": // OK
+	case "11652": // OK	
+	case "11654": // OK	
+	case "11656": // OK	
+	case "11658": // OK	
+	case "11660": // OK	
+	case "11662": // OK	
+	case "11664": // OK	
+	case "11666": // OK	
+	case "11668": // OK	
+		Exit = "Puszcza Mariańska";	
 		break;
 	default:
 		Exit = "err " + train3
 }
+
+train3 = TrainNoLocal.substring(0, 4);
+//**** dont 4 chiffres différents!!!
+switch (train3)  {
+	case "1615": // OK
+	case "1616": // OK
+	case "1617": // OK
+	case "1620": // OK
+		Exit = "Żelisławice";
+		break;
+	case "1610": // OK
+	case "1611": // OK
+	case "1617": // OK
+	case "1618": // OK
+		Exit = "Sędzice";
+		break;
+	case "1613": // OK
+	case "1614": // OK
+//	case "9320": // N'EXISTE PLUS
+//	case "9321": // N'EXISTE PLUS
+//	case "9322": // N'EXISTE PLUS
+//	case "9323": // N'EXISTE PLUS
+		Exit = "Piotrków";
+		break;
+	case "4010": // OK
+	case "4011": // OK
+	case "4012": // OK
+	case "4013": // OK
+	case "4014": // OK
+		Exit = "Kato.Brynów";
+		break;
+	case "1618": // OK
+	case "4060": // OK
+	case "4061": // OK
+	case "4062": // OK
+	case "4063": // OK
+	case "4064": // OK
+		Exit = "Kato.Tow KTC";
+		break;
+	case "4015": // OK
+	case "4016": // OK
+	case "4017": // OK
+	case "4018": // OK
+	case "4019": // OK
+	case "4065": // OK
+	case "4066": // OK
+	case "4067": // OK
+	case "4068": // OK
+	case "4069": // OK
+		Exit = "Myszków";
+		break;
+//	case "9325": // N'EXISTE PLUS
+//	case "9326": // N'EXISTE PLUS
+//	case "9327": // N'EXISTE PLUS
+//	case "9328": // N'EXISTE PLUS
+//		Exit = "Łódź Fabryczna";
+//		break;
+	case "1110": // OK
+	case "1155": // OK
+		Exit = "Łódź Widzew";
+		break;
+	case "1150": // OK
+	case "1165": // OK
+		Exit = "Puszcza Mariańska";
+		break;
+	case "1115": // OK
+//	case "1116": // N'EXISTE PLUS
+//	case "1915": // N'EXISTE PLUS
+		Exit = "Warszawa";
+		break;
+	default:
+		Exit = "err " + train3
+}
+
 train3 = TrainNoLocal.substring(0, 3);
 //**** dont 3 chiffres différents !!!
 switch (train3)  {
-	case "741":
-		if (globalThis_area0 == "L001_L017_LW_Gr")  {
-			Exit = "Piotrków";
+	case "141": // OK
+			Exit = "Rozprza";
+			break;
+		if (globalThis_area0 == "L001_KO_Zw")  {
+			Exit = "Katowice Tow.KTC";
 			break;
 		}
+	case "381": // OK
+			Exit = "Krzewie";
+			break;
+		if (globalThis_area0 == "L004_Zw_Gr")  {
+			Exit = " Radzic";
+			break;
+		}
+	case "411": // OK
+			Exit = "Warszawa";
+			break;
+		if (globalThis_area0 == "L001_KO_Zw")  {
+			Exit = "Myszków";
+			break;
+		}
+	case "471": // OK
+			Exit = "Sędzice";
+			break;
+		if (globalThis_area0 == "L001_KO_Zw")  {
+			Exit = "Myszków";
+			break;
+		}
+	case "741": // OK
+			Exit = "Piotrków";
+			break;
 		if (globalThis_area0 == "L001_KO_Zw")  {
 			Exit = "Kato.Brynów";
 			break;
 		}
-	case "471":
-		if (globalThis_area0 == "L001_L017_LW_Gr")  {
-			Exit = "Łódź Chojny";
+	case "831": // OK
+			Exit = "Mikołajów";
+			break;
+		if (globalThis_area0 == "L004_Zw_Gr")  {
+			Exit = "S.Maczki";
 			break;
 		}
-		if (globalThis_area0 == "L001_KO_Zw")  {
-			Exit = "Myszków";
+	case "212": // OK
+			Exit = "Łowicz Główny";
+			break;
+		if (globalThis_area0 == "L004_Zw_Gr")  {
+			Exit = "Radzice";
+			break;
+		}
+	case "122": // OK
+			Exit = "Mikołajów";
+			break;
+		if (globalThis_area0 == "L004_Zw_Gr")  {
+			Exit = "Żelisławice";
 			break;
 		}		
-	case "231":
-	case "531":
-	case "532":
-	case "239":
+	case "131": // OK
+		Exit = "S.Maczki";
+		break;
+	case "231": // OK
+	case "239": // OK
+	case "433": // OK
+	case "531": // OK
+	case "532": // OK
+	case "831": // OK
 		Exit = "Kraków Główny";
 		break;
-	case "351":
-	case "352":
-	case "450":
-	case "611":
-	case "612":
-	case "911":
-	case "917":
-	case "918":
-	case "919":
+	case "311": // OK
+	case "351": // OK
+	case "352": // OK
+	case "410": // OK
+//	case "450": // N'EXISTE PLUS
+	case "611": // OK
+//	case "612": // N'EXISTE PLUS
+	case "710": // OK
+	case "911": // OK
+	case "914": // OK
+//	case "917": // N'EXISTE PLUS
+	case "918": // OK
+	case "919": // OK
 		Exit = "Warszawa";
 		break;
-	case "197":
+	case "170": // OK
+	case "194": // OK
+//	case "197": // N'EXISTE PLUS
 		Exit = "Warszawa Gol.";
 		break;
-	case "191":
-	case "198":
-	case "199":
-		Exit = "Bełchów";
+	case "191": // OK
+	case "198": // OK
+	case "199": // OK
+		Exit = "Łowicz Główny";
 		break;
-	case "241":
-	case "242":
+	case "381": // OK
+	case "415": // OK
+		Exit = "Kutno";
+		break;
+	case "141": // OK
+	case "241": // OK
+//	case "242": // N'EXISTE PLUS
+	case "248": // OK
 		Exit = "Kato.Tow KTC";
 		break;
-	case "249":
-	case "540":
+	case "140": // OK
+	case "249": // OK
+	case "343": // OK
+//	case "540": // N'EXISTE PLUS
 		Exit = "Kato.Brynów";
 		break;
-	case "321":
-	case "329":
-	case "429":
+	case "311": // OK
+	case "321": // OK
+	case "329": // OK
+	case "421": // OK
+	case "422": // OK
+	case "429": // OK
 		Exit = "Sędziszów";
 		break;		
-	case "105":
-	case "212":
-		Exit = "Łódź Widzew";
+//	case "105": // N'EXISTE PLUS
+//		Exit = "Łódź Widzew";
+//		break;
+	case "412": // OK
+	case "415": // OK
+		Exit = "Łódź Fabryczna";
 		break;		
-	case "122":
-		Exit = "Mikołajów";
+	case "115": // OK
+	case "412": // OK
+	case "978": // OK
+	case "979": // OK
+		Exit = "Łódź Widzew";
 		break;
-	case "115":
-		Exit = "Puszcza";
+	case "143": // OK
+	case "144": // OK
+	case "145": // OK
+	case "745": // OK
+		Exit = "Rozprza";
+		break;
+	case "212": // OK
+	case "451": // OK
+		Exit = "Jackowice";
+		break;
+	case "175": // OK
+	case "475": // OK
+		Exit = "Sędzice";
+		break;
+	case "541": // OK
+		Exit = "Zduńska Wola";
+		break;
+	case "451":  // OK
+	case "715":  // OK
+		Exit = "Łowicz Główny";
 		break;
 	case "111":
+	case "122":
 	case "161":
 	case "162":
 	case "191":
+	case "212":
 	case "401":
 	case "406":
-	case "421":
-	case "422":
-	case "4210":
-	case "4211":
-	case "4220":
-	case "1910":
-	case "1915":
 	case "741":
 	case "932":
-		break;		
+	case "1910":
+	case "1915":
+	break;	
 	default:
 		Exit = "err " + train3
 }
+
 }
 
 //*** Fret
 
 if (TrainNoLocal.length == 6)  {
-//**** 6 chiffres dont 6 chiffres  différents   Łódź Widzew!!!
-train3 = TrainNoLocal.substring(0, 6); 
+	
+train3 = TrainNoLocal.substring(0, 6);
+//**** 6 chiffres dont 6 chiffres différents!!!
 switch (train3)  {
+	case "136001": // OK
+		if (globalThis_area0 == "L001_L017_LW_Gr")  {
+			Exit = "Mikołajów";
+		}
+		if (globalThis_area0 == "L008_KG_Kz")  {
+			Exit = "Kraków Główny";
+		}
+		if (globalThis_area0 == "L004_Zw_Gr")  {
+			Exit = "S.Maczki";
+		}
+		break;	
+	case "146001": // OK
+	case "246001": // OK
+		Exit = "Kato.Tow KTC";
+		break;	
+	case "336001": // OK
+	case "336003": // OK
+	case "336005": // OK
+	case "336007": // OK
+	case "336009": // OK
+	case "336011": // OK
+	case "336013": // OK
+	case "336015": // OK
+	case "336017": // OK
+	case "336019": // OK
+		Exit = "Kraków Płaszów";
+		break;
+	case "335051": // OK
+	case "335053": // OK
+	case "335055": // OK
+	case "335057": // OK
+	case "335059": // OK
+	case "335061": // OK
+	case "335063": // OK
+	case "335065": // OK
+	case "335067": // OK
+	case "335069": // OK
+	case "335071": // OK
+	case "335073": // OK
+		Exit = "Kraków Olsza";
+		break;
+	case "335000": // OK
+	case "335002": // OK
+	case "335012": // OK
+	case "335016": // OK
+	case "335020": // OK
+	case "335022": // OK
+	case "336050": // OK
+	case "336052": // OK
+	case "336054": // OK
+	case "336056": // OK
+	case "336058": // OK
+	case "336060": // OK
+	case "336062": // OK
+	case "336064": // OK
+	case "336066": // OK
+	case "336068": // OK
+	case "336068": // OK
+		Exit = "Dłubnia";
+		break;
 	case "335001":
 	case "335003":
 	case "335005":
@@ -2479,16 +2870,17 @@ switch (train3)  {
 	case "336021":
 	case "336023":
 			Exit = "Kraków Główny";
-			break;
-}
+			break;		
+	default:
+		Exit = "err " + train3		
+}	
+	
 train3 = TrainNoLocal.substring(0, 4);
 //**** 6 chiffres dont 4 chiffres  différents!!! 
 switch (train3)  {
 	case "4120":
-		if (globalThis_area0 == "L001_L017_LW_Gr")  {
 			Exit = "Łódź Olechów";
-			break;
-		}		
+			break;	
 		if ((globalThis_area0 == "L004_Zw_Gr") || (globalThis_area0 == "L062_L171_SG_Tl") || (globalThis_area0 == "L062_L064_SPł_Sd")) {
 			Exit = "Idzikowice";
 			break;
@@ -2500,6 +2892,7 @@ switch (train3)  {
 		Exit = "Piotrków";
 		break;
 	case "1442":
+	case "4432":
 		Exit = "Staszic";
 		break;
 	case "1443":
@@ -2511,91 +2904,146 @@ switch (train3)  {
 	case "4439":
 		Exit = " Myszków";
 		break;
-	case "3350":
-	case "3360":
-			break;
 	default:
 		Exit = "err " + train3		
 }
+
 train3 = TrainNoLocal.substring(0, 3);
 //**** 6 chiffres dont 3 chiffres différents!!!
-switch (train3)  {		
-	case "234":
+switch (train3)  {	
+	case "115": // OK
+			Exit = "Mikołajów";
+			break;
+		if (globalThis_area0 == "L003_L015_L016_ZI_KU_SK")  {
+			Exit = "Bednary";
+			break;
+		}
+	case "143": // OK
+			Exit = "Rozprza";
+			break;
+		if (globalThis_area0 == "L062_L171_L133")  {
+			Exit = "D.G. Tow";
+			break;
+		}
+	case "414": // OK
+			Exit = "Mikołajów";
+			break;
+		if (globalThis_area0 == "L001_KO_Zw")  {
+			Exit = "Myszków";
+			break;
+		}		
+	case "234": // OK
 		Exit = "Kraków Olsza";
 		break;
-	case "132":
+	case "132": // OK
 		Exit = "Dłubnia";
 		break;
-	case "142":
+	case "142": // OK
+	case "844": // OK
 		Exit = "D.G. Tow";
 		break;
-	case "242":
-	case "245":
+	case "242": // OK
 		Exit = "Kato.Tow KTC";
 		break;
-	case "125":
+	case "245": // OK
+		Exit = "Borowa Górka";
+		break;
+	case "713": // OK
 		Exit = "Mikołajów";
 		break;
-	case "215":
-		Exit = "Bełchów";
-		break;
-	case "324":
-	case "424":
+//	case "125": // N'EXISTE PLUS
+//		Exit = "Mikołajów";
+//		break;
+//	case "215": // N'EXISTE PLUS
+//		Exit = "Bełchów";
+//		break;
+	case "323": // OK
+	case "324": // OK
+	case "422": // OK
+	case "423": // OK
+	case "424": // OK
+	case "425": // OK
 		Exit = "Sędziszów";
 		break;
-	case "344":
+	case "344": // OK
 		Exit = "Koniecpol";
 		break;
-	case "444":
+	case "243": // OK
+	case "244": // OK
+	case "446": // OK
 		Exit = "S.Maczki";
 		break;
-	case "445":
-	case "464":
-	case "649":
+	case "346": // OK
+	case "445": // OK
+	case "464": // OK
+	case "484": // OK
+	case "649": // OK
 		Exit = "Myszków";
 		break;
-	case "441":
+	case "441": // OK
+	case "443": // OK
+	case "444": // OK
+	case "445": // OK
+	case "446": // OK
 		Exit = "KWK Staszic";
 		break;
-	case "192":
-	case "194":
-		Exit = "Łódź Olechów";
+//	case "192": // N'EXISTE PLUS
+//	case "194": // N'EXISTE PLUS
+//		Exit = "Łódź Olechów";
+//		break;
+//	case "912": // N'EXISTE PLUS
+//	case "914": // N'EXISTE PLUS
+//		Exit = "Warszawa Gł.Tow";
+//		break;
+	case "514": // OK
+	case "614": // OK
+		Exit = "Bednary";
 		break;
-	case "912":
-	case "914":
-		Exit = "Warszawa Gł.Tow";
+	case "152": // OK
+	case "544": // OK
+	case "651": // OK
+		Exit = "Zduńska Wola";
 		break;
-	case "422":
-	case "425":
+	case "542": // OK
+	case "561": // OK
+		Exit = " Sędzice";
+		break;
+	case "154": // OK
+	case "452": // OK
+	case "454": // OK
+		Exit = "Dionizów";
+		break;
+	case "144": // OK
+		Exit = "Rozprza";
+		break;
+	case "512": // OK
+		Exit = "Warszawa Gł.Tow.";
+		break;
+	case "626":
+		Exit = "Radzice";
+		break;
+	case "629":
 		Exit = "Czarnca";
 		break;
-	case "614":
-		Exit = "Puszcza";
-		break;
-	case "441":
-	case "446":
-		Exit = "Staszic";
-		break;
-	case "152":
-	case "154":
-		Exit = "Łask";
-		break;
-	case "512":
-	case "514":
-		Exit = "Józefinów";
-		break;
+	case "335":
+	case "336":
 	case "144":
 	case "335":
 	case "336":
 	case "443":
 	case "412":
 	case "4120":
-	case "4121":
+	case "4121":		
+	case "136001":
+	case "146001":
+	case "246001":
 		break;
 	default:
 		Exit = "err " + train3		
+}
+
 }	
-}	
+
 	return Exit
 }
 
@@ -2984,6 +3432,7 @@ case "L1_1186":
 case "3594_Ro_F":
 case "L1_1102":
 
+// L014 - L017 : Agglomeration de Lodz
 // Lodz
 case "3827_Si_D":
 case "5291_ZW_R":
@@ -3002,7 +3451,7 @@ case "3577_Rt_E":
 case "3577_Rt_F":
 case "2432_LK_G4":
 case "2463_LZ_S":
-case "5311_Zg_D":
+case "5311_Zg_D": // Zgierz
 case "5311_Zg_E":
 case "5311_Zg_F":
 case "5311_Zg_G":
@@ -3022,7 +3471,7 @@ case "2432_LK_K4":
 case "2432_LK_K2":
 case "2432_LK_K1":
 case "2432_LK_K3":
-case "2426_LCH_B":  // Chony
+case "2426_LCH_B":  // Chojny
 case "2426_LCH_C":
 case "2426_LCH_D":
 case "2426_LCH_J":
@@ -3035,6 +3484,131 @@ case "2439_LOA_D":
 case "2439_LOB_N11":
 case "2439_LOC_T21":
 case "2439_LOC_X2":
+
+// L015 - L016 : Łódź-Nord - Kutno / Łowicz
+case "2412_LG_U1":  // Lowicz
+case "2412_LG_U2":  // Lowicz
+case "2412_LG_U4":  // Lowicz
+case "2412_LG_U6":  // Lowicz
+case "2412_LG_U8":  // Lowicz
+case "2412_LG_T1":  // Lowicz
+case "2412_LG_T2":  // Lowicz
+case "2412_LG_T4":  // Lowicz
+case "2412_LG_T6":  // Lowicz
+case "2412_LG_T8":  // Lowicz
+case "2418_LP_D":  // Lowicz Przedmiescie
+case "2418_LP_E":  // Lowicz Przedmiescie
+case "2418_LP_F":  // Lowicz Przedmiescie
+case "2418_LP_J":  // Lowicz Przedmiescie
+case "2418_LP_K":  // Lowicz Przedmiescie
+case "2418_LP_L":  // Lowicz Przedmiescie
+case "824_Dm_C":
+case "824_Dm_D":
+case "824_Dm_K":
+case "824_Dm_L":
+case "1092_Gn_A":
+case "1092_Gn_D":  // Glowno
+case "1092_Gn_E":  // Glowno
+case "1092_Gn_F":  // Glowno
+case "1092_Gn_G":  // Glowno
+case "4143_St_A":
+case "4143_St_C":  // Strykow
+case "4143_St_D":  // Strykow
+case "4143_St_K":  // Strykow
+case "4143_St_L":  // Strykow
+case "1057_Gl_A":
+case "1057_Gl_B":  // Glinnik
+case "1057_Gl_C":  // Glinnik
+case "1057_Gl_D":  // Glinnik
+case "1057_Gl_E":  // Glinnik
+case "5311_Zg_B":
+case "2133_Ku_G1":  // Kutno
+case "2133_Ku_G2":  // Kutno
+case "2133_Ku_G3":  // Kutno
+case "2133_Ku_G4":  // Kutno
+case "2133_Ku_G5":  // Kutno
+case "2133_Ku_G6":  // Kutno
+case "2133_Ku_G8":  // Kutno
+case "2133_Ku_G10":  // Kutno
+case "2133_Ku_F1":  // Kutno
+case "2133_Ku_F2":  // Kutno
+case "2133_Ku_F3":  // Kutno
+case "2133_Ku_F4":  // Kutno
+case "2133_Ku_F5":  // Kutno
+case "2133_Ku_F6":  // Kutno
+case "2133_Ku_F8":  // Kutno
+case "2133_Ku_F10":  // Kutno
+case "4971_Wi_C":
+case "4971_Wi_D":
+case "4971_Wi_E":
+case "4971_Wi_F":
+case "2385_Le_A":
+case "2385_Le_D":
+case "2385_Le_E":
+case "2385_Le_F":
+case "2385_Le_L":
+case "2385_Le_M":
+case "2385_Le_N":
+case "3089_Oz_D":
+case "3089_Oz_E":
+case "3089_Oz_F":
+case "3089_Oz_M":
+case "3089_Oz_N":
+case "3089_Oz_P":
+case "3089_Oz_U":
+case "477_Ch_F":
+case "477_Ch_C1":
+case "477_Ch_C2":
+case "477_Ch_C3":
+case "477_Ch_D1":
+case "477_Ch_D2":
+case "477_Ch_D3":
+case "5313_ZK_D":
+case "5313_ZK_E":
+case "5313_ZK_K":
+case "5313_ZK_L":
+case "5313_ZK_P":
+case "5314_ZP_A":  // Zgierz Nord
+case "5314_ZP_B":  // Zgierz Nord
+case "5314_ZP_C":  // Zgierz Nord
+case "5314_ZP_D":  // Zgierz Nord
+case "5314_ZP_E":  // Zgierz Nord
+case "5314_ZP_K":  // Zgierz Nord
+case "5314_ZP_L":  // Zgierz Nord
+case "5311_Zg_A":
+case "5311_Zg_B":
+case "113_Be_E":  // Belchow
+case "113_Be_F":  // Belchow
+case "113_Be_K":  // Belchow
+case "113_Be_L":  // Belchow
+case "113_Be_P":
+case "L11_70":
+case "L11_36":
+case "L11_53":
+case "L11_83":
+case "2412_LG_A1":
+case "L3_879":
+case "L3_895":
+case "1811_Jc_C":  // Jackowice
+case "1811_Jc_E":  // Jackowice
+case "1811_Jc_G":  // Jackowice
+case "1811_Jc_J":  // Jackowice
+case "L3_1007":
+case "5248_Zy_E1":  // Zychlin
+case "5248_Zy_E2":  // Zychlin
+case "5248_Zy_E3":  // Zychlin
+case "5248_Zy_H1":  // Zychlin
+case "5248_Zy_H2":  // Zychlin
+case "5248_Zy_H3":  // Zychlin
+case "L3_1165":
+case "L3_1231":
+case "L3_1150":
+case "L3_990":
+case "L3_862":
+case "108_Bd_E": // Bednary
+case "108_Bd_F": // Bednary
+case "108_Bd_M": // Bednary
+case "108_Bd_N": // Bednary
 
 	signal = true;
 	break;
@@ -3094,7 +3668,7 @@ function drawSettings() {
         if (settingName === true) {
             settingName = "YES   ";
         } else if (settingName === false) {
-            settingName = "NO    ";
+            settingName = "NO   ";
         }
         settingName = settingName.toUpperCase();
         settingName = settingName.substring(0, 6);
@@ -3219,7 +3793,7 @@ function drawTrains(trainsToDraw) {
         if (settingName === true) {
             settingName = "YES   ";
         } else if (settingName === false) {
-            settingName = "NO    ";
+            settingName = "NO   ";
         }
         settingName = settingName.toUpperCase();
         settingName = settingName.substring(0, 6);
@@ -3230,7 +3804,6 @@ function drawTrains(trainsToDraw) {
         return settingName;
     }
     for (let id of Object.keys(settings)) {
-
 
 	if ((settings[id] != "white ") && (settings[id] != "green ") && (settings[id] != "red   ") && (settings[id] != "pink  ") && (settings[id] != "pink2 ") && (settings[id] != "blue  ") && (settings[id] != "orange") && (settings[id] != "yellow") && (settings[id] != true) && (settings[id] != false)) {	
 		
@@ -3257,6 +3830,7 @@ area6 = "L062_L064_SPł_Sd";
 area7 = "L008_KG_Kz";
 area8 = "L001_L017_LW_Gr";
 area9 = "L014_L017_LW";
+area0 = "L003_L015_L016_ZI_KU_SK";
 
        for (let station of stationToDraw) {
 		
@@ -3420,13 +3994,26 @@ drawstationuser(area8, "Baby", "Ba", 35, 24, 4)
 drawstationuser(area9, "Zgierz", "Zg", 24, 14, 6)
 drawstationuser(area9, "Łódź Marysin >>", "LW", 92, 6, 12)
 drawstationuser(area9, "<< Łódź Widzew", "LW", 137, 18, 11)
-drawstationuser(area9, "Łódź Chony", "LCH", 130, 33, 10)
+drawstationuser(area9, "Łódź Chojny", "LCH", 129, 33, 10)
 drawstationuser(area9, "Łódź Żabieniec", "LZ", 21, 24, 14)
 drawstationuser(area9, "Łódź Kaliska", "LK", 60, 26, 12)
 drawstationuser(area9, "Łódź Lubliniek", "Lb", 73, 34, 14)
 drawstationuser(area9, "Łask", "La", 28, 34, 4)
 drawstationuser(area9, "Pabianice", "Pa", 57, 33, 9)
 drawstationuser(area9, "Zdunska Wola", "ZW", 26, 44, 12)
+
+drawstationuser(area0, "Skierniewice", "Sk", 146, 42, 12)
+drawstationuser(area0, "<< Jackowice", "Jc", 126, 24, 12)
+drawstationuser(area0, "Żychlin >>", "Jc", 131, 22, 10)
+drawstationuser(area0, "Stara Wieś", "SK", 64, 17, 10)
+drawstationuser(area0, "Zgierz", "Zg", 18, 3, 6)
+drawstationuser(area0, "Zgierz Północ", "ZP", 39, 2, 13)
+drawstationuser(area0, "Witonia", "Wt", 134, 2, 7)
+drawstationuser(area0, "Glinnik", "Gl", 49, 8, 7)
+drawstationuser(area0, "Glowno", "Gl", 102, 7, 6)
+drawstationuser(area0, "Łowicz", "LG", 50, 47, 6)
+drawstationuser(area0, "Łowicz Przedmieście", "LP", 112, 51, 19)
+drawstationuser(area0, "Belchów", "Be", 93, 40, 7)
 
 		if (settings.showHornZone != true) {
 //	drawstation2mots(area8, "│", 56, 9, 1)
@@ -3479,7 +4066,7 @@ drawstation2mots(area1, "       │ ", 89, 44, 9)
 drawstation2mots(area2, "L004 : Grodzisk Mazowiecki - Zawiercie", 1, 0, 38)
 drawstation2mots(area2, "----", 1, 1, 4)
 drawstation2mots(area2, "                                      ", 121, 56, 38)
-drawstation2mots(area2, "SERVER = ", 141, 0, 9)
+drawstation2mots(area1, "SERVER = ", 141, 0, 9)
 drawstation2mots(area2, "               ", 4, 56, 15) // ___ server
 drawstationuser(area2, "Biała Rawska >>", "St", 120, 45, 15)
 drawstationuser(area2, "<< Strzałki", "St", 54, 38, 11)
@@ -3496,7 +4083,7 @@ drawstation2mots(area2, "-Markow-", 68, 0, 10)
 drawstation2mots(area3, "L001 : Warszawa - Żyrardów-Korytów", 1, 0, 34)
 drawstation2mots(area3, "----", 1, 1, 4)
 drawstation2mots(area3, "3                                    ", 123, 56, 39)
-drawstation2mots(area3, "SERVER = ", 141, 0, 9)
+drawstation2mots(area1, "SERVER = ", 141, 0, 9)
 drawstation2mots(area3, "               ", 4, 56, 15) // ___ server
 drawstation2mots(area3, "W.Targówek", 40, 24, 10)
 drawstation2mots(area3, "Warszawa Praga", 27, 21, 14)
@@ -3531,7 +4118,7 @@ drawstation2mots(area4, "L062-L171-L133 : D.G.Ząbkowice - K.Zawodzie", 1, 0, 43
 drawstation2mots(area4, "--------------", 1, 1, 14)
 drawstation2mots(area4, "    ", 156, 56, 4)
 drawstation2mots(area4, "                                           ", 113, 56, 43)
-drawstation2mots(area4, " SERVER = ", 141, 0, 9)
+drawstation2mots(area1, "SERVER = ", 141, 0, 9)
 drawstation2mots(area4, "               ", 4, 56, 15) // ___ server
 drawstationuser(area4, "Sosnowiec Główny", "SG", 44, 10, 16)
 drawstationuser(area4, "S.Południowy ", "Spł1", 43, 21, 14)
@@ -3555,7 +4142,7 @@ drawstation2mots(area4, "Staszic  ", 142, 25, 10)
 drawstation2mots(area5, "L062 - L064 : Sedziszow - Zawodzie", 125, 55, 34)
 drawstation2mots(area5, "-----------                       ", 125, 56, 34)
 drawstation2mots(area5, "<--- Psary  - Starzyny >> -         ", 0, 0, 36)
-drawstation2mots(area5, " SERVER = ", 141, 0, 9)
+drawstation2mots(area1, "SERVER = ", 141, 0, 9)
 drawstation2mots(area5, "                 ", 1, 56, 17) // ___ server
 drawstation2mots(area5, "SG R52", 126, 41, 6)
 drawstation2mots(area5, "Jaroszowiec Olkuski", 66, 20, 19)
@@ -3574,14 +4161,17 @@ drawstation2mots(area5, "KWK Staszic", 139, 35, 11)
 drawstation2mots(area6, "L062 - L064 - L065 : Sędziszów-Psary-Koniecpol - S.Południowy                    ", 1, 0, 81)
 drawstation2mots(area6, "------------------", 1, 1, 18)
 drawstation2mots(area6, "                                                                                  ", 89, 56, 81)
-drawstation2mots(area6, "SERVER = ", 141, 0, 9)
+drawstation2mots(area1, "SERVER = ", 141, 0, 9)
 drawstation2mots(area6, "                    ", 1, 56, 18) // ___ server
 drawstation2mots(area6, "Jaroszowiec Olkuski", 89, 28, 19)
 drawstationuser(area6, "<< Kozłów", "Kz", 82, 55, 9)
 drawstationuser(area6, "Klimontów >>", "Kz", 98, 49, 12)
 drawstationuser(area6, "Starzyny >>", "Str", 107, 37, 11)
+drawstationuser(area6, "  ", "Str", 118, 37, 11)
 drawstationuser(area6, "<< Sprowa", "Str", 103, 33, 9)
 drawstationuser(area6, "Julius", "Ju", 50, 13, 6)
+drawstationuser(area6, "         ", "Str", 102, 34, 9)
+drawstationuser(area6, "      ", "Ju", 50, 14, 6)
 drawstationuser(area6, "S.Południowy ", "Spł1", 10, 11, 14)
 drawstationuser(area6, "S.Kazimierz ", "SKz", 63, 2, 13)
 drawstationuser(area6, "D.G.Wschodnia ", "DW", 106, 2, 15)
@@ -3605,7 +4195,7 @@ drawstation2mots(area7, "L008 : Kozłów - Kraków", 137, 53, 22)
 drawstation2mots(area7, "----                  ", 137, 54, 22)
 drawstation2mots(area7, "                      ", 137, 56, 22)
 drawstation2mots(area7, "                 - Kozłów -", 1, 0, 27)
-drawstation2mots(area7, " SERVER = ", 141, 0, 9)
+drawstation2mots(area1, "SERVER = ", 141, 0, 9)
 drawstation2mots(area7, "               ", 4, 56, 15) // ___ server
 drawstationuser(area7, "   Kraków   ", "KPm", 58, 26, 12)
 drawstationuser(area7, "Przedmieście", "KPm", 58, 25, 12)
@@ -3619,7 +4209,7 @@ drawstation2mots(area7, " Zablocie ", 148, 38, 10)
 
 drawstation2mots(area8, "L001 - L017 : Grodzisk Mazowiecki - Łódź                    ", 1, 0, 60)
 drawstation2mots(area8, "-----------", 1, 1, 11)
-drawstation2mots(area8, "SERVER = ", 141, 0, 9)
+drawstation2mots(area1, "SERVER = ", 141, 0, 9)
 drawstation2mots(area8, "<--- Grodzisk Mazowiecki", 13, 3, 24)
 drawstation2mots(area8, "  1       4", 83, 7, 11)
 drawstationuser(area8, "Żyrardów >>", "Zr", 66, 47, 11)
@@ -3654,9 +4244,10 @@ drawstationuser(area8, " Żakowice ", "ZP", 85, 17, 10)
 drawstationuser(area8, "Południowe", "ZP", 85, 16, 10)
 drawstation2mots(area8, " ", 75 , 39, 1)  // Żakowice
 drawstation2mots(area8, "            ", 64 , 38, 12)  // Żakowice
-drawstation2mots(area8, "Łódź Olechów", 104, 34, 12)
+drawstation2mots(area8, "LOC - Łódź Olechów - LOB", 89, 34, 24)
 drawstation2mots(area8, "             ", 103, 33, 13)
 drawstation2mots(area8, "           ", 134, 35, 11)
+drawstation2mots(area8, "Łódź Chojny >", 113, 35, 13)
 drawstationuser(area8, "  Łódź Widzew  ", "LW", 13, 20, 15)
 ////drawstation2mots(area8, "            ", 71, 51, 12)
 drawstationuser(area8, "<< Łódź", "G", 42, 8, 7)
@@ -3667,7 +4258,8 @@ drawstationuser(area8, "Galkówek >>", "G", 77, 5, 11)
 drawstation2mots(area8, "           ", 72, 52, 11)  // Galkówek
 drawstationuser(area8, "Koluski", "KO", 126, 3, 7)
 drawstation2mots(area8, "       ", 27, 52, 7)
-
+drawstationuser(area8, "Baby", "Ba", 35, 23, 4)
+drawstation2mots(area8, "    ", 121, 32, 4)  // Baby
 
 	drawstation2mots(area8, "     ", 56, 8, 5)
 	drawstation2mots(area8, "     ", 56, 9, 5)
@@ -3684,10 +4276,12 @@ drawstationuser(area8, "\u25a3 ", "Pl", 17, 47, 2) // Plyćwia
 	drawstation2mots(area8, "▲", 103, 47, 1)
 	drawstation2mots(area8, "▲", 103, 48, 1)
 		}
-
-drawstation2mots(area9, "L014 - L017 : Łódź area", 136, 54, 23)
-drawstation2mots(area9, "-----------", 136, 55, 11)
+ 
+drawstation2mots(area9, "L014 - L017 : Łódź area", 124, 54, 23)
+drawstation2mots(area9, "-----------", 124, 55, 11)
 drawstation2mots(area9, "           ", 148, 53, 11)
+drawstation2mots(area9, "SERVER = ", 141, 0, 9)
+drawstation2mots(area9, "                  ", 1, 54, 18) // ___ server
 drawstationuser(area9, "<< Łódź Marysin", "LW", 93, 8, 15)
 drawstation2mots(area9, " └ ─====─ ┘ ", 56, 50, 12)
 drawstationuser(area9, "Łódź Żabieniec", "LZ", 22, 26, 14)
@@ -3698,8 +4292,8 @@ drawstationuser(area9, "Łódź Kaliska", "LK", 60, 28, 12)
 drawstation2mots(area9, "▷┤ ─====─ ├ & ", 88, 30, 12)
 drawstationuser(area9, "Łódź Lubliniek", "Lb", 73, 36, 14)
 drawstation2mots(area9, "  ┌ ─====─‡┐   ", 73, 22, 14)
-drawstationuser(area9, "Łódź Chony", "LCH", 130, 35, 10)
-drawstation2mots(area9, " ─====─▲┼‡", 20, 23, 10)
+drawstationuser(area9, "Łódź Chojny  ", "LCH", 129, 35, 13)
+drawstation2mots(area9, " ─====─▲┼‡──", 20, 23, 12)
 drawstationuser(area9, "Zdunska Wola", "ZW", 26, 46, 12)
 drawstation2mots(area9, "┌‡─====─‡┐  ", 122, 12, 12)
 drawstationuser(area9, "Łask", "La", 28, 36, 4)
@@ -3715,6 +4309,13 @@ drawstation2mots(area9, "Olechów Zachód", 68, 4, 14)
 drawstation2mots(area9, "              ", 68, 0, 14)
 drawstation2mots(area9, "Olechów Wschód", 52, 0, 14)
 
+drawstation2mots(area0, "                                        ", 110, 45, 42)
+drawstation2mots(area0, "L015 - L016 : Łódź-North - Kutno / Lowicz", 117, 56, 41)
+drawstation2mots(area0, "           ", 1, 1, 11)
+drawstation2mots(area0, " SERVER = ", 140, 0, 9)
+drawstation2mots(area0, "                  ", 1, 56, 18) // ___ server
+drawstation2mots(area0, "Stara Wieś", 86, 39, 10)
+drawstationuser(area0, "Stara Wieś", "SK", 64, 17, 10)
 		}
 
 	if (isCurrentlyFlipped != true) {
@@ -4378,7 +4979,7 @@ if ( y != 27 ) {
 }
 
 number = train8[train3];
-        if (number.substring(5,8) != "L.E") {
+        if (number.substring(5,8) != "HLP") {
 maxLength = 8;
 	} else {
 maxLength = 12;		
@@ -4491,10 +5092,10 @@ if ( y != 27 ) {
 }
 
 number = "v " + train9[train3] + "";
-        if (number.substring(5,8) != "L.E") {
-maxLengthLE = 0
+        if (number.substring(5,8) != "HLP") {
+maxLengthHLP = 0
 	} else {
-maxLengthLE = 5		
+maxLengthHLP = 5		
 	}
 	if ((globalThis.train4 == 1)) {	
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
@@ -4511,14 +5112,14 @@ maxLengthLE = 5
 		if (globalThis.user != "user") {
 	//// * = User - not Bot
 	//// number = vitesse
-	maxLength = maxLengthLE + 6;
+	maxLength = maxLengthHLP + 6;
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
 			n = "" + number + "" + ">";
 	humain = false;
 		    } else {
-	maxLength = maxLengthLE + 8;
+	maxLength = maxLengthHLP + 8;
 	ctx.fillStyle = "#48dfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
@@ -4531,14 +5132,14 @@ maxLengthLE = 5
 		if (globalThis.user != "user") {
 	//// * = User - not Bot
 	//// number = vitesse
-	maxLength = maxLengthLE + 6;
+	maxLength = maxLengthHLP + 6;
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
 			n = "<" + number + "";
 	humain = false;
 		    } else {
-	maxLength = maxLengthLE + 8;
+	maxLength = maxLengthHLP + 8;
 	ctx.fillStyle = "#48dfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
@@ -4626,11 +5227,11 @@ if ( y != 27 ) {
 }
 
 number = train10[train3];
-        if (number.substring(5,8) != "L.E") {
-maxLengthLE = 0
+        if (number.substring(5,8) != "HLP") {
+maxLengthHLP = 0
 number = "" + number;
 	} else {
-maxLengthLE = 2
+maxLengthHLP = 2
 	
 	}
 	if ((globalThis.train4 == 1)) {	
@@ -4648,14 +5249,14 @@ maxLengthLE = 2
 		if (globalThis.user != "user") {
 	//// * = User - not Bot
 	//// number = vitesse
-	maxLength = maxLengthLE + 6;
+	maxLength = maxLengthHLP + 6;
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
 			n = "" + number + "" + ">";
 	humain = false;
 		    } else {
-	maxLength = maxLengthLE + 8;
+	maxLength = maxLengthHLP + 8;
 	ctx.fillStyle = "#48dfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
@@ -4668,14 +5269,14 @@ maxLengthLE = 2
 		if (globalThis.user != "user") {
 	//// * = User - not Bot
 	//// number = vitesse
-	maxLength = maxLengthLE + 6;
+	maxLength = maxLengthHLP + 6;
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][1] : coloursPalette[trainBackgroundColour][0];
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
 			n = "<" + number + "";
 	humain = false;
 		    } else {
-	maxLength = maxLengthLE + 8;
+	maxLength = maxLengthHLP + 8;
 	ctx.fillStyle = "#48dfff";
     ctx.fillRect(x * textSize / textSizeRatio * textMargin, y * textSize * textMargin, textSize / textSizeRatio * textMargin * maxLength, textSize * textMargin);
     ctx.fillStyle = drawBoundingBox ? coloursPalette[trainBackgroundColour][0] : coloursPalette[trainBackgroundColour][1];
@@ -5056,7 +5657,7 @@ function drawserver() {
         if (settingName === true) {
             settingName = "YES   ";
         } else if (settingName === false) {
-            settingName = "NO    ";
+            settingName = "NO   ";
         }
         settingName = settingName.toUpperCase();
         settingName = settingName.substring(0, 6);
@@ -5198,8 +5799,8 @@ function keyboard(e) {
 		globalThis.showExit = false;
             break;
         case "0":
-            setAreaTo = "L001_L017_PT_LW";
-		globalThis.Key = "9";
+            setAreaTo = "L003_L015_L016_ZI_KU_SK";
+		globalThis.Key = "0";
 		globalThis.showLoco = false;
 		globalThis.showSpeed = false;
 		globalThis.showTypeTrain = false;
@@ -5208,6 +5809,17 @@ function keyboard(e) {
 		globalThis.showEntry = false;
 		globalThis.showExit = false;
             break;
+        case "a":
+            setAreaTo = "L001_L017_PT_LW";
+		globalThis.Key = "a";
+		globalThis.showLoco = false;
+		globalThis.showSpeed = false;
+		globalThis.showTypeTrain = false;
+		globalThis.showOrigine = false;
+		globalThis.showDestination = false;
+		globalThis.showEntry = false;
+		globalThis.showExit = false;
+            break;				
         case "e":
             setAreaTo = "Settings";
 		globalThis.showLoco = false;
